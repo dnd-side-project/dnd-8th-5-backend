@@ -70,6 +70,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.KEY }}
         script: |
+          sudo chmod 755 ./config/scripts/install-docker.sh 
           sudo sh ./config/scripts/install-docker.sh
           sudo docker rm -f $(docker ps -qa)
           sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
