@@ -45,6 +45,9 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew bootJar
 
+    ## ec2에 docker랑 docker-compose 설치
+    - name: install docker and docker-compose
+      run: sudo sh ./config/scripts/install-docker.sh
 
     ## 웹 이미지 빌드 및 도커허브에 push
     - name: web docker build and push
