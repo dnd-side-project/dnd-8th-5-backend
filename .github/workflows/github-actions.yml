@@ -60,8 +60,8 @@ jobs:
         username: ubuntu
         key: ${{ secrets.KEY }}
         script: |
-          sudo chmod 755 ~/home/install-docker.sh
-          sh ~/home/install-docker.sh
+          sudo chmod 755 ~/install-docker.sh
+          sh ~/install-docker.sh
 
     ## docker compose up
     - name: executing remote ssh commands using password
