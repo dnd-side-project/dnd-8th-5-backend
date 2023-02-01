@@ -45,16 +45,22 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew bootJar
 
-    ## ec2에 docker랑 docker-compose 설치
-    - name: install docker and docker-compose
-      run: sudo sh ./config/scripts/install-docker.sh
-
     ## 웹 이미지 빌드 및 도커허브에 push
     - name: web docker build and push
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker build -t ${{ secrets.DOCKER_REPO }}/modutime-web .
         docker push ${{ secrets.DOCKER_REPO }}/modutime-web
+
+    ## ec2에 docker랑 docker-compose 설치
+#    - name: install docker and docker-compose
+#      uses: appleboy/ssh-action@master
+#      with:
+#        host: ${{ secrets.HOST }}
+#        username: ubuntu
+#        key: ${{ secrets.KEY }}
+#        script: |
+#          sudo sh ./config/scripts/install-docker.sh
 
     ## docker compose up
     - name: executing remote ssh commands using password
@@ -64,6 +70,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.KEY }}
         script: |
+          sudo sh ./config/scripts/install-docker.sh
           sudo docker rm -f $(docker ps -qa)
           sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
           sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-nginx
