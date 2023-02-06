@@ -66,7 +66,7 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/modutime-web .
+          docker build -t ${{ secrets.DOCKER_REPO }}/modutime-web ./docker
           docker push ${{ secrets.DOCKER_REPO }}/modutime-web
 
       ## docker compose up
@@ -77,10 +77,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: |
-            cd /home/ubuntu/srv/ubuntu
-            sudo sh config/install-docker.sh
+            cd /home/ubuntu/srv/ubuntu/docker
+            sudo sh install-docker.sh
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-nginx
-            sudo docker/docker-compose up -d
+            sudo docker-compose up -d
             sudo docker image prune -f
