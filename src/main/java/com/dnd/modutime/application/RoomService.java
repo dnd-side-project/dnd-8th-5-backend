@@ -1,15 +1,16 @@
 package com.dnd.modutime.application;
 
 import com.dnd.modutime.domain.Room;
-import com.dnd.modutime.dto.RoomRequest;
-import com.dnd.modutime.dto.RoomResponse;
-import com.dnd.modutime.dto.TimerRequest;
+import com.dnd.modutime.dto.request.RoomRequest;
+import com.dnd.modutime.dto.request.TimerRequest;
+import com.dnd.modutime.dto.response.RoomResponse;
 import com.dnd.modutime.repository.RoomRepository;
 import com.dnd.modutime.util.TimeProvider;
 import com.dnd.modutime.util.Timer;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
