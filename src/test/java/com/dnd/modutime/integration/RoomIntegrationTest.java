@@ -1,19 +1,19 @@
 package com.dnd.modutime.integration;
 
-import static com.dnd.modutime.fixture.RoomFixture.getRoomRequest;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.dnd.modutime.application.RoomService;
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.domain.Room;
-import com.dnd.modutime.dto.RoomRequest;
-import com.dnd.modutime.dto.RoomResponse;
-import com.dnd.modutime.dto.TimerRequest;
+import com.dnd.modutime.dto.request.RoomRequest;
+import com.dnd.modutime.dto.request.TimerRequest;
+import com.dnd.modutime.dto.response.RoomResponse;
 import com.dnd.modutime.repository.RoomRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+
+import static com.dnd.modutime.fixture.RoomFixture.getRoomRequest;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(TimeConfiguration.class)
 @SpringBootTest

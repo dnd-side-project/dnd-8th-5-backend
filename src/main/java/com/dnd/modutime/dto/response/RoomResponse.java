@@ -1,4 +1,4 @@
-package com.dnd.modutime.dto;
+package com.dnd.modutime.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
