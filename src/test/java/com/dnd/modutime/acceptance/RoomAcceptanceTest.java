@@ -1,21 +1,15 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.RoomFixture.getRoomRequest;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.dnd.modutime.dto.RoomRequest;
-import com.dnd.modutime.dto.RoomResponse;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
+import com.dnd.modutime.dto.response.RoomResponse;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RoomAcceptanceTest extends AcceptanceSupporter{
 
     @Test
     void 방을_생성한다() {
-        RoomRequest roomRequest = getRoomRequest();
-        ExtractableResponse<Response> response = post("/api/room", roomRequest);
-        RoomResponse roomResponse = response.body().as(RoomResponse.class);
+        RoomResponse roomResponse = 방_생성();
         assertThat(roomResponse.getUuid()).isNotNull();
     }
 }

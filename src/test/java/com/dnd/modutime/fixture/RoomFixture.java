@@ -1,12 +1,11 @@
 package com.dnd.modutime.fixture;
 
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
+import com.dnd.modutime.dto.request.RoomRequest;
+import com.dnd.modutime.dto.request.TimerRequest;
 
-import com.dnd.modutime.dto.RoomRequest;
-import com.dnd.modutime.dto.TimerRequest;
 import java.util.List;
+
+import static com.dnd.modutime.fixture.TimeFixture.*;
 
 public class RoomFixture {
 
