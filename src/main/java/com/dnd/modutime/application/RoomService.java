@@ -21,7 +21,9 @@ public class RoomService {
 
     public RoomResponse create(RoomRequest roomRequest) {
         TimerRequest timerRequest = roomRequest.getTimerRequest();
-        Room room = new Room(roomRequest.getStartTime(),
+        Room room = new Room(
+                roomRequest.getTitle(),
+                roomRequest.getStartTime(),
                 roomRequest.getEndTime(),
                 roomRequest.getDates(),
                 roomRequest.getHeadCount(),
@@ -47,5 +49,11 @@ public class RoomService {
 
     private boolean checkAllValueZero(TimerRequest timerRequest) {
         return timerRequest.getDay() == 0 && timerRequest.getHour() == 0 && timerRequest.getMinute() == 0;
+    }
+
+    public String getTitleByUuid(String roomUuid) {
+        Room room = roomRepository.findByUuid(roomUuid)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 방이 없습니다."));
+        return room.getTitle();
     }
 }

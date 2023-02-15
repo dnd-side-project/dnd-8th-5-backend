@@ -1,6 +1,7 @@
 package com.dnd.modutime.domain;
 
 import static com.dnd.modutime.domain.fixture.RoomFixture.getRoom;
+import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByTitle;
 import static com.dnd.modutime.fixture.TimeFixture._00_00;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
 import static com.dnd.modutime.fixture.TimeFixture._13_00;
@@ -89,6 +90,18 @@ public class RoomTest {
         FakeTimeProvider timeProvider = new FakeTimeProvider();
         timeProvider.setTime(_2023_02_10_00_00);
         assertThatThrownBy(() -> getRoom(_2023_02_10_00_00, timeProvider))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 방제목이_null이면_예외를_반환한다() {
+        assertThatThrownBy(() -> getRoomByTitle(null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 방제목이_빈문자이면_예외를_반환한다() {
+        assertThatThrownBy(() -> getRoomByTitle(""))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
