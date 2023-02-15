@@ -1,8 +1,10 @@
 package com.dnd.modutime.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.dnd.modutime.dto.request.LoginRequest;
+import com.dnd.modutime.dto.response.LoginPageResponse;
 import com.dnd.modutime.dto.response.RoomResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -38,5 +40,16 @@ public class AuthAcceptanceTest extends AcceptanceSupporter{
         LoginRequest invalidLoginRequest = new LoginRequest("참여자1", "9999");
         ExtractableResponse<Response> response = post("/api/room/" + roomResponse.getUuid() + "/login", invalidLoginRequest);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    void 로그인페이지_입장시_200_상태코드와_로그인페이지에_필요한_정보를_반환한다() {
+        RoomResponse roomResponse = 방_생성();
+        ExtractableResponse<Response> response = get("/api/room/" + roomResponse.getUuid() + "/login");
+        LoginPageResponse loginPageResponse = response.body().as(LoginPageResponse.class);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(loginPageResponse.getRoomTitle()).isEqualTo("이멤버리멤버")
+        );
     }
 }

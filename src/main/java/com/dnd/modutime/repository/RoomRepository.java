@@ -3,6 +3,7 @@ package com.dnd.modutime.repository;
 import com.dnd.modutime.domain.Room;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,10 +17,9 @@ public class RoomRepository {
         return id++;
     }
 
-    public Room findByUuid(String roomUuid) {
+    public Optional<Room> findByUuid(String roomUuid) {
         return store.values().stream()
                 .filter(room -> room.getUuid().equals(roomUuid))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("해당 uuid를 가진 room이 없습니다."));
+                .findAny();
     }
 }
