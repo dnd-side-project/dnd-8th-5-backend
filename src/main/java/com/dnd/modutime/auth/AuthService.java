@@ -1,6 +1,6 @@
 package com.dnd.modutime.auth;
 
-import com.dnd.modutime.application.InvalidPasswordException;
+import com.dnd.modutime.exception.InvalidPasswordException;
 import com.dnd.modutime.application.ParticipantService;
 import com.dnd.modutime.domain.Participant;
 import com.dnd.modutime.dto.request.LoginRequest;

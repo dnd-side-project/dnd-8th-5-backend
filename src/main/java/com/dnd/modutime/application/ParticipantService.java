@@ -1,6 +1,7 @@
 package com.dnd.modutime.application;
 
 import com.dnd.modutime.domain.Participant;
+import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,6 @@ public class ParticipantService {
 
     public Participant getByRoomUuidAndName(String roomUuid, String name) {
         return participantRepository.findByRoomUuidAndName(roomUuid, name)
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 참여자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException("해당하는 참여자를 찾을 수 없습니다."));
     }
 }

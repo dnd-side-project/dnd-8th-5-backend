@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.dnd.modutime.auth.AuthService;
-import com.dnd.modutime.application.InvalidPasswordException;
+import com.dnd.modutime.exception.InvalidPasswordException;
 import com.dnd.modutime.application.RoomService;
 import com.dnd.modutime.domain.Participant;
 import com.dnd.modutime.dto.request.LoginRequest;

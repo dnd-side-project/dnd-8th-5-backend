@@ -4,6 +4,7 @@ import com.dnd.modutime.domain.Room;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimerRequest;
 import com.dnd.modutime.dto.response.RoomResponse;
+import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.repository.RoomRepository;
 import com.dnd.modutime.util.TimeProvider;
 import com.dnd.modutime.util.Timer;
@@ -53,7 +54,7 @@ public class RoomService {
 
     public String getTitleByUuid(String roomUuid) {
         Room room = roomRepository.findByUuid(roomUuid)
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 방이 없습니다."));
+                .orElseThrow(() -> new NotFoundException("해당하는 방이 없습니다."));
         return room.getTitle();
     }
 }
