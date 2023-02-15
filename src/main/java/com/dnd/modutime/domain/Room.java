@@ -11,6 +11,7 @@ public class Room {
     private static final int ZERO_HEAD_COUNT = 0;
     private static final LocalTime ZERO_TIME = LocalTime.of(0, 0);
 
+    private String title;
     private final LocalTime startTime;
     private final LocalTime endTime;
     private final List<LocalDate> dates;
@@ -18,23 +19,33 @@ public class Room {
     private final String uuid;
     private final LocalDateTime deadLine;
 
-    public Room(LocalTime startTime,
+    public Room(String title,
+                LocalTime startTime,
                 LocalTime endTime,
                 List<LocalDate> dates,
                 Integer headCount,
                 LocalDateTime deadLine,
                 TimeProvider timeProvider) {
+
+        validateTitle(title);
         validateStartAndEndTime(startTime, endTime);
         validateDates(dates);
         validateHeadCount(headCount);
         validateDeadLine(deadLine, timeProvider);
 
+        this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
         this.dates = dates;
         this.headCount = headCount;
         this.uuid = UUID.randomUUID().toString();
         this.deadLine = deadLine;
+    }
+
+    private void validateTitle(final String title) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("방의 제목은 빈문자일 수 없습니다.");
+        }
     }
 
     private void validateStartAndEndTime(LocalTime startTime, LocalTime endTime) {
@@ -86,11 +97,15 @@ public class Room {
         return headCount != ZERO_HEAD_COUNT;
     }
 
+    public boolean hasDeadLine() {
+        return deadLine != null;
+    }
+
     public String getUuid() {
         return uuid;
     }
 
-    public boolean hasDeadLine() {
-        return deadLine != null;
+    public String getTitle() {
+        return title;
     }
 }

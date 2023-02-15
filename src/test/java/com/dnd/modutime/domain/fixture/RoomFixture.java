@@ -20,6 +20,11 @@ public class RoomFixture {
         return getRoom(_12_00, _13_00, dates, 10);
     }
 
+    public static Room getRoomByTitle(String title) {
+        List<LocalDate> dates = List.of(_2023_02_10);
+        return getRoom(title, _12_00, _13_00, dates, 1, _2023_02_10_00_00, new FakeTimeProvider());
+    }
+
     public static Room getRoom(LocalTime startTime, LocalTime endTime) {
         return getRoom(startTime, endTime, List.of(_2023_02_10), 1);
     }
@@ -58,6 +63,16 @@ public class RoomFixture {
                                Integer headCount,
                                LocalDateTime deadLine,
                                TimeProvider timeProvider) {
-        return new Room(startTime, endTime, dates, headCount, deadLine, timeProvider);
+        return getRoom("이멤버 리멤버", startTime, endTime, dates, headCount, deadLine, timeProvider);
+    }
+
+    public static Room getRoom(String title,
+                               LocalTime startTime,
+                               LocalTime endTime,
+                               List<LocalDate> dates,
+                               Integer headCount,
+                               LocalDateTime deadLine,
+                               TimeProvider timeProvider) {
+        return new Room(title, startTime, endTime, dates, headCount, deadLine, timeProvider);
     }
 }

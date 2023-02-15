@@ -1,5 +1,7 @@
 package com.dnd.modutime.acceptance;
 
+import static com.dnd.modutime.fixture.RoomFixture.getRoomRequest;
+
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.response.RoomResponse;
@@ -12,8 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-
-import static com.dnd.modutime.fixture.RoomFixture.getRoomRequest;
 
 @Import(TimeConfiguration.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)

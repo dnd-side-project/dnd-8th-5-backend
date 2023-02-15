@@ -22,4 +22,9 @@ public class ParticipantRepository {
                 .filter(participant -> participant.getRoomUuid().equals(roomUuid) && participant.getName().equals(name))
                 .findAny();
     }
+
+    public boolean existsByName(String roomUuid, String name) {
+        return store.values().stream()
+                .anyMatch(participant -> participant.getRoomUuid().equals(roomUuid) && participant.getName().equals(name));
+    }
 }
