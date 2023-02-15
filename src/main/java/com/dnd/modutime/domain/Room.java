@@ -108,4 +108,16 @@ public class Room {
     public String getTitle() {
         return title;
     }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public List<LocalDate> getDates() {
+        return dates;
+    }
 }

@@ -1,11 +1,13 @@
 package com.dnd.modutime.application;
 
 import com.dnd.modutime.domain.Room;
+import com.dnd.modutime.domain.TimeBoard;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimerRequest;
 import com.dnd.modutime.dto.response.RoomResponse;
 import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.repository.RoomRepository;
+import com.dnd.modutime.repository.TimeBoardRepository;
 import com.dnd.modutime.util.TimeProvider;
 import com.dnd.modutime.util.Timer;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class RoomService {
 
     private final TimeProvider timeProvider;
     private final RoomRepository roomRepository;
+    private final TimeBoardRepository timeBoardRepository;
 
     public RoomResponse create(RoomRequest roomRequest) {
         TimerRequest timerRequest = roomRequest.getTimerRequest();
@@ -31,6 +34,13 @@ public class RoomService {
                 findDeadLineOrNull(timerRequest),
                 timeProvider);
         roomRepository.save(room);
+
+        timeBoardRepository.save(new TimeBoard(room.getUuid(),
+                room.getStartTime(),
+                room.getEndTime(),
+                room.getDates())
+        );
+
         return new RoomResponse(room.getUuid());
     }
 

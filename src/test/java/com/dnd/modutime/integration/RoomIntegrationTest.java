@@ -6,10 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.dnd.modutime.application.RoomService;
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.domain.Room;
+import com.dnd.modutime.domain.TimeBoard;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimerRequest;
 import com.dnd.modutime.dto.response.RoomResponse;
 import com.dnd.modutime.repository.RoomRepository;
+import com.dnd.modutime.repository.TimeBoardRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,11 +27,22 @@ public class RoomIntegrationTest {
     @Autowired
     private RoomRepository roomRepository;
 
+    @Autowired
+    private TimeBoardRepository timeBoardRepository;
+
     @Test
     void 방을_생성한다() {
         RoomRequest roomRequest = getRoomRequest();
         RoomResponse roomResponse = roomService.create(roomRequest);
         assertThat(roomResponse.getUuid()).isNotNull();
+    }
+
+    @Test
+    void 방을_생성하면_TimeBoard가_생성된다() {
+        RoomRequest roomRequest = getRoomRequest();
+        RoomResponse roomResponse = roomService.create(roomRequest);
+        TimeBoard timeBoard = timeBoardRepository.findByRoomUuid(roomResponse.getUuid()).get();
+        assertThat(timeBoard.getRoomUuid()).isNotNull();
     }
 
     @Test
