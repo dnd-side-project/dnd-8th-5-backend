@@ -1,13 +1,16 @@
 package com.dnd.modutime.fixture;
 
+import static com.dnd.modutime.fixture.TimeFixture._12_00;
+import static com.dnd.modutime.fixture.TimeFixture._13_00;
+import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
+
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimerRequest;
-
 import java.util.List;
 
-import static com.dnd.modutime.fixture.TimeFixture.*;
-
 public class RoomFixture {
+
+    public static String ROOM_UUID = "7c64aa0e-6e8f-4f61-b8ee-d5a86493d3a9";
 
     public static RoomRequest getRoomRequest(TimerRequest timerRequest) {
         return new RoomRequest("이멤버리멤버",

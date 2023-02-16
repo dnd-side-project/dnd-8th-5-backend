@@ -4,7 +4,7 @@ import static com.dnd.modutime.fixture.RoomFixture.getRoomRequest;
 
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.dto.request.RoomRequest;
-import com.dnd.modutime.dto.response.RoomResponse;
+import com.dnd.modutime.dto.response.RoomCreationResponse;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -44,9 +44,9 @@ public class AcceptanceSupporter {
                 .extract();
     }
 
-    protected RoomResponse 방_생성() {
+    protected RoomCreationResponse 방_생성() {
         RoomRequest roomRequest = getRoomRequest();
         ExtractableResponse<Response> response = post("/api/room", roomRequest);
-        return response.body().as(RoomResponse.class);
+        return response.body().as(RoomCreationResponse.class);
     }
 }

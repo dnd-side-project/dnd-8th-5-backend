@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomResponse {
+public class RoomCreationResponse {
 
     @JsonProperty(value = "roomUuid")
     private String uuid;

@@ -1,4 +1,4 @@
-package com.dnd.modutime.domain;
+package com.dnd.modutime.domain.participant;
 
 import java.util.regex.Pattern;
 
@@ -6,6 +6,7 @@ public class Participant {
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^[0-9]{4}$");
 
+    private Long id;
     private final String roomUuid;
     private final String name;
     private final String password;
@@ -20,6 +21,15 @@ public class Participant {
         this.name = name;
         this.password = password;
         this.email = null;
+    }
+
+    public Participant(final Long id, final String roomUuid, final String name, final String password,
+                       final String email) {
+        this.id = id;
+        this.roomUuid = roomUuid;
+        this.name = name;
+        this.password = password;
+        this.email = email;
     }
 
     private void validateRoomUuid(String roomUuid) {
@@ -56,11 +66,24 @@ public class Participant {
         return this.password.equals(password);
     }
 
+
+    public Long getId() {
+        return id;
+    }
+
     public String getRoomUuid() {
         return roomUuid;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

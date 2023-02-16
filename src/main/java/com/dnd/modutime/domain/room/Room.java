@@ -1,4 +1,4 @@
-package com.dnd.modutime.domain;
+package com.dnd.modutime.domain.room;
 
 import com.dnd.modutime.util.TimeProvider;
 import java.time.LocalDate;
@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class Room {
-    private static final int ZERO_HEAD_COUNT = 0;
-    private static final LocalTime ZERO_TIME = LocalTime.of(0, 0);
 
     private String title;
     private final LocalTime startTime;
@@ -49,17 +47,28 @@ public class Room {
     }
 
     private void validateStartAndEndTime(LocalTime startTime, LocalTime endTime) {
-        if (isZeroTime(startTime, endTime)) {
+        if (startTime == null && endTime == null) {
             return;
         }
+
+        if (startTime == null || endTime == null) {
+            throw new IllegalArgumentException("시작시간과 끝나는 시간은 하나만 null일 수 없습니다.");
+        }
+
 
         if (!startTime.isBefore(endTime)) {
             throw new IllegalArgumentException("시작시간은 끝나는 시간보다 작아야 합니다.");
         }
     }
 
-    private boolean isZeroTime(LocalTime startTime, LocalTime endTime) {
-        return startTime.equals(ZERO_TIME) && endTime.equals(ZERO_TIME);
+    private void validateHeadCount(Integer headCount) {
+        if (headCount == null) {
+            return;
+        }
+
+        if (headCount < 0) {
+            throw new IllegalArgumentException("방 참여 인원은 음수일 수 없습니다.");
+        }
     }
 
     private void validateDates(List<LocalDate> dates) {
@@ -68,12 +77,6 @@ public class Room {
         }
         if (dates.isEmpty()) {
             throw new IllegalArgumentException("날짜는 최소 1개이상 존재해야 합니다.");
-        }
-    }
-
-    private void validateHeadCount(int headCount) {
-        if (headCount < 0) {
-            throw new IllegalArgumentException("방 참여 인원은 음수일 수 없습니다.");
         }
     }
 
@@ -89,35 +92,31 @@ public class Room {
         }
     }
 
-    public boolean hasStartAndEndTime() {
-        return !isZeroTime(startTime, endTime);
+    public String getTitle() {
+        return title;
     }
 
-    public boolean hasParticipants() {
-        return headCount != ZERO_HEAD_COUNT;
+    public LocalTime getStartTimeOrNull() {
+        return startTime;
     }
 
-    public boolean hasDeadLine() {
-        return deadLine != null;
+    public LocalTime getEndTimeOrNull() {
+        return endTime;
+    }
+
+    public List<LocalDate> getDates() {
+        return dates;
+    }
+
+    public Integer getHeadCountOrNull() {
+        return headCount;
     }
 
     public String getUuid() {
         return uuid;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public List<LocalDate> getDates() {
-        return dates;
+    public LocalDateTime getDeadLineOrNull() {
+        return deadLine;
     }
 }

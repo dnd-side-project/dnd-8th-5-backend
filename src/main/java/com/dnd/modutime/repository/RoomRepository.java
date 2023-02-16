@@ -1,6 +1,6 @@
 package com.dnd.modutime.repository;
 
-import com.dnd.modutime.domain.Room;
+import com.dnd.modutime.domain.room.Room;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

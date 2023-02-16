@@ -1,6 +1,6 @@
 package com.dnd.modutime.application;
 
-import com.dnd.modutime.domain.Participant;
+import com.dnd.modutime.domain.participant.Participant;
 import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
