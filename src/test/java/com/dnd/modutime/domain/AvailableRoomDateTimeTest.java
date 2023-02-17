@@ -6,14 +6,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.dnd.modutime.domain.timeblock.AvailableDateTime;
+import com.dnd.modutime.domain.timeblock.AvailableTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class AvailableDateTimeTest {
+public class AvailableRoomDateTimeTest {
 
     @Test
     void AvailableDateTime생성시_date가_null이면_예외가_발생한다() {
-        assertThatThrownBy(() -> new AvailableDateTime(null, List.of(_12_00)))
+        assertThatThrownBy(() -> new AvailableDateTime(null, List.of(new AvailableTime(_12_00))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

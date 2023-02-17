@@ -2,6 +2,7 @@ package com.dnd.modutime.domain;
 
 import static com.dnd.modutime.domain.fixture.RoomFixture.getRoom;
 import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByHeadCount;
+import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByRoomDates;
 import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByStartEndTime;
 import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByTitle;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
@@ -40,7 +41,7 @@ public class RoomTest {
 
     @Test
     void 날짜가_null_이면_예외가_발생한다() {
-        assertThatThrownBy(() -> getRoom(null))
+        assertThatThrownBy(() -> getRoomByRoomDates(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -7,11 +7,13 @@ import static com.dnd.modutime.fixture.TimeFixture._2023_02_10_00_00;
 
 import com.dnd.modutime.domain.FakeTimeProvider;
 import com.dnd.modutime.domain.room.Room;
+import com.dnd.modutime.domain.room.RoomDate;
 import com.dnd.modutime.util.TimeProvider;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RoomFixture {
 
@@ -66,6 +68,10 @@ public class RoomFixture {
         return getRoom("이멤버 리멤버", startTime, endTime, dates, headCount, deadLine, timeProvider);
     }
 
+    public static Room getRoomByRoomDates(List<RoomDate> roomDates) {
+        return new Room("title", _12_00, _13_00, roomDates, 1, _2023_02_10_00_00, new FakeTimeProvider());
+    }
+
     public static Room getRoom(String title,
                                LocalTime startTime,
                                LocalTime endTime,
@@ -73,6 +79,10 @@ public class RoomFixture {
                                Integer headCount,
                                LocalDateTime deadLine,
                                TimeProvider timeProvider) {
-        return new Room(title, startTime, endTime, dates, headCount, deadLine, timeProvider);
+        return new Room(title, startTime, endTime,
+                dates.stream()
+                .map(RoomDate::new)
+                .collect(Collectors.toList()),
+                headCount, deadLine, timeProvider);
     }
 }

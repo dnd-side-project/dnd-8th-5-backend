@@ -1,40 +1,74 @@
 package com.dnd.modutime.domain.room;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import com.dnd.modutime.util.TimeProvider;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import lombok.NoArgsConstructor;
 
+@Entity
+@NoArgsConstructor
 public class Room {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String title;
-    private final LocalTime startTime;
-    private final LocalTime endTime;
-    private final List<LocalDate> dates;
-    private final Integer headCount;
-    private final String uuid;
-    private final LocalDateTime deadLine;
+
+    @Column
+    private LocalTime startTime;
+
+    @Column
+    private LocalTime endTime;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "room_id", nullable = false, updatable = false,
+            foreignKey = @ForeignKey(name = "fk_room_date_room_id_ref_room_id")
+    )
+    private List<RoomDate> roomDates;
+
+    @Column
+    private Integer headCount;
+
+    @Column(nullable = false, unique = true)
+    private String uuid;
+
+    @Column
+    private LocalDateTime deadLine;
 
     public Room(String title,
                 LocalTime startTime,
                 LocalTime endTime,
-                List<LocalDate> dates,
+                List<RoomDate> roomDates,
                 Integer headCount,
                 LocalDateTime deadLine,
                 TimeProvider timeProvider) {
 
         validateTitle(title);
         validateStartAndEndTime(startTime, endTime);
-        validateDates(dates);
+        validateRoomDates(roomDates);
         validateHeadCount(headCount);
         validateDeadLine(deadLine, timeProvider);
 
         this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.dates = dates;
+        this.roomDates = roomDates;
         this.headCount = headCount;
         this.uuid = UUID.randomUUID().toString();
         this.deadLine = deadLine;
@@ -71,11 +105,11 @@ public class Room {
         }
     }
 
-    private void validateDates(List<LocalDate> dates) {
-        if (dates == null) {
+    private void validateRoomDates(List<RoomDate> roomDates) {
+        if (roomDates == null) {
             throw new IllegalArgumentException("날짜는 null일 수 없습니다.");
         }
-        if (dates.isEmpty()) {
+        if (roomDates.isEmpty()) {
             throw new IllegalArgumentException("날짜는 최소 1개이상 존재해야 합니다.");
         }
     }
@@ -104,8 +138,8 @@ public class Room {
         return endTime;
     }
 
-    public List<LocalDate> getDates() {
-        return dates;
+    public List<RoomDate> getRoomDates() {
+        return roomDates;
     }
 
     public Integer getHeadCountOrNull() {

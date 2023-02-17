@@ -2,6 +2,7 @@ package com.dnd.modutime.application;
 
 import com.dnd.modutime.domain.participant.Participant;
 import com.dnd.modutime.domain.room.Room;
+import com.dnd.modutime.domain.room.RoomDate;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimerRequest;
 import com.dnd.modutime.dto.response.RoomCreationResponse;
@@ -31,7 +32,9 @@ public class RoomService {
                 roomRequest.getTitle(),
                 roomRequest.getStartTime(),
                 roomRequest.getEndTime(),
-                roomRequest.getDates(),
+                roomRequest.getDates().stream()
+                        .map(RoomDate::new)
+                        .collect(Collectors.toList()),
                 roomRequest.getHeadCount(),
                 findDeadLineOrNull(timerRequest),
                 timeProvider);
@@ -72,7 +75,9 @@ public class RoomService {
                 participants.stream()
                         .map(Participant::getName)
                         .collect(Collectors.toList()),
-                room.getDates(),
+                room.getRoomDates().stream()
+                        .map(RoomDate::getDate)
+                        .collect(Collectors.toList()),
                 room.getStartTimeOrNull(),
                 room.getEndTimeOrNull());
     }

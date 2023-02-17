@@ -1,15 +1,37 @@
 package com.dnd.modutime.domain.participant;
 
-import java.util.regex.Pattern;
+import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.regex.Pattern;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import lombok.NoArgsConstructor;
+
+@Entity
+@NoArgsConstructor
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"room_uuid", "name"})})
 public class Participant {
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^[0-9]{4}$");
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private final String roomUuid;
-    private final String name;
-    private final String password;
+
+    @Column(name = "room_uuid", nullable = false)
+    private String roomUuid;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column
     private String email;
 
     public Participant(String roomUuid, String name, String password) {
@@ -64,11 +86,6 @@ public class Participant {
 
     public boolean matchPassword(String password) {
         return this.password.equals(password);
-    }
-
-
-    public Long getId() {
-        return id;
     }
 
     public String getRoomUuid() {

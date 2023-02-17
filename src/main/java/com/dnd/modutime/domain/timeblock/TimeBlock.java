@@ -1,24 +1,43 @@
 package com.dnd.modutime.domain.timeblock;
 
-import java.util.List;
+import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import lombok.NoArgsConstructor;
+
+@Entity
+@NoArgsConstructor
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"room_uuid", "participant_name"})})
 public class TimeBlock {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @Column(name = "room_uuid", nullable = false)
     private String roomUuid;
+
+    @Column(name = "participant_name", nullable = false)
     private String participantName;
-    private AvailableDateTimeValidator availableDateTimeValidator;
+
+    @OneToMany(mappedBy = "timeBlock", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<AvailableDateTime> availableDateTimes = List.of();
 
     public TimeBlock(String roomUuid,
-                     String participantName,
-                     AvailableDateTimeValidator availableDateTimeValidator) {
+                     String participantName) {
         validateRoomUuid(roomUuid);
         validateParticipantName(participantName);
 
         this.roomUuid = roomUuid;
         this.participantName = participantName;
-        this.availableDateTimeValidator = availableDateTimeValidator;
     }
 
     private void validateParticipantName(String participantName) {
@@ -35,10 +54,5 @@ public class TimeBlock {
 
     public List<AvailableDateTime> getAvailableDateTimes() {
         return availableDateTimes;
-    }
-
-    public void replace(List<AvailableDateTime> availableDateTimes) {
-        availableDateTimeValidator.validate(roomUuid, availableDateTimes);
-        this.availableDateTimes = availableDateTimes;
     }
 }
