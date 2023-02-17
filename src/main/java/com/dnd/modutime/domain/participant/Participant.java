@@ -7,14 +7,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
 @NoArgsConstructor
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"room_uuid", "name"})})
-public class Participant {
+public class Participant extends AbstractAggregateRoot<Participant> {
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^[0-9]{4}$");
 
@@ -43,6 +45,11 @@ public class Participant {
         this.name = name;
         this.password = password;
         this.email = null;
+    }
+
+    @PostPersist
+    private void registerCreateEvent() {
+        registerEvent(new ParticipantCreateEvent(roomUuid, name));
     }
 
     private void validateRoomUuid(String roomUuid) {
@@ -85,13 +92,5 @@ public class Participant {
 
     public String getName() {
         return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }
