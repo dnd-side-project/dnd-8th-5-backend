@@ -18,7 +18,7 @@ public class ParticipantService {
     }
 
     public boolean existsByName(String roomUuid, String name) {
-        return participantRepository.existsByName(roomUuid, name);
+        return participantRepository.existsByRoomUuidAndName(roomUuid, name);
     }
 
     public Participant getByRoomUuidAndName(String roomUuid, String name) {

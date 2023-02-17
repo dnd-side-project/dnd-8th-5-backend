@@ -45,15 +45,6 @@ public class Participant {
         this.email = null;
     }
 
-    public Participant(final Long id, final String roomUuid, final String name, final String password,
-                       final String email) {
-        this.id = id;
-        this.roomUuid = roomUuid;
-        this.name = name;
-        this.password = password;
-        this.email = email;
-    }
-
     private void validateRoomUuid(String roomUuid) {
         if (roomUuid == null) {
             throw new IllegalArgumentException("roomUuid는 null일 수 없습니다");
