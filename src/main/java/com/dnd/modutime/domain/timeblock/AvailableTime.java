@@ -22,4 +22,8 @@ public class AvailableTime {
     public AvailableTime(LocalTime time) {
         this.time = time;
     }
+
+    public LocalTime getTime() {
+        return time;
+    }
 }

@@ -11,10 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"room_uuid", "participant_name"})})
 public class TimeBlock {
 
@@ -50,6 +51,14 @@ public class TimeBlock {
         if (roomUuid == null) {
             throw new IllegalArgumentException("roomUuid는 null일 수 없습니다.");
         }
+    }
+
+    public void replace(List<AvailableDateTime> availableDateTimes) {
+        this.availableDateTimes = availableDateTimes;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public List<AvailableDateTime> getAvailableDateTimes() {

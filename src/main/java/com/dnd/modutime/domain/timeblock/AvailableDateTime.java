@@ -36,9 +36,11 @@ public class AvailableDateTime {
     )
     private List<AvailableTime> times;
 
-    public AvailableDateTime(LocalDate date, List<AvailableTime> times) {
+    public AvailableDateTime(TimeBlock timeBlock,
+                             LocalDate date,
+                             List<AvailableTime> times) {
         validateDate(date);
-
+        this.timeBlock = timeBlock;
         this.date = date;
         this.times = times;
     }
@@ -47,6 +49,14 @@ public class AvailableDateTime {
         if (date == null) {
             throw new IllegalArgumentException("date는 null일 수 없습니다.");
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDate getDate() {
+        return date;
     }
 
     public List<AvailableTime> getTimesOrNull() {
