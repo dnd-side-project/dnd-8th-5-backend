@@ -6,7 +6,7 @@ import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.dnd.modutime.acceptance.request.RoomRequestWithNull;
+import com.dnd.modutime.acceptance.request.RoomRequestWithNoNull;
 import com.dnd.modutime.dto.response.RoomCreationResponse;
 import com.dnd.modutime.dto.response.RoomInfoResponse;
 import io.restassured.response.ExtractableResponse;
@@ -58,7 +58,7 @@ public class RoomAcceptanceTest extends AcceptanceSupporter{
     }
 
     private RoomCreationResponse getRoomCreationResponse() {
-        ExtractableResponse<Response> response = post("/api/room", new RoomRequestWithNull(
+        ExtractableResponse<Response> response = post("/api/room", new RoomRequestWithNoNull(
                 "이멤버리멤버",
                 List.of(_2023_02_10)));
         return response.body().as(RoomCreationResponse.class);

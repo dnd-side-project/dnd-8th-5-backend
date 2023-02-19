@@ -70,6 +70,26 @@ class TimeTableIntegrationTest {
     }
 
     @Test
+    void 시작과_끝나는_시간이_없는_방에_시간값을_넘겨주지_않으면_날짜만_저장된다() {
+        // given
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+        TimeBlock savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
+
+        // when
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
+                _2023_02_10, null)));
+        timeTableService.replace(ROOM_UUID, timeReplaceRequest);
+
+        // then
+        TimeBlock timeBlock = timeBlockRepository.findById(savedTimeBlock.getId()).get();
+        AvailableDateTime availableDateTime = timeBlock.getAvailableDateTimes().get(0);
+        assertAll(
+                () -> assertThat(availableDateTime.getDate()).isEqualTo(_2023_02_10),
+                () -> assertThat(availableDateTime.getTimesOrNull()).isNull()
+        );
+    }
+
+    @Test
     void 참여자가_가능한_시간을_교체하면_원래_가지고있던_시간은_삭제되어야한다() {
         // given
         doNothing().when(timeReplaceValidator).validate(any(), any());

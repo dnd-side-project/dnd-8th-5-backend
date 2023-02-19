@@ -51,6 +51,10 @@ public class AvailableDateTime {
         }
     }
 
+    public boolean hasTime() {
+        return times != null;
+    }
+
     public Long getId() {
         return id;
     }

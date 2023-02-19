@@ -126,6 +126,24 @@ public class Room {
         }
     }
 
+    public boolean containsAllDates(List<RoomDate> roomDates) {
+        return roomDates.stream()
+                .allMatch(this::containsDate);
+    }
+
+    private boolean containsDate(RoomDate roomDate) {
+        return this.roomDates.stream()
+                .anyMatch(it -> it.isSameDate(roomDate));
+    }
+
+    public boolean hasStartAndEndTime() {
+        return !(startTime == null && endTime == null);
+    }
+
+    public boolean includeTime(LocalTime time) {
+        return (!startTime.isAfter(time)) && (time.isBefore(endTime));
+    }
+
     public String getTitle() {
         return title;
     }

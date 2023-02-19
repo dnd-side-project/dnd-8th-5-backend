@@ -5,8 +5,13 @@ import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByHeadCount;
 import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByRoomDates;
 import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByStartEndTime;
 import static com.dnd.modutime.domain.fixture.RoomFixture.getRoomByTitle;
+import static com.dnd.modutime.fixture.TimeFixture._11_00;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
 import static com.dnd.modutime.fixture.TimeFixture._13_00;
+import static com.dnd.modutime.fixture.TimeFixture._14_00;
+import static com.dnd.modutime.fixture.TimeFixture._2023_02_08;
+import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
+import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10_00_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_20_00_00;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.dnd.modutime.domain.room.Room;
+import com.dnd.modutime.domain.room.RoomDate;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -110,5 +116,47 @@ public class RoomTest {
     void 방제목이_빈문자이면_예외를_반환한다() {
         assertThatThrownBy(() -> getRoomByTitle(""))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 들어온_날짜들이_방의_날짜들안에_모두_포함되면_true를_반환한다() {
+        Room room = getRoomByRoomDates(List.of(new RoomDate(_2023_02_09), new RoomDate(_2023_02_10)));
+        assertThat(room.containsAllDates(List.of(new RoomDate(_2023_02_09), new RoomDate(_2023_02_10)))).isTrue();
+    }
+
+    @Test
+    void 들어온_날짜들중_하나라도_방의_날짜들안에_모두_포함되지않으면_false를_반환한다() {
+        Room room = getRoomByRoomDates(List.of(new RoomDate(_2023_02_09), new RoomDate(_2023_02_10)));
+        assertThat(room.containsAllDates(List.of(new RoomDate(_2023_02_08), new RoomDate(_2023_02_09)))).isFalse();
+    }
+
+    @Test
+    void 방의_시작시간과_끝나는시간이_모두_null이면_가지고있지_않다고_판단한다() {
+        Room room = getRoomByStartEndTime(null, null);
+        assertThat(room.hasStartAndEndTime()).isFalse();
+    }
+
+    @Test
+    void 방의_시작시간과_끝나는시간이_모두_null이_아니면_가지고있다고_판단한다() {
+        Room room = getRoomByStartEndTime(_12_00, _13_00);
+        assertThat(room.hasStartAndEndTime()).isTrue();
+    }
+
+    @Test
+    void 시작시간의_이전_시간이_들어오면_false를_반환한다() {
+        Room room = getRoomByStartEndTime(_12_00, _13_00);
+        assertThat(room.includeTime(_11_00)).isFalse();
+    }
+
+    @Test
+    void 끝나는시간과_같은_시간이_들어오면_예외가_발생한다() {
+        Room room = getRoomByStartEndTime(_12_00, _13_00);
+        assertThat(room.includeTime(_13_00)).isFalse();
+    }
+
+    @Test
+    void 끝나는시간의_이후_시간이_들어오면_예외가_발생한다() {
+        Room room = getRoomByStartEndTime(_12_00, _13_00);
+        assertThat(room.includeTime(_14_00)).isFalse();
     }
 }

@@ -54,6 +54,11 @@ public class AcceptanceSupporter {
                 .extract();
     }
 
+    protected RoomCreationResponse 방_생성(RoomRequest roomRequest) {
+        ExtractableResponse<Response> response = post("/api/room", roomRequest);
+        return response.body().as(RoomCreationResponse.class);
+    }
+
     protected RoomCreationResponse 방_생성() {
         RoomRequest roomRequest = getRoomRequest();
         ExtractableResponse<Response> response = post("/api/room", roomRequest);

@@ -1,7 +1,7 @@
 package com.dnd.modutime.acceptance;
 
+import static com.dnd.modutime.fixture.RoomFixture.getRoomRequestNoTime;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 
 import com.dnd.modutime.dto.request.AvailableDateTimeRequest;
@@ -22,7 +22,18 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
         로그인_참여자1_1234(roomCreationResponse.getUuid());
 
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
-                _2023_02_10, List.of(_12_00, _13_00))));
+                _2023_02_10, List.of(_12_00))));
+        ExtractableResponse<Response> response = put("/api/room/" + roomCreationResponse.getUuid() + "/available-time", timeReplaceRequest);
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 날짜만_등록된_방에_참여자가_가능한_시간을_등록한다() {
+        RoomCreationResponse roomCreationResponse = 방_생성(getRoomRequestNoTime());
+        로그인_참여자1_1234(roomCreationResponse.getUuid());
+
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
+                _2023_02_10, null)));
         ExtractableResponse<Response> response = put("/api/room/" + roomCreationResponse.getUuid() + "/available-time", timeReplaceRequest);
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }

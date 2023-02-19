@@ -24,6 +24,10 @@ public class RoomDate {
         this.date = date;
     }
 
+    public boolean isSameDate(RoomDate roomDate) {
+        return this.date.equals(roomDate.getDate());
+    }
+
     public LocalDate getDate() {
         return date;
     }
