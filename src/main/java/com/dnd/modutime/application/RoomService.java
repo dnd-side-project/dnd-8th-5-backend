@@ -82,7 +82,7 @@ public class RoomService {
                 room.getEndTimeOrNull());
     }
 
-    private Room getByUuid(final String roomUuid) {
+    private Room getByUuid(String roomUuid) {
         return roomRepository.findByUuid(roomUuid)
                 .orElseThrow(() -> new NotFoundException("해당하는 방이 없습니다."));
     }

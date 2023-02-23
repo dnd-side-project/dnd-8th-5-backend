@@ -61,6 +61,10 @@ public class TimeBlock {
         return id;
     }
 
+    public String getParticipantName() {
+        return participantName;
+    }
+
     public List<AvailableDateTime> getAvailableDateTimes() {
         return availableDateTimes;
     }

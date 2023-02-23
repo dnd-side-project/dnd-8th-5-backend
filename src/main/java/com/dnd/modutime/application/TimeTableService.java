@@ -4,6 +4,8 @@ import com.dnd.modutime.domain.timeblock.AvailableDateTime;
 import com.dnd.modutime.domain.timeblock.AvailableTime;
 import com.dnd.modutime.domain.timeblock.TimeBlock;
 import com.dnd.modutime.dto.request.TimeReplaceRequest;
+import com.dnd.modutime.dto.response.AvailableDateTimeResponse;
+import com.dnd.modutime.dto.response.TimeBlockResponse;
 import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.repository.AvailableDateTimeRepository;
 import com.dnd.modutime.repository.TimeBlockRepository;
@@ -12,8 +14,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class TimeTableService {
 
@@ -25,7 +29,7 @@ public class TimeTableService {
         TimeBlock timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, timeReplaceRequest.getName());
 
         List<AvailableDateTime> availableDateTimes = timeReplaceRequest.getAvailableDateTimes().stream()
-                .map(it -> new AvailableDateTime(timeBlock, it.getDate(), convertToAvailableTimes(it.getTimes())))
+                .map(it -> new AvailableDateTime(timeBlock, it.getDate(), convertToAvailableTimesOrNull(it.getTimes())))
                 .collect(Collectors.toList());
 
         timeReplaceValidator.validate(roomUuid, availableDateTimes);
@@ -34,7 +38,7 @@ public class TimeTableService {
         timeBlock.replace(availableDateTimes);
     }
 
-    private List<AvailableTime> convertToAvailableTimes(List<LocalTime> times) {
+    private List<AvailableTime> convertToAvailableTimesOrNull(List<LocalTime> times) {
         if (times == null) {
             return null;
         }
@@ -47,5 +51,22 @@ public class TimeTableService {
     private TimeBlock getTimeBlockByRoomUuidAndParticipantName(String roomUuid, String participantName) {
         return timeBlockRepository.findByRoomUuidAndParticipantName(roomUuid, participantName)
                 .orElseThrow(() -> new NotFoundException("해당하는 TimeBlock을 찾을 수 없습니다."));
+    }
+
+    public TimeBlockResponse getTimeBlock(String roomUuid, String name) {
+        TimeBlock timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, name);
+        List<AvailableDateTime> availableDateTimes = availableDateTimeRepository.findByTimeBlockId(timeBlock.getId());
+        return new TimeBlockResponse(timeBlock.getParticipantName(), availableDateTimes.stream()
+                .map(it -> new AvailableDateTimeResponse(it.getDate(), getTimesOrNull(it.getTimesOrNull())))
+                .collect(Collectors.toList()));
+    }
+
+    private List<LocalTime> getTimesOrNull(List<AvailableTime> availableTimes) {
+        if (availableTimes == null) {
+            return null;
+        }
+        return availableTimes.stream()
+                .map(AvailableTime::getTime)
+                .collect(Collectors.toList());
     }
 }

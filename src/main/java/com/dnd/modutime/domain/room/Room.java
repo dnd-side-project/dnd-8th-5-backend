@@ -74,7 +74,7 @@ public class Room {
         this.deadLine = deadLine;
     }
 
-    private void validateTitle(final String title) {
+    private void validateTitle(String title) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("방의 제목은 빈문자일 수 없습니다.");
         }

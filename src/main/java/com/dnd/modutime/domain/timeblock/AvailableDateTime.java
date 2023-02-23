@@ -31,7 +31,7 @@ public class AvailableDateTime {
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn(
-            name = "available_date_time_id", updatable = false,
+            name = "available_date_time_id", nullable = false, updatable = false,
             foreignKey = @ForeignKey(name = "fk_available_time_available_date_time_id_ref_available_date_time_id")
     )
     private List<AvailableTime> times;
@@ -45,7 +45,7 @@ public class AvailableDateTime {
         this.times = times;
     }
 
-    private void validateDate(final LocalDate date) {
+    private void validateDate(LocalDate date) {
         if (date == null) {
             throw new IllegalArgumentException("date는 null일 수 없습니다.");
         }

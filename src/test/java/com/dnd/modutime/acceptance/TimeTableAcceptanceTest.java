@@ -2,15 +2,20 @@ package com.dnd.modutime.acceptance;
 
 import static com.dnd.modutime.fixture.RoomFixture.getRoomRequestNoTime;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
+import static com.dnd.modutime.fixture.TimeFixture._13_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.dnd.modutime.dto.request.AvailableDateTimeRequest;
 import com.dnd.modutime.dto.request.TimeReplaceRequest;
+import com.dnd.modutime.dto.response.AvailableDateTimeResponse;
 import com.dnd.modutime.dto.response.RoomCreationResponse;
+import com.dnd.modutime.dto.response.TimeBlockResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import org.assertj.core.api.Assertions;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -24,7 +29,7 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
                 _2023_02_10, List.of(_12_00))));
         ExtractableResponse<Response> response = put("/api/room/" + roomCreationResponse.getUuid() + "/available-time", timeReplaceRequest);
-        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
@@ -35,6 +40,30 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
                 _2023_02_10, null)));
         ExtractableResponse<Response> response = put("/api/room/" + roomCreationResponse.getUuid() + "/available-time", timeReplaceRequest);
-        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 참여자가_등록한_시간을_조회한다() {
+        RoomCreationResponse roomCreationResponse = 방_생성();
+        로그인_참여자1_1234(roomCreationResponse.getUuid());
+
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
+                _2023_02_10, List.of(_12_00, _13_00))));
+        put("/api/room/" + roomCreationResponse.getUuid() + "/available-time", timeReplaceRequest);
+
+        ExtractableResponse<Response> response = get("/api/room/" + roomCreationResponse.getUuid() + "/available-time?name=" + timeReplaceRequest.getName());
+        TimeBlockResponse timeBlockResponse = response.body().as(TimeBlockResponse.class);
+        assertAll(
+                () -> assertThat(timeBlockResponse.getName()).isEqualTo("참여자1"),
+                () -> assertThat(timeBlockResponse.getAvailableDateTimes().stream()
+                        .map(AvailableDateTimeResponse::getAvailableDate)
+                        .collect(Collectors.toList())).hasSize(1)
+                        .contains(_2023_02_10),
+                () -> assertThat(timeBlockResponse.getAvailableDateTimes().stream()
+                        .flatMap(it -> it.getAvailableTimes().stream())
+                        .collect(Collectors.toList())).hasSize(2)
+                        .contains(_12_00, _13_00)
+        );
     }
 }

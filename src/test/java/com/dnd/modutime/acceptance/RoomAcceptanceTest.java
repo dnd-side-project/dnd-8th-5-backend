@@ -1,7 +1,7 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
+import static com.dnd.modutime.fixture.TimeFixture._11_00;
+import static com.dnd.modutime.fixture.TimeFixture._14_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -34,8 +34,8 @@ public class RoomAcceptanceTest extends AcceptanceSupporter{
                 () -> assertThat(roomInfoResponse.getDates())
                         .hasSize(1)
                         .contains(_2023_02_10),
-                () -> assertThat(roomInfoResponse.getStartTime()).isEqualTo(_12_00),
-                () -> assertThat(roomInfoResponse.getEndTime()).isEqualTo(_13_00)
+                () -> assertThat(roomInfoResponse.getStartTime()).isEqualTo(_11_00),
+                () -> assertThat(roomInfoResponse.getEndTime()).isEqualTo(_14_00)
         );
     }
 
