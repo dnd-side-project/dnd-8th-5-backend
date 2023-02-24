@@ -1,30 +1,13 @@
 package com.dnd.modutime.repository;
 
-import com.dnd.modutime.domain.Participant;
-import org.springframework.stereotype.Repository;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.dnd.modutime.domain.participant.Participant;
+import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class ParticipantRepository {
+public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
-    private Long id = 0L;
-    private final Map<Long, Participant> store = new HashMap<>();
-
-    public void save(Participant participant) {
-        store.put(id++, participant);
-    }
-
-    public Optional<Participant> findByRoomUuidAndName(String roomUuid, String name) {
-        return store.values().stream()
-                .filter(participant -> participant.getRoomUuid().equals(roomUuid) && participant.getName().equals(name))
-                .findAny();
-    }
-
-    public boolean existsByName(String roomUuid, String name) {
-        return store.values().stream()
-                .anyMatch(participant -> participant.getRoomUuid().equals(roomUuid) && participant.getName().equals(name));
-    }
+    Optional<Participant> findByRoomUuidAndName(String roomUuid, String name);
+    boolean existsByRoomUuidAndName(String roomUuid, String name);
+    List<Participant> findByRoomUuid(String roomUuid);
 }

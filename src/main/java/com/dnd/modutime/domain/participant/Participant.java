@@ -1,14 +1,39 @@
-package com.dnd.modutime.domain;
+package com.dnd.modutime.domain.participant;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.regex.Pattern;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.PostPersist;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
-public class Participant {
+@Entity
+@NoArgsConstructor
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"room_uuid", "name"})})
+public class Participant extends AbstractAggregateRoot<Participant> {
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^[0-9]{4}$");
 
-    private final String roomUuid;
-    private final String name;
-    private final String password;
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    @Column(name = "room_uuid", nullable = false)
+    private String roomUuid;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column
     private String email;
 
     public Participant(String roomUuid, String name, String password) {
@@ -20,6 +45,11 @@ public class Participant {
         this.name = name;
         this.password = password;
         this.email = null;
+    }
+
+    @PostPersist
+    private void registerCreateEvent() {
+        registerEvent(new ParticipantCreateEvent(roomUuid, name));
     }
 
     private void validateRoomUuid(String roomUuid) {

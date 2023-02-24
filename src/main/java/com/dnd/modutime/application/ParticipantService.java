@@ -1,6 +1,6 @@
 package com.dnd.modutime.application;
 
-import com.dnd.modutime.domain.Participant;
+import com.dnd.modutime.domain.participant.Participant;
 import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class ParticipantService {
     }
 
     public boolean existsByName(String roomUuid, String name) {
-        return participantRepository.existsByName(roomUuid, name);
+        return participantRepository.existsByRoomUuidAndName(roomUuid, name);
     }
 
     public Participant getByRoomUuidAndName(String roomUuid, String name) {
