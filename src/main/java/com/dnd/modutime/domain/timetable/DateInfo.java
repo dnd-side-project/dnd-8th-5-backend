@@ -1,0 +1,51 @@
+package com.dnd.modutime.domain.timetable;
+
+import java.time.LocalDate;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import lombok.NoArgsConstructor;
+
+@Entity
+@NoArgsConstructor
+public class DateInfo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "time_table_id")
+    private TimeTable timeTable;
+
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "time_table_id", nullable = false, updatable = false,
+            foreignKey = @ForeignKey(name = "fk_time_info_date_info_id_ref_date_info_id")
+    )
+    private List<TimeInfo> timeInfos;
+
+    public DateInfo(final TimeTable timeTable,
+                    final LocalDate date,
+                    final List<TimeInfo> timeInfos) {
+        this.timeTable = timeTable;
+        this.date = date;
+        this.timeInfos = timeInfos;
+    }
+
+    public List<TimeInfo> getTimeInfos() {
+        return timeInfos;
+    }
+}

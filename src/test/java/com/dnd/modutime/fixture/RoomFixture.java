@@ -1,12 +1,12 @@
 package com.dnd.modutime.fixture;
 
 import static com.dnd.modutime.fixture.TimeFixture._11_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
 import static com.dnd.modutime.fixture.TimeFixture._14_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimerRequest;
+import java.time.LocalDate;
 import java.util.List;
 
 public class RoomFixture {
@@ -24,8 +24,17 @@ public class RoomFixture {
         return getRoomRequest(timerRequest);
     }
 
+    public static RoomRequest getRoomRequest(List<LocalDate> dates) {
+        TimerRequest timerRequest = new TimerRequest(2, 1, 30);
+        return getRoomRequest(dates, timerRequest);
+    }
+
     public static RoomRequest getRoomRequest(TimerRequest timerRequest) {
+        return getRoomRequest(List.of(_2023_02_10), timerRequest);
+    }
+
+    public static RoomRequest getRoomRequest(List<LocalDate> dates, TimerRequest timerRequest) {
         return new RoomRequest("이멤버리멤버",
-                10, List.of(_2023_02_10), _11_00, _14_00, timerRequest);
+                10, dates, _11_00, _14_00, timerRequest);
     }
 }

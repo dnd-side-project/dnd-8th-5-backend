@@ -16,11 +16,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.PostPersist;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
 @NoArgsConstructor
-public class Room {
+public class Room extends AbstractAggregateRoot<Room> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -124,6 +126,11 @@ public class Room {
         if (!now.isBefore(deadLine)) {
             throw new IllegalArgumentException("마감시간은 현재시간 이후여야 합니다.");
         }
+    }
+
+    @PostPersist
+    private void registerCreateEvent() {
+        registerEvent(new RoomCreationEvent(uuid));
     }
 
     public boolean containsAllDates(List<RoomDate> roomDates) {

@@ -19,11 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TimeTableService {
+public class TimeBlockService {
 
     private final TimeReplaceValidator timeReplaceValidator;
     private final TimeBlockRepository timeBlockRepository;
     private final AvailableDateTimeRepository availableDateTimeRepository;
+    private final TimeTableCalculator timeTableCalculator;
 
     public void replace(String roomUuid, TimeReplaceRequest timeReplaceRequest) {
         TimeBlock timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, timeReplaceRequest.getName());

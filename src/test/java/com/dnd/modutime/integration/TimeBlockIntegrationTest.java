@@ -13,7 +13,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
 import com.dnd.modutime.application.TimeReplaceValidator;
-import com.dnd.modutime.application.TimeTableService;
+import com.dnd.modutime.application.TimeBlockService;
 import com.dnd.modutime.domain.timeblock.AvailableDateTime;
 import com.dnd.modutime.domain.timeblock.AvailableTime;
 import com.dnd.modutime.domain.timeblock.TimeBlock;
@@ -32,10 +32,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-class TimeTableIntegrationTest {
+class TimeBlockIntegrationTest {
 
     @Autowired
-    private TimeTableService timeTableService;
+    private TimeBlockService timeBlockService;
 
     @Autowired
     private TimeBlockRepository timeBlockRepository;
@@ -55,7 +55,7 @@ class TimeTableIntegrationTest {
         // when
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
                 _2023_02_10, List.of(_12_00, _13_00))));
-        timeTableService.replace(ROOM_UUID, timeReplaceRequest);
+        timeBlockService.replace(ROOM_UUID, timeReplaceRequest);
 
         // then
         TimeBlock timeBlock = timeBlockRepository.findById(savedTimeBlock.getId()).get();
@@ -78,7 +78,7 @@ class TimeTableIntegrationTest {
         // when
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
                 _2023_02_10, null)));
-        timeTableService.replace(ROOM_UUID, timeReplaceRequest);
+        timeBlockService.replace(ROOM_UUID, timeReplaceRequest);
 
         // then
         TimeBlock timeBlock = timeBlockRepository.findById(savedTimeBlock.getId()).get();
@@ -100,7 +100,7 @@ class TimeTableIntegrationTest {
         // when
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
                 _2023_02_10, List.of(_12_00, _13_00))));
-        timeTableService.replace(ROOM_UUID, timeReplaceRequest);
+        timeBlockService.replace(ROOM_UUID, timeReplaceRequest);
 
         // then
         Optional<AvailableDateTime> actual = availableDateTimeRepository.findById(savedAvailableDateTime.getId());
@@ -118,7 +118,7 @@ class TimeTableIntegrationTest {
                 _2023_02_10, List.of(_12_00, _13_00))));
 
         // then
-        assertThatThrownBy(() -> timeTableService.replace(ROOM_UUID, timeReplaceRequest))
+        assertThatThrownBy(() -> timeBlockService.replace(ROOM_UUID, timeReplaceRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

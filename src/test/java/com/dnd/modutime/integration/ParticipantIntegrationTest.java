@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.dnd.modutime.application.ParticipantService;
-import com.dnd.modutime.domain.participant.ParticipantCreateEvent;
+import com.dnd.modutime.domain.participant.ParticipantCreationEvent;
 import com.dnd.modutime.domain.timeblock.TimeBlock;
 import com.dnd.modutime.repository.TimeBlockRepository;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class ParticipantIntegrationTest {
         Optional<TimeBlock> actual = timeBlockRepository.findByRoomUuidAndParticipantName(ROOM_UUID, "참여자1");
         assertAll(
                 () -> assertThat(actual.isPresent()).isTrue(),
-                () -> assertThat(events.stream(ParticipantCreateEvent.class).count()).isEqualTo(1)
+                () -> assertThat(events.stream(ParticipantCreationEvent.class).count()).isEqualTo(1)
         );
     }
 }
