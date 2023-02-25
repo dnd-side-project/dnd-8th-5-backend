@@ -27,6 +27,33 @@ public class TimeInfo {
         this.count = count;
     }
 
+    public void minusCountIfSameTime(LocalTime time) {
+        if (this.time.equals(time)) {
+            minusCount();
+        }
+    }
+
+    public void minusCount() {
+        validatePossibleMinus();
+        count--;
+    }
+
+    private void validatePossibleMinus() {
+        if (count < 1) {
+            throw new IllegalArgumentException("count는 음수가 될 수 없습니다.");
+        }
+    }
+
+    public void plusCountIfSameTime(LocalTime time) {
+        if (this.time.equals(time)) {
+            count++;
+        }
+    }
+
+    public void plusCount() {
+        count++;
+    }
+
     public int getCount() {
         return count;
     }

@@ -1,5 +1,7 @@
 package com.dnd.modutime.domain.timetable;
 
+import com.dnd.modutime.domain.timeblock.AvailableDateTime;
+import com.dnd.modutime.domain.timeblock.AvailableTime;
 import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -47,5 +49,43 @@ public class DateInfo {
 
     public List<TimeInfo> getTimeInfos() {
         return timeInfos;
+    }
+
+    public void minusCount(AvailableDateTime availableDateTime) {
+        if (!date.isEqual(availableDateTime.getDate())) {
+            return;
+        }
+        List<AvailableTime> timesOrNull = availableDateTime.getTimesOrNull();
+        if (timesOrNull == null) {
+            validateTimeInfoIsEmpty();
+            TimeInfo timeInfo = timeInfos.get(0);
+            timeInfo.minusCount();
+            return;
+        }
+        timeInfos.forEach(
+                timeInfo -> timesOrNull.forEach(availableTime -> timeInfo.minusCountIfSameTime(availableTime.getTime()))
+        );
+    }
+
+    public void plusCount(AvailableDateTime availableDateTime) {
+        if (!date.isEqual(availableDateTime.getDate())) {
+            return;
+        }
+        List<AvailableTime> timesOrNull = availableDateTime.getTimesOrNull();
+        if (timesOrNull == null) {
+            validateTimeInfoIsEmpty();
+            TimeInfo timeInfo = timeInfos.get(0);
+            timeInfo.plusCount();
+            return;
+        }
+        timeInfos.forEach(
+                timeInfo -> timesOrNull.forEach(availableTime -> timeInfo.plusCountIfSameTime(availableTime.getTime()))
+        );
+    }
+
+    private void validateTimeInfoIsEmpty() {
+        if (timeInfos.isEmpty()) {
+            throw new IllegalArgumentException("timeInfo가 비어있을 수 없습니다.");
+        }
     }
 }

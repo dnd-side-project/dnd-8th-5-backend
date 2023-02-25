@@ -13,11 +13,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"room_uuid", "participant_name"})})
-public class TimeBlock {
+public class TimeBlock extends AbstractAggregateRoot<TimeBlock> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -54,7 +55,9 @@ public class TimeBlock {
     }
 
     public void replace(List<AvailableDateTime> availableDateTimes) {
+        List<AvailableDateTime> oldAvailableDateTimes = this.availableDateTimes;
         this.availableDateTimes = availableDateTimes;
+        registerEvent(new TimeBlockReplaceEvent(roomUuid, oldAvailableDateTimes, availableDateTimes));
     }
 
     public Long getId() {

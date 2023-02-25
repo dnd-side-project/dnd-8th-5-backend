@@ -1,5 +1,6 @@
 package com.dnd.modutime.domain.timetable;
 
+import com.dnd.modutime.domain.timeblock.AvailableDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,6 +31,28 @@ public class TimeTable {
 
     public void replaceDateInfos(List<DateInfo> dateInfos) {
         this.dateInfos = dateInfos;
+    }
+
+    public void updateCount(List<AvailableDateTime> oldAvailableDateTimes,
+                            List<AvailableDateTime> newAvailableDateTimes) {
+        minusCount(oldAvailableDateTimes);
+        plusCount(newAvailableDateTimes);
+    }
+
+    private void minusCount(List<AvailableDateTime> availableDateTimes) {
+        availableDateTimes.forEach(
+                availableDateTime -> dateInfos.forEach(
+                        dateInfo -> dateInfo.minusCount(availableDateTime)
+                )
+        );
+    }
+
+    private void plusCount(List<AvailableDateTime> availableDateTimes) {
+        availableDateTimes.forEach(
+                availableDateTime -> dateInfos.forEach(
+                        dateInfo -> dateInfo.plusCount(availableDateTime)
+                )
+        );
     }
 
     public List<DateInfo> getDateInfos() {

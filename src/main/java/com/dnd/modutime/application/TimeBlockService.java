@@ -24,7 +24,6 @@ public class TimeBlockService {
     private final TimeReplaceValidator timeReplaceValidator;
     private final TimeBlockRepository timeBlockRepository;
     private final AvailableDateTimeRepository availableDateTimeRepository;
-    private final TimeTableCalculator timeTableCalculator;
 
     public void replace(String roomUuid, TimeReplaceRequest timeReplaceRequest) {
         TimeBlock timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, timeReplaceRequest.getName());
