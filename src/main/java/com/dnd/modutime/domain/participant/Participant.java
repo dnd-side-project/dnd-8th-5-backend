@@ -47,11 +47,6 @@ public class Participant extends AbstractAggregateRoot<Participant> {
         this.email = null;
     }
 
-    @PostPersist
-    private void registerCreateEvent() {
-        registerEvent(new ParticipantCreateEvent(roomUuid, name));
-    }
-
     private void validateRoomUuid(String roomUuid) {
         if (roomUuid == null) {
             throw new IllegalArgumentException("roomUuid는 null일 수 없습니다");
@@ -68,6 +63,11 @@ public class Participant extends AbstractAggregateRoot<Participant> {
         if (isRightPassword(password)) {
             throw new IllegalArgumentException("비밀번호는 4자리 숫자여야 합니다.");
         }
+    }
+
+    @PostPersist
+    private void registerCreateEvent() {
+        registerEvent(new ParticipantCreationEvent(roomUuid, name));
     }
 
     private boolean isRightPassword(String password) {

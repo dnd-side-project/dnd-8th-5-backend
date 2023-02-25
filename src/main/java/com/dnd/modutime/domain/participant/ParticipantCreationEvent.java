@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ParticipantCreateEvent {
+public class ParticipantCreationEvent {
 
     private String roomUuid;
     private String name;

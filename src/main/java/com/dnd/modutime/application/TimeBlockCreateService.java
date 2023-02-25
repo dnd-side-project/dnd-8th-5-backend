@@ -1,6 +1,6 @@
 package com.dnd.modutime.application;
 
-import com.dnd.modutime.domain.participant.ParticipantCreateEvent;
+import com.dnd.modutime.domain.participant.ParticipantCreationEvent;
 import com.dnd.modutime.domain.timeblock.TimeBlock;
 import com.dnd.modutime.repository.TimeBlockRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class TimeBlockCreateService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener
-    public void create(ParticipantCreateEvent event) {
+    public void create(ParticipantCreationEvent event) {
         timeBlockRepository.save(new TimeBlock(event.getRoomUuid(), event.getName()));
     }
 }
