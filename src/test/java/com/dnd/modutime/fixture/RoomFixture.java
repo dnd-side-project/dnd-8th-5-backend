@@ -14,9 +14,13 @@ public class RoomFixture {
     public static String ROOM_UUID = "7c64aa0e-6e8f-4f61-b8ee-d5a86493d3a9";
 
     public static RoomRequest getRoomRequestNoTime() {
+        return getRoomRequestNoTime(List.of(_2023_02_10));
+    }
+
+    public static RoomRequest getRoomRequestNoTime(List<LocalDate> dates) {
         TimerRequest timerRequest = new TimerRequest(2, 1, 30);
         return new RoomRequest("이멤버리멤버",
-                10, List.of(_2023_02_10), null, null, timerRequest);
+                10, dates, null, null, timerRequest);
     }
 
     public static RoomRequest getRoomRequest() {

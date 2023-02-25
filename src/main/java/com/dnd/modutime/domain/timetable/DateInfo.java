@@ -47,10 +47,6 @@ public class DateInfo {
         this.timeInfos = timeInfos;
     }
 
-    public List<TimeInfo> getTimeInfos() {
-        return timeInfos;
-    }
-
     public void minusCount(AvailableDateTime availableDateTime) {
         if (!date.isEqual(availableDateTime.getDate())) {
             return;
@@ -87,5 +83,13 @@ public class DateInfo {
         if (timeInfos.isEmpty()) {
             throw new IllegalArgumentException("timeInfo가 비어있을 수 없습니다.");
         }
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public List<TimeInfo> getTimeInfos() {
+        return timeInfos;
     }
 }

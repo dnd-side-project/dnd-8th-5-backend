@@ -54,6 +54,10 @@ public class TimeInfo {
         count++;
     }
 
+    public LocalTime getTime() {
+        return time;
+    }
+
     public int getCount() {
         return count;
     }
