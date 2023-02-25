@@ -19,12 +19,12 @@ public class TimeTableUpdateService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener
     public void update(TimeBlockReplaceEvent event) {
-        TimeTable timeTable = getTimeTableByRoomUuid(event);
+        TimeTable timeTable = getTimeTableByRoomUuid(event.getRoomUuid());
         timeTable.updateCount(event.getOldAvailableDateTimes(), event.getNewAvailableDateTimes());
     }
 
-    private TimeTable getTimeTableByRoomUuid(final TimeBlockReplaceEvent event) {
-        return timeTableRepository.findByRoomUuid(event.getRoomUuid())
+    private TimeTable getTimeTableByRoomUuid(String roomUuid) {
+        return timeTableRepository.findByRoomUuid(roomUuid)
                 .orElseThrow(() -> new NotFoundException("해당하는 TimeBlock을 찾을 수 없습니다."));
     }
 }

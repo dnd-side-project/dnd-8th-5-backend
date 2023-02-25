@@ -36,6 +36,7 @@ public class TimeBlockService {
         availableDateTimeRepository.deleteAllByTimeBlockId(timeBlock.getId());
         availableDateTimeRepository.saveAll(availableDateTimes);
         timeBlock.replace(availableDateTimes);
+        timeBlockRepository.save(timeBlock);
     }
 
     private List<AvailableTime> convertToAvailableTimesOrNull(List<LocalTime> times) {

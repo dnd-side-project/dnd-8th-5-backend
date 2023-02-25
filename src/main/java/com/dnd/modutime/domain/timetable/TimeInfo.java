@@ -22,7 +22,7 @@ public class TimeInfo {
     @Column(nullable = false)
     private int count;
 
-    public TimeInfo(final LocalTime time, final int count) {
+    public TimeInfo(LocalTime time, int count) {
         this.time = time;
         this.count = count;
     }

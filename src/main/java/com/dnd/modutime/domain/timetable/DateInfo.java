@@ -39,9 +39,9 @@ public class DateInfo {
     )
     private List<TimeInfo> timeInfos;
 
-    public DateInfo(final TimeTable timeTable,
-                    final LocalDate date,
-                    final List<TimeInfo> timeInfos) {
+    public DateInfo(TimeTable timeTable,
+                    LocalDate date,
+                    List<TimeInfo> timeInfos) {
         this.timeTable = timeTable;
         this.date = date;
         this.timeInfos = timeInfos;
