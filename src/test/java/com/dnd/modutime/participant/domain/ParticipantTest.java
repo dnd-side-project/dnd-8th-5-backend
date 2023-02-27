@@ -1,17 +1,24 @@
 package com.dnd.modutime.participant.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class ParticipantTest {
 
     @Test
     void 이름값이_null이면_예외가_발생한다() {
         assertThatThrownBy(() -> getParticipant(null, "1234"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"참여자동호", "참여자수진", "abcde"})
+    void 이름값이_4글자가_넘어가면_예외를_반환한다(String name) {
+        assertThatThrownBy(() -> getParticipant(name, "1234"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
