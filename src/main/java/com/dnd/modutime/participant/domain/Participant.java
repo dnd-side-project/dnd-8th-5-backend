@@ -1,18 +1,13 @@
 package com.dnd.modutime.participant.domain;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import com.dnd.modutime.timeblock.application.ParticipantCreationEvent;
-import java.util.regex.Pattern;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PostPersist;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.AbstractAggregateRoot;
+
+import javax.persistence.*;
+import java.util.regex.Pattern;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @NoArgsConstructor
@@ -28,7 +23,7 @@ public class Participant extends AbstractAggregateRoot<Participant> {
     @Column(name = "room_uuid", nullable = false)
     private String roomUuid;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 4)
     private String name;
 
     @Column(nullable = false)
@@ -57,6 +52,10 @@ public class Participant extends AbstractAggregateRoot<Participant> {
     private static void validateName(String name) {
         if (name == null) {
             throw new IllegalArgumentException("이름은 null일 수 없습니다");
+        }
+
+        if (name.length() > 4) {
+            throw new IllegalArgumentException("이름은 4글자 이하이어야 합니다");
         }
     }
 
