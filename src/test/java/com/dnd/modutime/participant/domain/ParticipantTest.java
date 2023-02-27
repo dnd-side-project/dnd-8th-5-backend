@@ -25,16 +25,8 @@ public class ParticipantTest {
     @Test
     void 이메일을_추가한다() {
         Participant participant = getParticipant("김동호", "1234");
-        participant.registerEmail("participant@email.com");
+        participant.registerEmail(new Email("participant@email.com"));
         assertThat(participant.hasEmail()).isTrue();
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", "aa", "asd.com", "asd@", "asd@@email.com"})
-    void 이메일형식이_맞지않으면_예외를_발생한다(String email) {
-        Participant participant = getParticipant("김동호", "1234");
-        assertThatThrownBy(() -> participant.registerEmail(email))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
