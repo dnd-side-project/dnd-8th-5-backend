@@ -102,4 +102,8 @@ public class Participant extends AbstractAggregateRoot<Participant> {
     public String getName() {
         return name;
     }
+
+    public String getEmail() {
+        return email;
+    }
 }

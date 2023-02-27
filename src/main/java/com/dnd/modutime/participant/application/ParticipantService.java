@@ -1,6 +1,7 @@
 package com.dnd.modutime.participant.application;
 
 import com.dnd.modutime.dto.request.EmailCreationRequest;
+import com.dnd.modutime.dto.response.EmailResponse;
 import com.dnd.modutime.participant.domain.Participant;
 import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.participant.repository.ParticipantRepository;
@@ -29,6 +30,11 @@ public class ParticipantService {
                               EmailCreationRequest emailCreationRequest) {
         Participant participant = getByRoomUuidAndName(roomUuid, emailCreationRequest.getName());
         participant.registerEmail(emailCreationRequest.getEmail());
+    }
+
+    public EmailResponse getEmail(String roomUuid, String name) {
+        Participant participant = getByRoomUuidAndName(roomUuid, name);
+        return new EmailResponse(participant.getEmail());
     }
 
     @Transactional(readOnly = true)
