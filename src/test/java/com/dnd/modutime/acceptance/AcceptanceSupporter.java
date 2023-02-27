@@ -1,6 +1,6 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.RoomFixture.getRoomRequest;
+import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
 
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.dto.request.AvailableDateTimeRequest;

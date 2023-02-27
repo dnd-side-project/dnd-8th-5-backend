@@ -1,7 +1,7 @@
 package com.dnd.modutime.dto.response;
 
-import com.dnd.modutime.domain.timetable.DateInfo;
-import com.dnd.modutime.domain.timetable.TimeTable;
+import com.dnd.modutime.timetable.domain.DateInfo;
+import com.dnd.modutime.timetable.domain.TimeTable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;

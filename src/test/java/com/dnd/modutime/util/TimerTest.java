@@ -4,7 +4,6 @@ import static com.dnd.modutime.fixture.TimeFixture._2023_02_10_00_00;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.dnd.modutime.domain.FakeTimeProvider;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
