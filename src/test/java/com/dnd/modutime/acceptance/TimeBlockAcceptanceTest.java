@@ -1,6 +1,6 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.RoomFixture.getRoomRequestNoTime;
+import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequestNoTime;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
 import static com.dnd.modutime.fixture.TimeFixture._13_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
