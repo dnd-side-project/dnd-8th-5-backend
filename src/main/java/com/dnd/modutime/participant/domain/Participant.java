@@ -20,6 +20,7 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 public class Participant extends AbstractAggregateRoot<Participant> {
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^[0-9]{4}$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$");
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -76,7 +77,14 @@ public class Participant extends AbstractAggregateRoot<Participant> {
     }
 
     public void registerEmail(String email) {
+        validateRightEmailPattern(email);
         this.email = email;
+    }
+
+    private void validateRightEmailPattern(String email) {
+        if (!EMAIL_PATTERN.matcher(email).find()) {
+            throw new IllegalArgumentException("email 형식에 맞지 않습니다.");
+        }
     }
 
     public boolean hasEmail() {
