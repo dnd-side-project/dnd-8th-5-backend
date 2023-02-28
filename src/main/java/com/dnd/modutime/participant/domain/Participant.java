@@ -81,12 +81,6 @@ public class Participant extends AbstractAggregateRoot<Participant> {
         this.email = email;
     }
 
-//    private void validateRightEmailPattern(String email) {
-//        if (!EMAIL_PATTERN.matcher(email).find()) {
-//            throw new IllegalArgumentException("email 형식에 맞지 않습니다.");
-//        }
-//    }
-
     public boolean hasEmail() {
         return email != null;
     }

@@ -21,7 +21,6 @@ public class TimeTableUpdateService {
     public void update(TimeBlockReplaceEvent event) {
         TimeTable timeTable = getTimeTableByRoomUuid(event.getRoomUuid());
         timeTable.updateCount(event.getOldAvailableDateTimes(), event.getNewAvailableDateTimes());
-        System.out.println("aaaaaaa");
     }
 
     private TimeTable getTimeTableByRoomUuid(String roomUuid) {
