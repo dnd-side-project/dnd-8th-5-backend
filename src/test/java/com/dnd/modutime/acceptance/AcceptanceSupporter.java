@@ -7,6 +7,7 @@ import com.dnd.modutime.dto.request.AvailableDateTimeRequest;
 import com.dnd.modutime.dto.request.LoginRequest;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimeReplaceRequest;
+import com.dnd.modutime.dto.response.EmailResponse;
 import com.dnd.modutime.dto.response.RoomCreationResponse;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -86,5 +87,10 @@ public class AcceptanceSupporter {
     protected void 로그인후_시간을_등록한다(String roomUuid, String participantName, List<AvailableDateTimeRequest> requests) {
         로그인_참여자_1234(roomUuid, participantName);
         시간을_등록한다(roomUuid, participantName, requests);
+    }
+
+    protected EmailResponse 이메일을_조회한다(String roomUuid, String participantName) {
+        ExtractableResponse<Response> response = get("/api/room/" + roomUuid + "/email?name=" + participantName);
+        return response.body().as(EmailResponse.class);
     }
 }

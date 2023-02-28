@@ -1,6 +1,5 @@
-package com.dnd.modutime.dto.response;
+package com.dnd.modutime.dto.request;
 
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class TimeBlockResponse {
+public class EmailCreationRequest {
 
     private String name;
-    private List<AvailableDateTimeResponse> availableDateTimes;
+    private String email;
 }

@@ -25,7 +25,7 @@ public class ParticipantTest {
     @Test
     void 이메일을_추가한다() {
         Participant participant = getParticipant("김동호", "1234");
-        participant.registerEmail("participant@email.com");
+        participant.registerEmail(new Email("participant@email.com"));
         assertThat(participant.hasEmail()).isTrue();
     }
 

@@ -97,7 +97,7 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
         );
     }
 
-    private void 두명의_날짜를_등록한다(final String roomUuid) {
+    private void 두명의_날짜를_등록한다(String roomUuid) {
         로그인후_시간을_등록한다(roomUuid,
                 "김동호",
                 List.of(getAvailableDateTimeRequest(_2023_02_08, null),

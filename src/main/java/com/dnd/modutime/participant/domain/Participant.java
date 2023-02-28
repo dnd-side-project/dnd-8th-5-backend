@@ -5,17 +5,19 @@ import static javax.persistence.GenerationType.IDENTITY;
 import com.dnd.modutime.timeblock.application.ParticipantCreationEvent;
 import java.util.regex.Pattern;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"room_uuid", "name"})})
 public class Participant extends AbstractAggregateRoot<Participant> {
 
@@ -34,8 +36,8 @@ public class Participant extends AbstractAggregateRoot<Participant> {
     @Column(nullable = false)
     private String password;
 
-    @Column
-    private String email;
+    @Embedded
+    private Email email;
 
     public Participant(String roomUuid, String name, String password) {
         validateRoomUuid(roomUuid);
@@ -75,9 +77,15 @@ public class Participant extends AbstractAggregateRoot<Participant> {
         return !PASSWORD_PATTERN.matcher(password).find();
     }
 
-    public void registerEmail(String email) {
+    public void registerEmail(Email email) {
         this.email = email;
     }
+
+//    private void validateRightEmailPattern(String email) {
+//        if (!EMAIL_PATTERN.matcher(email).find()) {
+//            throw new IllegalArgumentException("email 형식에 맞지 않습니다.");
+//        }
+//    }
 
     public boolean hasEmail() {
         return email != null;
@@ -93,5 +101,9 @@ public class Participant extends AbstractAggregateRoot<Participant> {
 
     public String getName() {
         return name;
+    }
+
+    public Email getEmailOrNull() {
+        return email;
     }
 }
