@@ -1,6 +1,7 @@
 package com.dnd.modutime.timetable.domain;
 
 import com.dnd.modutime.timeblock.domain.AvailableDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,26 +35,48 @@ public class TimeTable {
         this.dateInfos = dateInfos;
     }
 
-    public void updateCount(List<AvailableDateTime> oldAvailableDateTimes,
-                            List<AvailableDateTime> newAvailableDateTimes) {
-        minusCount(oldAvailableDateTimes);
-        plusCount(newAvailableDateTimes);
+    public void updateParticipantName(List<AvailableDateTime> oldAvailableDateTimes,
+                                      List<AvailableDateTime> newAvailableDateTimes,
+                                      String participantName) {
+//        minusCount(oldAvailableDateTimes);
+//        plusCount(newAvailableDateTimes);
+
+        removeParticipantName(oldAvailableDateTimes, participantName);
+        addParticipantName(newAvailableDateTimes, participantName);
     }
 
-    private void minusCount(List<AvailableDateTime> availableDateTimes) {
+    private void removeParticipantName(List<AvailableDateTime> availableDateTimes, String participantName) {
         availableDateTimes.forEach(
                 availableDateTime -> dateInfos.forEach(
-                        dateInfo -> dateInfo.minusCount(availableDateTime)
+                        dateInfo -> dateInfo.removeParticipantNameIfSameDate(availableDateTime, participantName)
                 )
         );
     }
 
-    private void plusCount(List<AvailableDateTime> availableDateTimes) {
+    private void addParticipantName(List<AvailableDateTime> availableDateTimes, String participantName) {
         availableDateTimes.forEach(
                 availableDateTime -> dateInfos.forEach(
-                        dateInfo -> dateInfo.plusCount(availableDateTime)
+                        dateInfo -> dateInfo.addParticipantNameIfSameDate(availableDateTime, participantName)
                 )
         );
+    }
+
+    public List<TimeInfo> getTimeInfosByAvailableDateTimesAndParticipantName(List<AvailableDateTime> availableDateTimes,
+                                                                             String participantName) {
+        for (DateInfo dateInfo : dateInfos) {
+            for (AvailableDateTime availableDateTime : availableDateTimes) {
+                List<TimeInfo> timeInfos = dateInfo.getByDateAndTimesAndParticipantName(availableDateTime.getDate(),
+                        availableDateTime.getTimesOrNull(), participantName);
+
+            }
+        }
+
+        // availableDateTimes 의 각 date중 timeTable이 갖고있는 dateInfo의 date와 맞는 것들중
+        // 시간, 참여자 이름
+
+        // TimeTable이 가지고 있는 모든 DateInfo들을 돌면서
+        // DateInfo에서
+        return ;
     }
 
     public List<DateInfo> getDateInfos() {

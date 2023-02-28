@@ -44,7 +44,7 @@ public class RoomTimeTableInitializerTest {
         // when
         List<Integer> counts = timeTable.getDateInfos().stream()
                 .flatMap(it -> it.getTimeInfos().stream())
-                .map(TimeInfo::getCount)
+                .map(TimeInfo::getParticipantsSize)
                 .collect(Collectors.toList());
 
         // then
@@ -63,7 +63,7 @@ public class RoomTimeTableInitializerTest {
         // when
         List<Integer> counts = timeTable.getDateInfos().stream()
                 .flatMap(it -> it.getTimeInfos().stream())
-                .map(TimeInfo::getCount)
+                .map(TimeInfo::getParticipantsSize)
                 .collect(Collectors.toList());
 
         // then

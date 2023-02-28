@@ -48,7 +48,7 @@ public class DateInfo {
         this.timeInfos = timeInfos;
     }
 
-    public void minusCount(AvailableDateTime availableDateTime) {
+    public void removeParticipantNameIfSameDate(AvailableDateTime availableDateTime, String participantName) {
         if (!date.isEqual(availableDateTime.getDate())) {
             return;
         }
@@ -56,15 +56,18 @@ public class DateInfo {
         if (timesOrNull == null) {
             validateTimeInfoIsEmpty();
             TimeInfo timeInfo = timeInfos.get(0);
-            timeInfo.minusCount();
+            timeInfo.removeParticipantName(participantName);
             return;
         }
         timeInfos.forEach(
-                timeInfo -> timesOrNull.forEach(availableTime -> timeInfo.minusCountIfSameTime(availableTime.getTime()))
+                timeInfo -> timesOrNull.forEach(
+                        availableTime -> timeInfo.removeParticipantNameIfSameTime(availableTime.getTime(), participantName)
+                )
         );
     }
 
-    public void plusCount(AvailableDateTime availableDateTime) {
+    public void addParticipantNameIfSameDate(AvailableDateTime availableDateTime,
+                                             String participantName) {
         if (!date.isEqual(availableDateTime.getDate())) {
             return;
         }
@@ -72,11 +75,12 @@ public class DateInfo {
         if (timesOrNull == null) {
             validateTimeInfoIsEmpty();
             TimeInfo timeInfo = timeInfos.get(0);
-            timeInfo.plusCount();
+            timeInfo.addParticipantName(participantName);
             return;
         }
         timeInfos.forEach(
-                timeInfo -> timesOrNull.forEach(availableTime -> timeInfo.plusCountIfSameTime(availableTime.getTime()))
+                timeInfo -> timesOrNull.forEach(
+                        availableTime -> timeInfo.addParticipantNameIfSameTime(availableTime.getTime(), participantName))
         );
     }
 

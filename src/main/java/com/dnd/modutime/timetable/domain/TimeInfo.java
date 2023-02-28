@@ -1,11 +1,15 @@
 package com.dnd.modutime.timetable.domain;
 
 import java.time.LocalTime;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -20,46 +24,53 @@ public class TimeInfo {
     @Column
     private LocalTime time;
 
-    @Column(nullable = false)
-    private int count;
+    @OneToMany(mappedBy = "timeInfo", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    private List<TimeTableParticipantName> timeTableParticipantNames;
 
-    public TimeInfo(LocalTime time, int count) {
+    public TimeInfo(LocalTime time,
+                    List<TimeTableParticipantName> timeTableParticipantNames) {
         this.time = time;
-        this.count = count;
+        this.timeTableParticipantNames = timeTableParticipantNames;
     }
 
-    public void minusCountIfSameTime(LocalTime time) {
+    public void removeParticipantNameIfSameTime(LocalTime time, String participantName) {
         if (this.time.equals(time)) {
-            minusCount();
+            removeParticipantName(participantName);
         }
     }
 
-    public void minusCount() {
-        validatePossibleMinus();
-        count--;
+    public void removeParticipantName(String participantName) {
+        timeTableParticipantNames.removeIf(
+                timeTableParticipantName -> timeTableParticipantName.isSameName(participantName));
     }
 
-    private void validatePossibleMinus() {
-        if (count < 1) {
-            throw new IllegalArgumentException("count는 음수가 될 수 없습니다.");
-        }
-    }
-
-    public void plusCountIfSameTime(LocalTime time) {
+    public void addParticipantNameIfSameTime(LocalTime time,
+                                             String participantName) {
         if (this.time.equals(time)) {
-            count++;
+            addParticipantName(participantName);
         }
     }
 
-    public void plusCount() {
-        count++;
+    public void addParticipantName(String participantName) {
+        if (!containsParticipantName(participantName)) {
+            timeTableParticipantNames.add(new TimeTableParticipantName(this, participantName));
+        }
+    }
+
+    private boolean containsParticipantName(String participantName) {
+        return timeTableParticipantNames.stream()
+                .anyMatch(timeTableParticipantName -> timeTableParticipantName.isSameName(participantName));
+    }
+
+    public int getParticipantsSize() {
+        return timeTableParticipantNames.size();
     }
 
     public LocalTime getTime() {
         return time;
     }
 
-    public int getCount() {
-        return count;
+    public List<TimeTableParticipantName> getTimeTableParticipantNames() {
+        return timeTableParticipantNames;
     }
 }
