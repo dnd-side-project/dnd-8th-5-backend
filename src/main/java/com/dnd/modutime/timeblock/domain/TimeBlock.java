@@ -58,7 +58,7 @@ public class TimeBlock extends AbstractAggregateRoot<TimeBlock> {
     public void replace(List<AvailableDateTime> availableDateTimes) {
         List<AvailableDateTime> oldAvailableDateTimes = this.availableDateTimes;
         this.availableDateTimes = availableDateTimes;
-        registerEvent(new TimeBlockReplaceEvent(roomUuid, oldAvailableDateTimes, availableDateTimes));
+        registerEvent(new TimeBlockReplaceEvent(roomUuid, oldAvailableDateTimes, availableDateTimes, participantName));
     }
 
     public Long getId() {

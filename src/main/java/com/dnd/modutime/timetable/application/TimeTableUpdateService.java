@@ -1,8 +1,8 @@
 package com.dnd.modutime.timetable.application;
 
+import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.timeblock.domain.TimeBlockReplaceEvent;
 import com.dnd.modutime.timetable.domain.TimeTable;
-import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.timetable.repository.TimeTableRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,9 @@ public class TimeTableUpdateService {
     @TransactionalEventListener
     public void update(TimeBlockReplaceEvent event) {
         TimeTable timeTable = getTimeTableByRoomUuid(event.getRoomUuid());
-        timeTable.updateCount(event.getOldAvailableDateTimes(), event.getNewAvailableDateTimes());
+        timeTable.updateParticipantName(event.getOldAvailableDateTimes(),
+                event.getNewAvailableDateTimes(),
+                event.getParticipantName());
     }
 
     private TimeTable getTimeTableByRoomUuid(String roomUuid) {

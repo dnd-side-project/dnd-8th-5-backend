@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class TimeTable {
     @Column(nullable = false)
     private String roomUuid;
 
-    @OneToMany(mappedBy = "timeTable", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "timeTable", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     private List<DateInfo> dateInfos = List.of();
 
     public TimeTable(String roomUuid) {
@@ -34,24 +35,25 @@ public class TimeTable {
         this.dateInfos = dateInfos;
     }
 
-    public void updateCount(List<AvailableDateTime> oldAvailableDateTimes,
-                            List<AvailableDateTime> newAvailableDateTimes) {
-        minusCount(oldAvailableDateTimes);
-        plusCount(newAvailableDateTimes);
+    public void updateParticipantName(List<AvailableDateTime> oldAvailableDateTimes,
+                                      List<AvailableDateTime> newAvailableDateTimes,
+                                      String participantName) {
+        removeParticipantName(oldAvailableDateTimes, participantName);
+        addParticipantName(newAvailableDateTimes, participantName);
     }
 
-    private void minusCount(List<AvailableDateTime> availableDateTimes) {
+    private void removeParticipantName(List<AvailableDateTime> availableDateTimes, String participantName) {
         availableDateTimes.forEach(
                 availableDateTime -> dateInfos.forEach(
-                        dateInfo -> dateInfo.minusCount(availableDateTime)
+                        dateInfo -> dateInfo.removeParticipantNameIfSameDate(availableDateTime, participantName)
                 )
         );
     }
 
-    private void plusCount(List<AvailableDateTime> availableDateTimes) {
+    private void addParticipantName(List<AvailableDateTime> availableDateTimes, String participantName) {
         availableDateTimes.forEach(
                 availableDateTime -> dateInfos.forEach(
-                        dateInfo -> dateInfo.plusCount(availableDateTime)
+                        dateInfo -> dateInfo.addParticipantNameIfSameDate(availableDateTime, participantName)
                 )
         );
     }

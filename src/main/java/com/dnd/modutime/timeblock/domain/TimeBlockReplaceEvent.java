@@ -11,4 +11,5 @@ public class TimeBlockReplaceEvent {
     private String roomUuid;
     private List<AvailableDateTime> oldAvailableDateTimes;
     private List<AvailableDateTime> newAvailableDateTimes;
+    private String participantName;
 }

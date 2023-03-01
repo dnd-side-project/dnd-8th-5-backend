@@ -24,7 +24,7 @@ public class TimeTableResponse {
         List<DateInfo> dateInfos = timeTable.getDateInfos();
         for (DateInfo dateInfo : dateInfos) {
             List<AvailableTimeInfo> availableTimeInfos = dateInfo.getTimeInfos().stream()
-                    .map(timeInfo -> new AvailableTimeInfo(timeInfo.getTime(), timeInfo.getCount()))
+                    .map(timeInfo -> new AvailableTimeInfo(timeInfo.getTime(), timeInfo.getParticipantsSize()))
                     .collect(Collectors.toList());
             TimeAndCountPerDate timeAndCountPerDate = new TimeAndCountPerDate(dateInfo.getDate(), availableTimeInfos);
             timeAndCountPerDates.add(timeAndCountPerDate);

@@ -46,11 +46,11 @@ public class RoomTimeTableInitializer implements TimeTableInitializer {
         LocalTime startTime = room.getStartTimeOrNull();
         LocalTime endTime = room.getEndTimeOrNull();
         if (!room.hasStartAndEndTime()) {
-            timeInfos.add(new TimeInfo(null, 0));
+            timeInfos.add(new TimeInfo(null, new ArrayList<>()));
             return;
         }
         for (LocalTime time = startTime; time.isBefore(endTime); time = time.plusMinutes(30)) {
-            timeInfos.add(new TimeInfo(time, 0));
+            timeInfos.add(new TimeInfo(time, new ArrayList<>()));
         }
     }
 
