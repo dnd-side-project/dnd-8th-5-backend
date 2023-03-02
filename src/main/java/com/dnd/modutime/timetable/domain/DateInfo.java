@@ -3,7 +3,9 @@ package com.dnd.modutime.timetable.domain;
 import com.dnd.modutime.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.timeblock.domain.AvailableTime;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,7 +50,28 @@ public class DateInfo {
         this.timeInfos = timeInfos;
     }
 
-    public void minusCount(AvailableDateTime availableDateTime) {
+    public List<Long> getTimeInfoIdsByAvailableDateTime(AvailableDateTime availableDateTime) {
+        final LocalDate date = availableDateTime.getDate();
+        final List<AvailableTime> timesOrNull = availableDateTime.getTimesOrNull();
+        if (!this.date.isEqual(date)) {
+            return List.of();
+        }
+        if (timesOrNull == null) {
+            validateTimeInfoIsEmpty();
+            return List.of(timeInfos.get(0).getId());
+        }
+        List<Long> timeInfoIds = new ArrayList<>();
+        for (TimeInfo timeInfo : timeInfos) {
+            for (AvailableTime availableTime : timesOrNull) {
+                if (timeInfo.isSameTime(availableTime.getTime())) {
+                    timeInfoIds.add(timeInfo.getId());
+                }
+            }
+        }
+        return timeInfoIds;
+    }
+
+    public void removeParticipantNameIfSameDate(AvailableDateTime availableDateTime, String participantName) {
         if (!date.isEqual(availableDateTime.getDate())) {
             return;
         }
@@ -56,15 +79,30 @@ public class DateInfo {
         if (timesOrNull == null) {
             validateTimeInfoIsEmpty();
             TimeInfo timeInfo = timeInfos.get(0);
-            timeInfo.minusCount();
+            timeInfo.removeParticipantName(participantName);
             return;
         }
         timeInfos.forEach(
-                timeInfo -> timesOrNull.forEach(availableTime -> timeInfo.minusCountIfSameTime(availableTime.getTime()))
+                timeInfo -> timesOrNull.forEach(
+                        availableTime -> timeInfo.removeParticipantNameIfSameTime(availableTime.getTime(), participantName)
+                )
         );
     }
 
-    public void plusCount(AvailableDateTime availableDateTime) {
+    public void removeParticipantNameByTimeInfoId(final List<Long> timeInfoIds, final String participantName) {
+        timeInfos.forEach(
+                timeInfo -> timeInfo.removeParticipantByTimeInfoIds(timeInfoIds, participantName)
+        );
+    }
+
+    public void addParticipantNameByTimeInfoId(final List<Long> timeInfoIds, final String participantName) {
+        timeInfos.forEach(
+                timeInfo -> timeInfo.addParticipantByTimeInfoIds(timeInfoIds, participantName)
+        );
+    }
+
+    public void addParticipantNameIfSameDate(AvailableDateTime availableDateTime,
+                                             String participantName) {
         if (!date.isEqual(availableDateTime.getDate())) {
             return;
         }
@@ -72,11 +110,12 @@ public class DateInfo {
         if (timesOrNull == null) {
             validateTimeInfoIsEmpty();
             TimeInfo timeInfo = timeInfos.get(0);
-            timeInfo.plusCount();
+            timeInfo.addParticipantName(participantName);
             return;
         }
         timeInfos.forEach(
-                timeInfo -> timesOrNull.forEach(availableTime -> timeInfo.plusCountIfSameTime(availableTime.getTime()))
+                timeInfo -> timesOrNull.forEach(
+                        availableTime -> timeInfo.addParticipantNameIfSameTime(availableTime.getTime(), participantName))
         );
     }
 
@@ -84,6 +123,12 @@ public class DateInfo {
         if (timeInfos.isEmpty()) {
             throw new IllegalArgumentException("timeInfo가 비어있을 수 없습니다.");
         }
+    }
+
+    public List<TimeInfo> getTimeInfosByParticipantNames(List<String> participantNames) {
+        return timeInfos.stream()
+                .filter(timeInfo -> timeInfo.containsAllParticipantName(participantNames))
+                .collect(Collectors.toList());
     }
 
     public LocalDate getDate() {

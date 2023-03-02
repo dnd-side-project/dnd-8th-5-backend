@@ -45,7 +45,7 @@ public class TimeTableIntegrationTest {
     private ApplicationEvents events;
 
     @Test
-    void 참여자가_가능한_시간을_교체하면_TimeTable의_count를_수정한다() {
+    void 참여자가_가능한_시간을_교체하면_TimeTable을_수정한다() {
         participantService.create(ROOM_UUID, "참여자1", "1234");
         doNothing().when(timeReplaceValidator).validate(any(), any());
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
