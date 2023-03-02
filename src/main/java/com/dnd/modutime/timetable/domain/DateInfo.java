@@ -4,6 +4,7 @@ import com.dnd.modutime.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.timeblock.domain.AvailableTime;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -66,6 +67,10 @@ public class DateInfo {
         );
     }
 
+    public void removeParticipantNameBySameTimeInfo(final List<Long> timeInfoIds, final String participantName) {
+
+    }
+
     public void addParticipantNameIfSameDate(AvailableDateTime availableDateTime,
                                              String participantName) {
         if (!date.isEqual(availableDateTime.getDate())) {
@@ -88,6 +93,12 @@ public class DateInfo {
         if (timeInfos.isEmpty()) {
             throw new IllegalArgumentException("timeInfo가 비어있을 수 없습니다.");
         }
+    }
+
+    public List<TimeInfo> getTimeInfosByParticipantNames(List<String> participantNames) {
+        return timeInfos.stream()
+                .filter(timeInfo -> timeInfo.containsAllParticipantName(participantNames))
+                .collect(Collectors.toList());
     }
 
     public LocalDate getDate() {

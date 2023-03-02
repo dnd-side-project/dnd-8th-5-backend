@@ -2,7 +2,6 @@ package com.dnd.modutime.room.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import com.dnd.modutime.timetable.application.RoomCreationEvent;
 import com.dnd.modutime.util.TimeProvider;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,7 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.PostPersist;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.AbstractAggregateRoot;
@@ -128,11 +126,6 @@ public class Room extends AbstractAggregateRoot<Room> {
         if (!now.isBefore(deadLine)) {
             throw new IllegalArgumentException("마감시간은 현재시간 이후여야 합니다.");
         }
-    }
-
-    @PostPersist
-    private void registerCreateEvent() {
-        registerEvent(new RoomCreationEvent(uuid));
     }
 
     public boolean containsAllDates(List<RoomDate> roomDates) {

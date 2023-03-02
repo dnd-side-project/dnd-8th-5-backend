@@ -15,18 +15,23 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class TimeTableUpdateService {
 
     private final TimeTableRepository timeTableRepository;
+//    private final DateInfoRepository dateInfoRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener
     public void update(TimeBlockReplaceEvent event) {
         TimeTable timeTable = getTimeTableByRoomUuid(event.getRoomUuid());
+        // 참여자를 지워야함
+        // old에 해당하는 timeInfo id 가져와서 delete
+        timeTable.getTimeInfoParticipantNameIds();
         timeTable.updateParticipantName(event.getOldAvailableDateTimes(),
                 event.getNewAvailableDateTimes(),
                 event.getParticipantName());
+        timeTableRepository.save(timeTable);
     }
 
     private TimeTable getTimeTableByRoomUuid(String roomUuid) {
         return timeTableRepository.findByRoomUuid(roomUuid)
-                .orElseThrow(() -> new NotFoundException("해당하는 TimeBlock을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException("해당하는 TimeTable을 찾을 수 없습니다."));
     }
 }

@@ -6,15 +6,15 @@ import static com.dnd.modutime.fixture.TimeFixture._13_00;
 import static com.dnd.modutime.fixture.TimeFixture._14_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
+import static com.dnd.modutime.fixture.TimeTableFixture.getAvailableDateTime;
+import static com.dnd.modutime.fixture.TimeTableFixture.getDateInfo;
+import static com.dnd.modutime.fixture.TimeTableFixture.getTimeInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.dnd.modutime.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.timeblock.domain.AvailableTime;
 import com.dnd.modutime.timeblock.domain.TimeBlock;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -30,8 +30,8 @@ public class DateInfoTest {
         dateInfo.removeParticipantNameIfSameDate(new AvailableDateTime(new TimeBlock(ROOM_UUID, "참여자1"), _2023_02_09,
                 List.of(new AvailableTime(_12_00))), "참여자1");
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
-        assertThat(timeInfo.getTimeTableParticipantNames().stream()
-                .map(TimeTableParticipantName::getName)
+        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
+                .map(TimeInfoParticipantName::getName)
                 .collect(Collectors.toList())).contains("참여자1");
     }
 
@@ -44,8 +44,8 @@ public class DateInfoTest {
         dateInfo.removeParticipantNameIfSameDate(new AvailableDateTime(new TimeBlock(ROOM_UUID, "참여자1"), _2023_02_10,
                 null), "참여자1");
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
-        assertThat(timeInfo.getTimeTableParticipantNames().stream()
-                .map(TimeTableParticipantName::getName)
+        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
+                .map(TimeInfoParticipantName::getName)
                 .collect(Collectors.toList())).doesNotContain("참여자1");
     }
 
@@ -69,9 +69,9 @@ public class DateInfoTest {
 
         List<TimeInfo> timeInfos = dateInfo.getTimeInfos();
         assertAll(
-                () -> assertThat(timeInfos.get(0).getTimeTableParticipantNames()).hasSize(0),
-                () -> assertThat(timeInfos.get(1).getTimeTableParticipantNames()).hasSize(1),
-                () -> assertThat(timeInfos.get(2).getTimeTableParticipantNames()).hasSize(0)
+                () -> assertThat(timeInfos.get(0).getTimeInfoParticipantNames()).hasSize(0),
+                () -> assertThat(timeInfos.get(1).getTimeInfoParticipantNames()).hasSize(1),
+                () -> assertThat(timeInfos.get(2).getTimeInfoParticipantNames()).hasSize(0)
         );
     }
 
@@ -88,9 +88,9 @@ public class DateInfoTest {
 
         List<TimeInfo> timeInfos = dateInfo.getTimeInfos();
         assertAll(
-                () -> assertThat(timeInfos.get(0).getTimeTableParticipantNames()).hasSize(1),
-                () -> assertThat(timeInfos.get(1).getTimeTableParticipantNames()).hasSize(0),
-                () -> assertThat(timeInfos.get(2).getTimeTableParticipantNames()).hasSize(1)
+                () -> assertThat(timeInfos.get(0).getTimeInfoParticipantNames()).hasSize(1),
+                () -> assertThat(timeInfos.get(1).getTimeInfoParticipantNames()).hasSize(0),
+                () -> assertThat(timeInfos.get(2).getTimeInfoParticipantNames()).hasSize(1)
         );
     }
 
@@ -102,7 +102,7 @@ public class DateInfoTest {
                 List.of(new AvailableTime(_12_00))), "참여자1");
 
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
-        assertThat(timeInfo.getTimeTableParticipantNames()).hasSize(0);
+        assertThat(timeInfo.getTimeInfoParticipantNames()).hasSize(0);
     }
 
     @Test
@@ -112,24 +112,24 @@ public class DateInfoTest {
                 null), "참여자1");
 
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
-        assertThat(timeInfo.getTimeTableParticipantNames().stream()
-                .map(TimeTableParticipantName::getName)
+        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
+                .map(TimeInfoParticipantName::getName)
                 .collect(Collectors.toList())).contains("참여자1");
     }
 
-    private DateInfo getDateInfo(List<TimeInfo> timeInfos) {
-        return new DateInfo(getTimeTable(), _2023_02_10, timeInfos);
-    }
-
-    private TimeTable getTimeTable() {
-        return new TimeTable(ROOM_UUID);
-    }
-
-    private TimeInfo getTimeInfo(LocalTime time) {
-        return new TimeInfo(time, new ArrayList<>());
-    }
-
-    private AvailableDateTime getAvailableDateTime(String participantName, LocalDate date, List<AvailableTime> availableTimes) {
-        return new AvailableDateTime(new TimeBlock(ROOM_UUID, participantName), date, availableTimes);
-    }
+//    private DateInfo getDateInfo(List<TimeInfo> timeInfos) {
+//        return new DateInfo(getTimeTable(), _2023_02_10, timeInfos);
+//    }
+//
+//    private TimeTable getTimeTable() {
+//        return new TimeTable(ROOM_UUID);
+//    }
+//
+//    private TimeInfo getTimeInfo(LocalTime time) {
+//        return new TimeInfo(time, new ArrayList<>());
+//    }
+//
+//    private AvailableDateTime getAvailableDateTime(String participantName, LocalDate date, List<AvailableTime> availableTimes) {
+//        return new AvailableDateTime(new TimeBlock(ROOM_UUID, participantName), date, availableTimes);
+//    }
 }
