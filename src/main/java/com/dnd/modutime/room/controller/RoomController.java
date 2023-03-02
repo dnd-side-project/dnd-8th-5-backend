@@ -1,5 +1,6 @@
 package com.dnd.modutime.room.controller;
 
+import com.dnd.modutime.adjustresult.application.AdjustmentResultService;
 import com.dnd.modutime.room.application.RoomService;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.response.RoomCreationResponse;
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoomController {
 
     private final RoomService roomService;
+    private final AdjustmentResultService adjustmentResultService;
 
     @PostMapping
     public ResponseEntity<RoomCreationResponse> create(@RequestBody RoomRequest roomRequest) {
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
+        adjustmentResultService.create(roomCreationResponse.getUuid());
         return ResponseEntity.ok(roomCreationResponse);
     }
 

@@ -12,16 +12,17 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TimeTable {
+public class TimeTable extends AbstractAggregateRoot<TimeTable> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String roomUuid;
 
     @OneToMany(mappedBy = "timeTable", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
@@ -40,6 +41,7 @@ public class TimeTable {
                                       String participantName) {
         removeParticipantName(oldAvailableDateTimes, participantName);
         addParticipantName(newAvailableDateTimes, participantName);
+        registerEvent(new TimeTableReplaceEvent(roomUuid, dateInfos));
     }
 
     private void removeParticipantName(List<AvailableDateTime> availableDateTimes, String participantName) {
