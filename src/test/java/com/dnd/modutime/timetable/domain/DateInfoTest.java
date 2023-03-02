@@ -6,15 +6,15 @@ import static com.dnd.modutime.fixture.TimeFixture._13_00;
 import static com.dnd.modutime.fixture.TimeFixture._14_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
+import static com.dnd.modutime.fixture.TimeTableFixture.getAvailableDateTime;
+import static com.dnd.modutime.fixture.TimeTableFixture.getDateInfo;
+import static com.dnd.modutime.fixture.TimeTableFixture.getTimeInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.dnd.modutime.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.timeblock.domain.AvailableTime;
 import com.dnd.modutime.timeblock.domain.TimeBlock;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -117,19 +117,19 @@ public class DateInfoTest {
                 .collect(Collectors.toList())).contains("참여자1");
     }
 
-    private DateInfo getDateInfo(List<TimeInfo> timeInfos) {
-        return new DateInfo(getTimeTable(), _2023_02_10, timeInfos);
-    }
-
-    private TimeTable getTimeTable() {
-        return new TimeTable(ROOM_UUID);
-    }
-
-    private TimeInfo getTimeInfo(LocalTime time) {
-        return new TimeInfo(time, new ArrayList<>());
-    }
-
-    private AvailableDateTime getAvailableDateTime(String participantName, LocalDate date, List<AvailableTime> availableTimes) {
-        return new AvailableDateTime(new TimeBlock(ROOM_UUID, participantName), date, availableTimes);
-    }
+//    private DateInfo getDateInfo(List<TimeInfo> timeInfos) {
+//        return new DateInfo(getTimeTable(), _2023_02_10, timeInfos);
+//    }
+//
+//    private TimeTable getTimeTable() {
+//        return new TimeTable(ROOM_UUID);
+//    }
+//
+//    private TimeInfo getTimeInfo(LocalTime time) {
+//        return new TimeInfo(time, new ArrayList<>());
+//    }
+//
+//    private AvailableDateTime getAvailableDateTime(String participantName, LocalDate date, List<AvailableTime> availableTimes) {
+//        return new AvailableDateTime(new TimeBlock(ROOM_UUID, participantName), date, availableTimes);
+//    }
 }

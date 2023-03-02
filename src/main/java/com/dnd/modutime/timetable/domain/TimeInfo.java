@@ -2,6 +2,7 @@ package com.dnd.modutime.timetable.domain;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,6 +61,12 @@ public class TimeInfo {
     private boolean containsParticipantName(String participantName) {
         return timeTableParticipantNames.stream()
                 .anyMatch(timeTableParticipantName -> timeTableParticipantName.isSameName(participantName));
+    }
+
+    public boolean containsAllParticipantName(List<String> participantNames) {
+        return participantNames.containsAll(timeTableParticipantNames.stream()
+                .map(TimeTableParticipantName::getName)
+                .collect(Collectors.toList()));
     }
 
     public int getParticipantsSize() {

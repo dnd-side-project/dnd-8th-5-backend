@@ -20,5 +20,6 @@ public class TimeTableCreateService {
     public void create(RoomCreationEvent event) {
         TimeTable timeTable = timeTableRepository.save(new TimeTable(event.getUuid()));
         timeTableInitializer.initialize(event.getUuid(), timeTable);
+        timeTableRepository.save(timeTable);
     }
 }

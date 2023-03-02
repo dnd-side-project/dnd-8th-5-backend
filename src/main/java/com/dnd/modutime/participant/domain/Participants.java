@@ -1,0 +1,45 @@
+package com.dnd.modutime.participant.domain;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+// TODO: test
+public class Participants {
+
+    private final List<Participant> participants;
+
+    public Participants(List<Participant> participants) {
+        validateParticipantsNull(participants);
+        this.participants = participants;
+    }
+
+    private void validateParticipantsNull(List<Participant> participants) {
+        if (participants == null) {
+            throw new IllegalArgumentException("참여자에 null일 수 없습니다.");
+        }
+    }
+
+    public boolean isSameAllNames(List<String> names) {
+        validateNamesNull(names);
+        List<String> participantNames = getParticipantNames();
+        return names.containsAll(participantNames);
+    }
+
+    public boolean containsAll(List<String> names) {
+        validateNamesNull(names);
+        List<String> participantNames = getParticipantNames();
+        return participantNames.containsAll(names);
+    }
+
+    private List<String> getParticipantNames() {
+        return participants.stream()
+                .map(Participant::getName)
+                .collect(Collectors.toList());
+    }
+
+    private void validateNamesNull(List<String> names) {
+        if (names == null) {
+            throw new IllegalArgumentException("이름에 null이 올 수 없습니다.");
+        }
+    }
+}

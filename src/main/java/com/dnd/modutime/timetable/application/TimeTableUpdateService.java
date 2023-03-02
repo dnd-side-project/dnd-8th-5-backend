@@ -23,6 +23,7 @@ public class TimeTableUpdateService {
         timeTable.updateParticipantName(event.getOldAvailableDateTimes(),
                 event.getNewAvailableDateTimes(),
                 event.getParticipantName());
+        timeTableRepository.save(timeTable);
     }
 
     private TimeTable getTimeTableByRoomUuid(String roomUuid) {
