@@ -16,8 +16,8 @@ public class TimeInfoTest {
         timeInfo.addParticipantNameIfSameTime(_12_00, "참여자1");
 
         timeInfo.removeParticipantNameIfSameTime(_12_00, "참여자1");
-        assertThat(timeInfo.getTimeTableParticipantNames().stream()
-                .map(TimeTableParticipantName::getName)
+        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
+                .map(TimeInfoParticipantName::getName)
                 .collect(Collectors.toList())).doesNotContain("참여자1");
     }
 
@@ -27,8 +27,8 @@ public class TimeInfoTest {
         timeInfo.addParticipantNameIfSameTime(_12_00, "참여자1");
 
         timeInfo.removeParticipantNameIfSameTime(_13_00, "참여자1");
-        assertThat(timeInfo.getTimeTableParticipantNames().stream()
-                .map(TimeTableParticipantName::getName)
+        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
+                .map(TimeInfoParticipantName::getName)
                 .collect(Collectors.toList())).contains("참여자1");
     }
 
@@ -36,8 +36,8 @@ public class TimeInfoTest {
     void time이_같으면_해당_참여자_이름을_추가한다() {
         TimeInfo timeInfo = new TimeInfo(_12_00, new ArrayList<>());
         timeInfo.addParticipantNameIfSameTime(_12_00, "참여자1");
-        assertThat(timeInfo.getTimeTableParticipantNames().stream()
-                .map(TimeTableParticipantName::getName)
+        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
+                .map(TimeInfoParticipantName::getName)
                 .collect(Collectors.toList())).contains("참여자1");
     }
 
@@ -45,8 +45,8 @@ public class TimeInfoTest {
     void time이_같지_않으면_해당_참여자_이름을_추가하지_않는다() {
         TimeInfo timeInfo = new TimeInfo(_12_00, new ArrayList<>());
         timeInfo.addParticipantNameIfSameTime(_13_00, "참여자1");
-        assertThat(timeInfo.getTimeTableParticipantNames().stream()
-                .map(TimeTableParticipantName::getName)
+        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
+                .map(TimeInfoParticipantName::getName)
                 .collect(Collectors.toList())).doesNotContain("참여자1");
     }
 
@@ -56,6 +56,6 @@ public class TimeInfoTest {
         timeInfo.addParticipantNameIfSameTime(_12_00, "참여자1");
 
         timeInfo.addParticipantName("참여자1");
-        assertThat(timeInfo.getTimeTableParticipantNames()).hasSize(1);
+        assertThat(timeInfo.getTimeInfoParticipantNames()).hasSize(1);
     }
 }

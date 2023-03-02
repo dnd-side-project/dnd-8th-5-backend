@@ -2,6 +2,7 @@ package com.dnd.modutime.timetable.domain;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,12 +26,12 @@ public class TimeInfo {
     private LocalTime time;
 
     @OneToMany(mappedBy = "timeInfo", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
-    private List<TimeTableParticipantName> timeTableParticipantNames;
+    private List<TimeInfoParticipantName> timeInfoParticipantNames;
 
     public TimeInfo(LocalTime time,
-                    List<TimeTableParticipantName> timeTableParticipantNames) {
+                    List<TimeInfoParticipantName> timeInfoParticipantNames) {
         this.time = time;
-        this.timeTableParticipantNames = timeTableParticipantNames;
+        this.timeInfoParticipantNames = timeInfoParticipantNames;
     }
 
     public void removeParticipantNameIfSameTime(LocalTime time, String participantName) {
@@ -40,8 +41,14 @@ public class TimeInfo {
     }
 
     public void removeParticipantName(String participantName) {
-        timeTableParticipantNames.removeIf(
+        timeInfoParticipantNames.removeIf(
                 timeTableParticipantName -> timeTableParticipantName.isSameName(participantName));
+    }
+
+    public void removeParticipantByTimeInfoIds(final List<Long> timeInfoIds, final String participantName) {
+        if (timeInfoIds.contains(this.id)) {
+            removeParticipantName(participantName);
+        }
     }
 
     public void addParticipantNameIfSameTime(LocalTime time,
@@ -53,24 +60,47 @@ public class TimeInfo {
 
     public void addParticipantName(String participantName) {
         if (!containsParticipantName(participantName)) {
-            timeTableParticipantNames.add(new TimeTableParticipantName(this, participantName));
+            timeInfoParticipantNames.add(new TimeInfoParticipantName(this, participantName));
+        }
+    }
+
+    public void addParticipantByTimeInfoIds(final List<Long> timeInfoIds, final String participantName) {
+        if (timeInfoIds.contains(this.id)) {
+            addParticipantName(participantName);
         }
     }
 
     private boolean containsParticipantName(String participantName) {
-        return timeTableParticipantNames.stream()
+        return timeInfoParticipantNames.stream()
                 .anyMatch(timeTableParticipantName -> timeTableParticipantName.isSameName(participantName));
     }
 
+    // TODO: test
+    public boolean containsAllParticipantName(List<String> participantNames) {
+        return timeInfoParticipantNames.stream()
+                .map(TimeInfoParticipantName::getName)
+                .collect(Collectors.toList())
+                .containsAll(participantNames);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     public int getParticipantsSize() {
-        return timeTableParticipantNames.size();
+        return timeInfoParticipantNames.size();
     }
 
     public LocalTime getTime() {
         return time;
     }
 
-    public List<TimeTableParticipantName> getTimeTableParticipantNames() {
-        return timeTableParticipantNames;
+    public List<TimeInfoParticipantName> getTimeInfoParticipantNames() {
+        return timeInfoParticipantNames;
+    }
+
+    // TODO: test
+    public boolean isSameTime(final LocalTime time) {
+        return this.time.equals(time);
     }
 }

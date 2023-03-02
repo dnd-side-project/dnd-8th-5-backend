@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TimeTableParticipantName {
+public class TimeInfoParticipantName {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +26,8 @@ public class TimeTableParticipantName {
     @Column(nullable = false)
     private String name;
 
-    public TimeTableParticipantName(TimeInfo timeInfo,
-                                    String name) {
+    public TimeInfoParticipantName(TimeInfo timeInfo,
+                                   String name) {
         this.timeInfo = timeInfo;
         this.name = name;
     }
