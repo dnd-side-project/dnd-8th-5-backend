@@ -2,18 +2,15 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
     generate-ddl: true
   datasource:
-    url: jdbc:h2:mem:test6
-    username: sa
-  h2:
-    console:
-      enabled:
-        true
+    url: jdbc:mysql://localhost:3306/modutime?serverTimezone=Asia/Seoul
+    username: root
+    password:
 logging:
   level:
     org:
