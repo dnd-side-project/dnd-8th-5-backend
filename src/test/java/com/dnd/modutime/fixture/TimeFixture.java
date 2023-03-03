@@ -17,7 +17,7 @@ public class TimeFixture {
     public static LocalDate _2023_02_08 = LocalDate.of(2023, 2, 8);
     public static LocalDate _2023_02_09 = LocalDate.of(2023, 2, 9);
     public static LocalDate _2023_02_10 = LocalDate.of(2023, 2, 10);
+    public static LocalDateTime _2023_02_09_00_00 = LocalDateTime.of(2023, 2, 9, 0, 0);
     public static LocalDateTime _2023_02_10_00_00 = LocalDateTime.of(2023, 2, 10, 0, 0);
     public static LocalDateTime _2023_02_20_00_00 = LocalDateTime.of(2023, 2, 20, 0, 0);
-
 }

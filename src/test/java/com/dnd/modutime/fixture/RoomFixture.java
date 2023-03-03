@@ -46,6 +46,11 @@ public class RoomFixture {
         return getRoom(startTime, endTime, dates, headCount, _2023_02_10_00_00);
     }
 
+    public static Room getRoomByDeadLine(LocalDateTime deadLine) {
+        List<LocalDate> dates = List.of(_2023_02_10);
+        return getRoom(_12_00, _13_00, dates, 10, deadLine, new FakeTimeProvider());
+    }
+
     public static Room getRoom(LocalDateTime deadLine, TimeProvider timeProvider) {
         List<LocalDate> dates = List.of(_2023_02_10);
         return getRoom(_12_00, _13_00, dates, 10, deadLine, timeProvider);
