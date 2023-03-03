@@ -16,8 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ParticipantService {
 
     private final ParticipantRepository participantRepository;
+    private final ParticipantCreateValidator participantCreateValidator;
 
     public void create(String roomUuid, String name, String password) {
+        participantCreateValidator.validate(roomUuid);
         Participant participant = new Participant(roomUuid, name, password);
         participantRepository.save(participant);
     }

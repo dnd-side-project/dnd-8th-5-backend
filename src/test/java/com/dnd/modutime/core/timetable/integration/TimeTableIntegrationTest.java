@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
+import com.dnd.modutime.core.participant.application.ParticipantCreateValidator;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
 import com.dnd.modutime.core.participant.application.ParticipantService;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
@@ -41,11 +42,15 @@ public class TimeTableIntegrationTest {
     @MockBean
     private TimeTableUpdateService timeTableUpdateService;
 
+    @MockBean
+    private ParticipantCreateValidator participantCreateValidator;
+
     @Autowired
     private ApplicationEvents events;
 
     @Test
     void 참여자가_가능한_시간을_교체하면_TimeTable을_수정한다() {
+        doNothing().when(participantCreateValidator).validate(any());
         participantService.create(ROOM_UUID, "참여자1", "1234");
         doNothing().when(timeReplaceValidator).validate(any(), any());
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", true, List.of(LocalDateTime.of(_2023_02_10, _12_00), LocalDateTime.of(_2023_02_10, _13_00)));
