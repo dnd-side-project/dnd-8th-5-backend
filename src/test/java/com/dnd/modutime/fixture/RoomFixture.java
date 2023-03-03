@@ -6,8 +6,8 @@ import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10_00_00;
 
 import com.dnd.modutime.util.FakeTimeProvider;
-import com.dnd.modutime.room.domain.Room;
-import com.dnd.modutime.room.domain.RoomDate;
+import com.dnd.modutime.core.room.domain.Room;
+import com.dnd.modutime.core.room.domain.RoomDate;
 import com.dnd.modutime.util.TimeProvider;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

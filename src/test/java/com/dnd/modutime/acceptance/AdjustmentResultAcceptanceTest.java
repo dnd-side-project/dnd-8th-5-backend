@@ -7,9 +7,9 @@ import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.dnd.modutime.dto.response.AdjustmentResultResponse;
-import com.dnd.modutime.dto.response.CandidateDateTimeResponse;
-import com.dnd.modutime.dto.response.RoomCreationResponse;
+import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponse;
+import com.dnd.modutime.core.adjustresult.application.response.CandidateDateTimeResponse;
+import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
