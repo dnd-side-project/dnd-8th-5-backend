@@ -10,7 +10,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 import com.dnd.modutime.config.TimeConfiguration;
-import com.dnd.modutime.dto.request.AvailableDateTimeRequest;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimeReplaceRequest;
 import com.dnd.modutime.dto.response.AvailableTimeInfo;
@@ -23,7 +22,7 @@ import com.dnd.modutime.timeblock.application.TimeBlockService;
 import com.dnd.modutime.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.timeblock.domain.TimeBlockReplaceEvent;
 import com.dnd.modutime.timetable.application.TimeTableService;
-import com.dnd.modutime.timetable.repository.TimeTableRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -41,9 +40,6 @@ public class RoomIntegrationTest {
 
     @Autowired
     private RoomService roomService;
-
-    @Autowired
-    private TimeTableRepository timeTableRepository;
 
     @Autowired
     private TimeTableService timeTableService;
@@ -80,8 +76,8 @@ public class RoomIntegrationTest {
 
         // when
         doNothing().when(timeReplaceValidator).validate(any(), any());
-        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
-                _2023_02_10, List.of(_12_00, _13_00))));
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", true, List.of(
+                LocalDateTime.of(_2023_02_10, _12_00), LocalDateTime.of(_2023_02_10, _13_00)));
         timeBlockService.replace(roomUuid, timeReplaceRequest);
 
         // then

@@ -12,15 +12,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
-import com.dnd.modutime.timeblock.application.TimeReplaceValidator;
+import com.dnd.modutime.dto.request.TimeReplaceRequest;
 import com.dnd.modutime.timeblock.application.TimeBlockService;
+import com.dnd.modutime.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.timeblock.domain.AvailableTime;
 import com.dnd.modutime.timeblock.domain.TimeBlock;
-import com.dnd.modutime.dto.request.AvailableDateTimeRequest;
-import com.dnd.modutime.dto.request.TimeReplaceRequest;
 import com.dnd.modutime.timeblock.repository.AvailableDateTimeRepository;
 import com.dnd.modutime.timeblock.repository.TimeBlockRepository;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,8 +54,7 @@ class TimeBlockIntegrationTest {
         TimeBlock savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
 
         // when
-        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
-                _2023_02_10, List.of(_12_00, _13_00))));
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", true, List.of(LocalDateTime.of(_2023_02_10, _12_00), LocalDateTime.of(_2023_02_10, _13_00)));
         timeBlockService.replace(ROOM_UUID, timeReplaceRequest);
 
         // then
@@ -76,8 +76,7 @@ class TimeBlockIntegrationTest {
         TimeBlock savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
 
         // when
-        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
-                _2023_02_10, null)));
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", false, List.of(LocalDateTime.of(_2023_02_10, LocalTime.of(0, 0))));
         timeBlockService.replace(ROOM_UUID, timeReplaceRequest);
 
         // then
@@ -98,8 +97,7 @@ class TimeBlockIntegrationTest {
                 new AvailableDateTime(savedTimeBlock, _2023_02_09, List.of(new AvailableTime(_12_00))));
 
         // when
-        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
-                _2023_02_10, List.of(_12_00, _13_00))));
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", true, List.of(LocalDateTime.of(_2023_02_10, _12_00), LocalDateTime.of(_2023_02_10, _13_00)));
         timeBlockService.replace(ROOM_UUID, timeReplaceRequest);
 
         // then
@@ -114,8 +112,7 @@ class TimeBlockIntegrationTest {
         timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
 
         // when
-        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", List.of(new AvailableDateTimeRequest(
-                _2023_02_10, List.of(_12_00, _13_00))));
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", true, List.of(LocalDateTime.of(_2023_02_10, _12_00), LocalDateTime.of(_2023_02_10, _13_00)));
 
         // then
         assertThatThrownBy(() -> timeBlockService.replace(ROOM_UUID, timeReplaceRequest))

@@ -10,10 +10,8 @@ import static com.dnd.modutime.fixture.TimeFixture._13_30;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_08;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
-import static com.dnd.modutime.fixture.TimeFixture.getAvailableDateTimeRequest;
 
 import com.dnd.modutime.config.TimeConfiguration;
-import com.dnd.modutime.dto.request.AvailableDateTimeRequest;
 import com.dnd.modutime.dto.request.LoginRequest;
 import com.dnd.modutime.dto.request.RoomRequest;
 import com.dnd.modutime.dto.request.TimeReplaceRequest;
@@ -22,6 +20,8 @@ import com.dnd.modutime.dto.response.RoomCreationResponse;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,19 +84,19 @@ public class AcceptanceSupporter {
         return post("/api/room/" + roomUuid + "/login", loginRequest);
     }
 
-    protected ExtractableResponse<Response> 시간을_등록한다(String roomUuid, String participantName, AvailableDateTimeRequest request) {
-        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest(participantName, List.of(request));
+    protected ExtractableResponse<Response> 시간을_등록한다(String roomUuid, String participantName, Boolean hasTime, LocalDateTime dateTime) {
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest(participantName, hasTime, List.of(dateTime));
         return put("/api/room/" + roomUuid + "/available-time", timeReplaceRequest);
     }
 
-    protected ExtractableResponse<Response> 시간을_등록한다(String roomUuid, String participantName, List<AvailableDateTimeRequest> requests) {
-        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest(participantName, requests);
+    protected ExtractableResponse<Response> 시간을_등록한다(String roomUuid, String participantName, Boolean hasTime, List<LocalDateTime> dateTimes) {
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest(participantName, hasTime, dateTimes);
         return put("/api/room/" + roomUuid + "/available-time", timeReplaceRequest);
     }
 
-    protected void 로그인후_시간을_등록한다(String roomUuid, String participantName, List<AvailableDateTimeRequest> requests) {
+    protected void 로그인후_시간을_등록한다(String roomUuid, String participantName, Boolean hasTime, List<LocalDateTime> requests) {
         로그인_참여자_1234(roomUuid, participantName);
-        시간을_등록한다(roomUuid, participantName, requests);
+        시간을_등록한다(roomUuid, participantName, hasTime, requests);
     }
 
     protected EmailResponse 이메일을_조회한다(String roomUuid, String participantName) {
@@ -107,36 +107,66 @@ public class AcceptanceSupporter {
     protected void 두명의_날짜를_등록한다(String roomUuid) {
         로그인후_시간을_등록한다(roomUuid,
                 "김동호",
-                List.of(getAvailableDateTimeRequest(_2023_02_08, null),
-                        getAvailableDateTimeRequest(_2023_02_10, null)
+                false,
+                List.of(LocalDateTime.of(_2023_02_08, LocalTime.of(0, 0)),
+                        LocalDateTime.of(_2023_02_10, LocalTime.of(0, 0))
                 )
         );
         로그인후_시간을_등록한다(roomUuid,
                 "이수진",
-                List.of(getAvailableDateTimeRequest(_2023_02_10, null))
+                false,
+                List.of(LocalDateTime.of(_2023_02_10, LocalTime.of(0, 0)))
         );
     }
 
     protected void 세명의_날짜와_시간을_등록한다(String roomUuid) {
         로그인후_시간을_등록한다(roomUuid,
                 "김동호",
-                List.of(getAvailableDateTimeRequest(_2023_02_08, List.of(_11_00, _11_30, _13_00)),
-                        getAvailableDateTimeRequest(_2023_02_09, List.of(_11_00, _11_30, _13_00)),
-                        getAvailableDateTimeRequest(_2023_02_10, List.of(_11_00, _11_30, _13_00))
+                true,
+                List.of(LocalDateTime.of(_2023_02_08, _11_00),
+                        LocalDateTime.of(_2023_02_08, _11_30),
+                        LocalDateTime.of(_2023_02_08, _13_00),
+
+                        LocalDateTime.of(_2023_02_09, _11_00),
+                        LocalDateTime.of(_2023_02_09, _11_30),
+                        LocalDateTime.of(_2023_02_09, _13_00),
+
+                        LocalDateTime.of(_2023_02_10, _11_00),
+                        LocalDateTime.of(_2023_02_10, _11_30),
+                        LocalDateTime.of(_2023_02_10, _13_00)
                 )
         );
         로그인후_시간을_등록한다(roomUuid,
                 "이수진",
-                List.of(getAvailableDateTimeRequest(_2023_02_08, List.of(_11_00, _11_30, _12_00, _12_30, _13_00)),
-                        getAvailableDateTimeRequest(_2023_02_09, List.of(_13_00, _13_30)),
-                        getAvailableDateTimeRequest(_2023_02_10, List.of(_11_30, _12_30, _13_30))
+                true,
+                List.of(LocalDateTime.of(_2023_02_08, _11_00),
+                        LocalDateTime.of(_2023_02_08, _11_30),
+                        LocalDateTime.of(_2023_02_08, _12_00),
+                        LocalDateTime.of(_2023_02_08, _12_30),
+                        LocalDateTime.of(_2023_02_08, _13_00),
+
+                        LocalDateTime.of(_2023_02_09, _13_00),
+                        LocalDateTime.of(_2023_02_09, _13_30),
+
+                        LocalDateTime.of(_2023_02_10, _11_30),
+                        LocalDateTime.of(_2023_02_10, _12_30),
+                        LocalDateTime.of(_2023_02_10, _13_30)
                 )
         );
+
         로그인후_시간을_등록한다(roomUuid,
                 "이세희",
-                List.of(getAvailableDateTimeRequest(_2023_02_08, List.of(_11_00, _11_30)),
-                        getAvailableDateTimeRequest(_2023_02_09, List.of(_12_00, _13_00)),
-                        getAvailableDateTimeRequest(_2023_02_10, List.of(_11_30, _12_00, _12_30, _13_30))
+                true,
+                List.of(LocalDateTime.of(_2023_02_08, _11_00),
+                        LocalDateTime.of(_2023_02_08, _11_30),
+
+                        LocalDateTime.of(_2023_02_09, _12_00),
+                        LocalDateTime.of(_2023_02_09, _13_00),
+
+                        LocalDateTime.of(_2023_02_10, _11_30),
+                        LocalDateTime.of(_2023_02_10, _12_00),
+                        LocalDateTime.of(_2023_02_10, _12_30),
+                        LocalDateTime.of(_2023_02_10, _13_30)
                 )
         );
     }
