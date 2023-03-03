@@ -14,10 +14,10 @@ import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.dnd.modutime.dto.response.AvailableTimeInfo;
-import com.dnd.modutime.dto.response.RoomCreationResponse;
-import com.dnd.modutime.dto.response.TimeAndCountPerDate;
-import com.dnd.modutime.dto.response.TimeTableResponse;
+import com.dnd.modutime.core.timetable.application.response.AvailableTimeInfo;
+import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
+import com.dnd.modutime.core.timetable.application.response.TimeAndCountPerDate;
+import com.dnd.modutime.core.timetable.application.response.TimeTableResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
