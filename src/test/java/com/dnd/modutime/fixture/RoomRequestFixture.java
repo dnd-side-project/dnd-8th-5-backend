@@ -4,8 +4,8 @@ import static com.dnd.modutime.fixture.TimeFixture._11_00;
 import static com.dnd.modutime.fixture.TimeFixture._14_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 
-import com.dnd.modutime.dto.request.RoomRequest;
-import com.dnd.modutime.dto.request.TimerRequest;
+import com.dnd.modutime.core.room.application.request.RoomRequest;
+import com.dnd.modutime.core.room.application.request.TimerRequest;
 import java.time.LocalDate;
 import java.util.List;
 

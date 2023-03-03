@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.dnd.modutime.acceptance.request.RoomRequestWithNoNull;
-import com.dnd.modutime.dto.response.RoomCreationResponse;
-import com.dnd.modutime.dto.response.RoomInfoResponse;
+import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
+import com.dnd.modutime.core.room.application.response.RoomInfoResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;

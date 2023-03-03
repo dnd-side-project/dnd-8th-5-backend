@@ -5,9 +5,9 @@ import static com.dnd.modutime.fixture.TimeFixture._12_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.dnd.modutime.dto.request.EmailCreationRequest;
-import com.dnd.modutime.dto.response.EmailResponse;
-import com.dnd.modutime.dto.response.RoomCreationResponse;
+import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
+import com.dnd.modutime.core.participant.application.response.EmailResponse;
+import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;

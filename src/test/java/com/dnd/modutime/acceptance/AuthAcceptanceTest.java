@@ -3,9 +3,9 @@ package com.dnd.modutime.acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.dnd.modutime.dto.request.LoginRequest;
-import com.dnd.modutime.dto.response.LoginPageResponse;
-import com.dnd.modutime.dto.response.RoomCreationResponse;
+import com.dnd.modutime.core.auth.application.request.LoginRequest;
+import com.dnd.modutime.core.auth.application.response.LoginPageResponse;
+import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;

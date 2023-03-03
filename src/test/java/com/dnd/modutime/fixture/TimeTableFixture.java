@@ -3,12 +3,12 @@ package com.dnd.modutime.fixture;
 import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 
-import com.dnd.modutime.timeblock.domain.AvailableDateTime;
-import com.dnd.modutime.timeblock.domain.AvailableTime;
-import com.dnd.modutime.timeblock.domain.TimeBlock;
-import com.dnd.modutime.timetable.domain.DateInfo;
-import com.dnd.modutime.timetable.domain.TimeInfo;
-import com.dnd.modutime.timetable.domain.TimeTable;
+import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
+import com.dnd.modutime.core.timeblock.domain.AvailableTime;
+import com.dnd.modutime.core.timeblock.domain.TimeBlock;
+import com.dnd.modutime.core.timetable.domain.DateInfo;
+import com.dnd.modutime.core.timetable.domain.TimeInfo;
+import com.dnd.modutime.core.timetable.domain.TimeTable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
