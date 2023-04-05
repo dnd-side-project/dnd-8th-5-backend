@@ -1,6 +1,6 @@
 package com.dnd.modutime.core.adjustresult.util.executor;
 
-import com.dnd.modutime.core.adjustresult.util.convertor.CandidateDateTimeConvertor;
+import com.dnd.modutime.core.adjustresult.util.convertor.DateTimeRoomConvertor;
 import com.dnd.modutime.core.adjustresult.application.CandidateDateTimeSortStandard;
 import com.dnd.modutime.core.adjustresult.application.DateTimeInfoDto;
 import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorter;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class TimeTableResponseGenerator implements AdjustmentResultResponseGenerator {
 
     private final TimeTableRepository timeTableRepository;
-    private final CandidateDateTimeConvertor candidateDateTimeConvertor;
+    private final DateTimeRoomConvertor dateTimeRoomConvertor;
     private final CandidateDateTimesSorterFactory candidateDateTimesSorterFactory;
 
     @Override
@@ -29,7 +29,7 @@ public class TimeTableResponseGenerator implements AdjustmentResultResponseGener
                                              List<String> names) {
         TimeTable timeTable = getTimeTableByRoomUuid(roomUuid);
         List<DateTimeInfoDto> dateTimeInfosDto = timeTable.getDateTimeInfosDtoByParticipantNames(names);
-        List<CandidateDateTime> candidateDateTimes = candidateDateTimeConvertor.convert(dateTimeInfosDto);
+        List<CandidateDateTime> candidateDateTimes = dateTimeRoomConvertor.convert(dateTimeInfosDto);
         CandidateDateTimesSorter candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(candidateDateTimeSortStandard);
         candidateDateTimesSorter.sort(candidateDateTimes);
         return AdjustmentResultResponse.from(candidateDateTimes.stream()

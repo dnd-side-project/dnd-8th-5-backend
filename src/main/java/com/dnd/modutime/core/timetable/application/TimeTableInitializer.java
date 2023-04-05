@@ -4,5 +4,5 @@ import com.dnd.modutime.core.timetable.domain.TimeTable;
 
 public interface TimeTableInitializer {
 
-    void initialize(String roomUuid, final TimeTable timeTable);
+    void initialize(String roomUuid, TimeTable timeTable);
 }
