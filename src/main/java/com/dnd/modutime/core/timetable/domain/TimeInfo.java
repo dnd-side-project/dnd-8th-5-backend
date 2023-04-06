@@ -95,6 +95,13 @@ public class TimeInfo {
         return time;
     }
 
+    public LocalTime getTimeOrZeroTime() {
+        if (time == null) {
+            return LocalTime.of(0, 0);
+        }
+        return time;
+    }
+
     public List<TimeInfoParticipantName> getTimeInfoParticipantNames() {
         return timeInfoParticipantNames;
     }

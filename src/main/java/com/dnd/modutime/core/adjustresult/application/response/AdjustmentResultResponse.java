@@ -23,27 +23,30 @@ public class AdjustmentResultResponse {
 
     public static AdjustmentResultResponse from(List<CandidateDateTime> candidateDateTimes) {
         return new AdjustmentResultResponse(candidateDateTimes.stream()
-                .map(candidateDateTime -> new CandidateDateTimeResponse(
-                        candidateDateTime.getId(),
-                        candidateDateTime.getStartDateTime().toLocalDate(),
-                        candidateDateTime.getStartDateTime().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN),
-                        getTimeOrNull(candidateDateTime.getStartDateTime().toLocalTime()),
-                        getTimeOrNull(candidateDateTime.getEndDateTime().toLocalTime()),
-                        candidateDateTime.getParticipantNames().stream()
-                                .map(CandidateDateTimeParticipantName::getName)
-                                .collect(Collectors.toList()),
-                        candidateDateTime.isConfirmed()))
+                .map(AdjustmentResultResponse::getCandidateDateTimeResponse)
                 .collect(Collectors.toList()));
     }
 
-    private static LocalTime getTimeOrNull(LocalTime time) {
-        if (isZeroTime(time)) {
-            return null;
+    private static CandidateDateTimeResponse getCandidateDateTimeResponse(CandidateDateTime candidateDateTime) {
+        LocalTime startTime = candidateDateTime.getStartDateTime().toLocalTime();
+        LocalTime endTime = candidateDateTime.getEndDateTime().toLocalTime();
+        if (isZeroTime(startTime, endTime)) {
+            startTime = null;
+            endTime = null;
         }
-        return time;
+        return new CandidateDateTimeResponse(
+                candidateDateTime.getId(),
+                candidateDateTime.getStartDateTime().toLocalDate(),
+                candidateDateTime.getStartDateTime().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN),
+                startTime,
+                endTime,
+                candidateDateTime.getParticipantNames().stream()
+                        .map(CandidateDateTimeParticipantName::getName)
+                        .collect(Collectors.toList()),
+                candidateDateTime.isConfirmed());
     }
 
-    private static boolean isZeroTime(LocalTime time) {
-        return time.equals(LocalTime.of(0, 0));
+    private static boolean isZeroTime(LocalTime startTime, LocalTime endTime) {
+        return startTime.equals(endTime) && startTime.equals(LocalTime.of(0, 0));
     }
 }
