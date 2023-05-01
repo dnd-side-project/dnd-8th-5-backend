@@ -45,7 +45,7 @@ public class TimeInfo {
                 timeTableParticipantName -> timeTableParticipantName.isSameName(participantName));
     }
 
-    public void removeParticipantByTimeInfoIds(final List<Long> timeInfoIds, final String participantName) {
+    public void removeParticipantByTimeInfoIds(List<Long> timeInfoIds, String participantName) {
         if (timeInfoIds.contains(this.id)) {
             removeParticipantName(participantName);
         }
@@ -64,7 +64,7 @@ public class TimeInfo {
         }
     }
 
-    public void addParticipantByTimeInfoIds(final List<Long> timeInfoIds, final String participantName) {
+    public void addParticipantByTimeInfoIds(List<Long> timeInfoIds, String participantName) {
         if (timeInfoIds.contains(this.id)) {
             addParticipantName(participantName);
         }
@@ -95,12 +95,24 @@ public class TimeInfo {
         return time;
     }
 
+    public LocalTime getTimeOrZeroTime() {
+        if (time == null) {
+            return LocalTime.of(0, 0);
+        }
+        return time;
+    }
+
     public List<TimeInfoParticipantName> getTimeInfoParticipantNames() {
         return timeInfoParticipantNames;
     }
 
     // TODO: test
-    public boolean isSameTime(final LocalTime time) {
+    public boolean isSameTime(LocalTime time) {
         return this.time.equals(time);
+    }
+
+    // TODO: test
+    public boolean hasTime() {
+        return time != null;
     }
 }

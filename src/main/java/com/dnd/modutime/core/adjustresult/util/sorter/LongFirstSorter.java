@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 // TODO: test
 @Component
 public class LongFirstSorter implements CandidateDateTimesSorter{
+
     @Override
-    public void sort(final List<CandidateDateTime> candidateDateTimes) {
+    public void sort(List<CandidateDateTime> candidateDateTimes) {
         Comparator<CandidateDateTime> compare = Comparator
                 .comparing(CandidateDateTime::getParticipantSize, Comparator.reverseOrder())
                 .thenComparing(CandidateDateTime::calculateTerm)

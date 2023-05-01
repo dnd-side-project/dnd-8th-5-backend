@@ -89,13 +89,13 @@ public class DateInfo {
         );
     }
 
-    public void removeParticipantNameByTimeInfoId(final List<Long> timeInfoIds, final String participantName) {
+    public void removeParticipantNameByTimeInfoId(List<Long> timeInfoIds, String participantName) {
         timeInfos.forEach(
                 timeInfo -> timeInfo.removeParticipantByTimeInfoIds(timeInfoIds, participantName)
         );
     }
 
-    public void addParticipantNameByTimeInfoId(final List<Long> timeInfoIds, final String participantName) {
+    public void addParticipantNameByTimeInfoId(List<Long> timeInfoIds, String participantName) {
         timeInfos.forEach(
                 timeInfo -> timeInfo.addParticipantByTimeInfoIds(timeInfoIds, participantName)
         );
