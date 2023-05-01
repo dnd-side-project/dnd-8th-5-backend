@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AdjustmentResponseGenerator implements AdjustmentResultResponseGenerator {
 
+    private static final int EXPOSURE_SIZE = 5;
+
     private final AdjustmentResultRepository adjustmentResultRepository;
     private final CandidateDateTimesSorterFactory candidateDateTimesSorterFactory;
 
@@ -29,7 +31,7 @@ public class AdjustmentResponseGenerator implements AdjustmentResultResponseGene
         CandidateDateTimesSorter candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(candidateDateTimeSortStandard);
         candidateDateTimesSorter.sort(candidateDateTimes);
         return AdjustmentResultResponse.from(candidateDateTimes.stream()
-                .limit(5)
+                .limit(EXPOSURE_SIZE)
                 .collect(Collectors.toList())
         );
     }

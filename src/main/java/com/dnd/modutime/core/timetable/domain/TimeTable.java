@@ -86,15 +86,13 @@ public class TimeTable extends AbstractAggregateRoot<TimeTable> {
         );
     }
 
-    //TODO: refactor
     public List<DateTimeInfoDto> getDateTimeInfosDtoByParticipantNames(List<String> participantNames) {
         List<DateTimeInfoDto> dateTimeInfosDto = new ArrayList<>();
         for (DateInfo dateInfo : dateInfos) {
             List<TimeInfo> timeInfos = dateInfo.getTimeInfosByParticipantNames(participantNames);
-            for (TimeInfo timeInfo : timeInfos) {
-                // TODO: 시간이 없는 방의 경우 time에 null 이 들어갈듯
-                dateTimeInfosDto.add(new DateTimeInfoDto(LocalDateTime.of(dateInfo.getDate(), timeInfo.getTime()), participantNames));
-            }
+            timeInfos.forEach(
+                    timeInfo -> dateTimeInfosDto.add(new DateTimeInfoDto(LocalDateTime.of(dateInfo.getDate(), timeInfo.getTimeOrZeroTime()), participantNames))
+            );
         }
         return dateTimeInfosDto;
     }

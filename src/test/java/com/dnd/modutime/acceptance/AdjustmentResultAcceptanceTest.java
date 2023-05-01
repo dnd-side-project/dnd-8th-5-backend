@@ -1,6 +1,7 @@
 package com.dnd.modutime.acceptance;
 
 import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
+import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequestNoTime;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_08;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
@@ -65,9 +66,51 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
         );
     }
 
-    // TODO:
     @Test
     void 날짜만있는_방의_전체참여자의_조율결과를_조회한다() {
+        RoomCreationResponse roomCreationResponse = 방_생성(getRoomRequestNoTime(List.of(_2023_02_08, _2023_02_09, _2023_02_10)));
+        String roomUuid = roomCreationResponse.getUuid();
+        두명의_날짜를_등록한다(roomUuid);
 
+        ExtractableResponse<Response> response = get("/api/room/" + roomUuid + "/adjustment-result");
+        AdjustmentResultResponse adjustmentResultResponse = response.body().as(AdjustmentResultResponse.class);
+        List<CandidateDateTimeResponse> candidateDateTimeResponses = adjustmentResultResponse.getCandidateDateTimeResponse();
+        CandidateDateTimeResponse candidateDateTimeResponse = candidateDateTimeResponses.get(0);
+        assertAll(
+                () -> assertThat(candidateDateTimeResponses).hasSizeLessThanOrEqualTo(5),
+                () -> assertThat(candidateDateTimeResponse.getId()).isNotNull(),
+                () -> assertThat(candidateDateTimeResponse.getDate()).isNotNull(),
+                () -> assertThat(candidateDateTimeResponse.getDayOfWeek()).isNotNull(),
+                () -> assertThat(candidateDateTimeResponse.getStartTime()).isNull(),
+                () -> assertThat(candidateDateTimeResponse.getEndTime()).isNull(),
+                () -> assertThat(candidateDateTimeResponse.getParticipantNames())
+                        .hasSize(2)
+                        .contains("김동호", "이수진"),
+                () -> assertThat(candidateDateTimeResponse.getIsConfirmed()).isNotNull()
+        );
+    }
+
+    @Test
+    void 날짜만있는_방의_일부참여자의_조율결과를_조회한다() {
+        RoomCreationResponse roomCreationResponse = 방_생성(getRoomRequestNoTime(List.of(_2023_02_08, _2023_02_09, _2023_02_10)));
+        String roomUuid = roomCreationResponse.getUuid();
+        두명의_날짜를_등록한다(roomUuid);
+
+        ExtractableResponse<Response> response = get("/api/room/" + roomUuid + "/adjustment-result?name=김동호");
+        AdjustmentResultResponse adjustmentResultResponse = response.body().as(AdjustmentResultResponse.class);
+        List<CandidateDateTimeResponse> candidateDateTimeResponses = adjustmentResultResponse.getCandidateDateTimeResponse();
+        CandidateDateTimeResponse candidateDateTimeResponse = candidateDateTimeResponses.get(0);
+        assertAll(
+                () -> assertThat(candidateDateTimeResponses).hasSizeLessThanOrEqualTo(5),
+                () -> assertThat(candidateDateTimeResponse.getId()).isNull(),
+                () -> assertThat(candidateDateTimeResponse.getDate()).isNotNull(),
+                () -> assertThat(candidateDateTimeResponse.getDayOfWeek()).isNotNull(),
+                () -> assertThat(candidateDateTimeResponse.getStartTime()).isNull(),
+                () -> assertThat(candidateDateTimeResponse.getEndTime()).isNull(),
+                () -> assertThat(candidateDateTimeResponse.getParticipantNames())
+                        .hasSize(1)
+                        .contains("김동호"),
+                () -> assertThat(candidateDateTimeResponse.getIsConfirmed()).isNull()
+        );
     }
 }
