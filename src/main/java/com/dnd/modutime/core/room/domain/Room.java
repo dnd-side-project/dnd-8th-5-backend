@@ -2,11 +2,13 @@ package com.dnd.modutime.core.room.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import com.dnd.modutime.util.TimeProvider;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +18,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+
+import org.springframework.data.domain.AbstractAggregateRoot;
+
+import com.dnd.modutime.util.TimeProvider;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -114,6 +120,12 @@ public class Room extends AbstractAggregateRoot<Room> {
         if (roomDates.isEmpty()) {
             throw new IllegalArgumentException("날짜는 최소 1개이상 존재해야 합니다.");
         }
+
+        sortingByDate(roomDates);
+    }
+
+    private void sortingByDate(List<RoomDate> roomDates) {
+        Collections.sort(roomDates, Comparator.comparing(RoomDate::getDate));
     }
 
     private void validateDeadLine(LocalDateTime deadLine,

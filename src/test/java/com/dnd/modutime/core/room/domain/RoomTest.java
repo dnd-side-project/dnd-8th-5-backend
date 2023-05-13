@@ -18,12 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.dnd.modutime.util.FakeTimeProvider;
-import com.dnd.modutime.core.room.domain.Room;
-import com.dnd.modutime.core.room.domain.RoomDate;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
+
+import com.dnd.modutime.util.FakeTimeProvider;
 
 public class RoomTest {
 
@@ -121,13 +122,19 @@ public class RoomTest {
 
     @Test
     void 들어온_날짜들이_방의_날짜들안에_모두_포함되면_true를_반환한다() {
-        Room room = getRoomByRoomDates(List.of(new RoomDate(_2023_02_09), new RoomDate(_2023_02_10)));
+        List<RoomDate> roomDates = new ArrayList<>();
+        roomDates.add(new RoomDate(_2023_02_09));
+        roomDates.add(new RoomDate(_2023_02_10));
+        Room room = getRoomByRoomDates(roomDates);
         assertThat(room.containsAllDates(List.of(new RoomDate(_2023_02_09), new RoomDate(_2023_02_10)))).isTrue();
     }
 
     @Test
     void 들어온_날짜들중_하나라도_방의_날짜들안에_모두_포함되지않으면_false를_반환한다() {
-        Room room = getRoomByRoomDates(List.of(new RoomDate(_2023_02_09), new RoomDate(_2023_02_10)));
+        List<RoomDate> roomDates = new ArrayList<>();
+        roomDates.add(new RoomDate(_2023_02_09));
+        roomDates.add(new RoomDate(_2023_02_10));
+        Room room = getRoomByRoomDates(roomDates);
         assertThat(room.containsAllDates(List.of(new RoomDate(_2023_02_08), new RoomDate(_2023_02_09)))).isFalse();
     }
 
@@ -159,5 +166,20 @@ public class RoomTest {
     void 끝나는시간의_이후_시간이_들어오면_예외가_발생한다() {
         Room room = getRoomByStartEndTime(_12_00, _13_00);
         assertThat(room.includeTime(_14_00)).isFalse();
+    }
+
+    @Test
+    void 방_생성시_dates는_날짜순으로_저장된다() {
+        List<RoomDate> roomDates = new ArrayList<>();
+        roomDates.add(new RoomDate(_2023_02_10));
+        roomDates.add(new RoomDate(_2023_02_09));
+        roomDates.add(new RoomDate(_2023_02_08));
+        Room room = getRoomByRoomDates(roomDates);
+        List<RoomDate> getRoomDates = room.getRoomDates();
+        assertAll(
+            () -> assertThat(getRoomDates.get(0).getDate()).isEqualTo(_2023_02_08),
+            () -> assertThat(getRoomDates.get(1).getDate()).isEqualTo(_2023_02_09),
+            () -> assertThat(getRoomDates.get(2).getDate()).isEqualTo(_2023_02_10)
+        );
     }
 }
