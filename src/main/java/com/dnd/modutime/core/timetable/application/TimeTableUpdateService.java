@@ -1,16 +1,19 @@
 package com.dnd.modutime.core.timetable.application;
 
-import com.dnd.modutime.core.timetable.domain.TimeTable;
-import com.dnd.modutime.core.timetable.repository.TimeInfoParticipantNameRepository;
-import com.dnd.modutime.core.timetable.repository.TimeTableRepository;
-import com.dnd.modutime.exception.NotFoundException;
-import com.dnd.modutime.core.timeblock.domain.TimeBlockReplaceEvent;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import com.dnd.modutime.core.timeblock.domain.TimeBlockReplaceEvent;
+import com.dnd.modutime.core.timetable.domain.TimeTable;
+import com.dnd.modutime.core.timetable.repository.TimeInfoParticipantNameRepository;
+import com.dnd.modutime.core.timetable.repository.TimeTableRepository;
+import com.dnd.modutime.exception.NotFoundException;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +28,13 @@ public class TimeTableUpdateService {
     public void update(TimeBlockReplaceEvent event) {
         TimeTable timeTable = getTimeTableByRoomUuid(event.getRoomUuid());
         List<Long> timeInfoIds = timeTable.getTimeInfoIdsByAvailableDateTimes(event.getOldAvailableDateTimes());
+
+        timeTable.removeParticipantName(event.getOldAvailableDateTimes(), event.getParticipantName());
         for (Long timeInfoId : timeInfoIds) {
             timeInfoParticipantNameRepository.deleteByTimeInfoIdAndName(timeInfoId, event.getParticipantName());
         }
-        timeTable.updateParticipantName(event.getOldAvailableDateTimes(),
-                event.getNewAvailableDateTimes(),
-                event.getParticipantName());
+
+        timeTable.addParticipantName(event.getNewAvailableDateTimes(), event.getParticipantName());
         timeTableRepository.save(timeTable);
     }
 
