@@ -1,13 +1,13 @@
 package com.dnd.modutime.core.timeblock.application;
 
+import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
+import com.dnd.modutime.core.timeblock.application.response.TimeBlockResponse;
 import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.core.timeblock.repository.AvailableDateTimeRepository;
 import com.dnd.modutime.core.timeblock.repository.TimeBlockRepository;
 import com.dnd.modutime.core.timeblock.util.DateTimeToAvailableDateTimeConvertor;
 import com.dnd.modutime.core.timeblock.util.DateTimeToAvailableDateTimeConvertorFactory;
-import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
-import com.dnd.modutime.core.timeblock.application.response.TimeBlockResponse;
 import com.dnd.modutime.exception.NotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +44,16 @@ public class TimeBlockService {
     }
 
     public TimeBlockResponse getTimeBlock(String roomUuid, String name) {
-        TimeBlock timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, name);
-        List<AvailableDateTime> availableDateTimes = availableDateTimeRepository.findByTimeBlockId(timeBlock.getId());
-        return TimeBlockResponse.of(timeBlock.getParticipantName(), availableDateTimes);
+        validateRoomExist(roomUuid);
+        return timeBlockRepository.findByRoomUuidAndParticipantName(roomUuid, name)
+                .map(timeBlock -> TimeBlockResponse.of(timeBlock.getParticipantName(),
+                        availableDateTimeRepository.findByTimeBlockId(timeBlock.getId())))
+                .orElse(TimeBlockResponse.of(name, List.of()));
+    }
+
+    private void validateRoomExist(String roomUuid) {
+        if (!timeBlockRepository.existsByRoomUuid(roomUuid)) {
+            throw new NotFoundException("해당하는 TimeBlock을 찾을 수 없습니다.");
+        }
     }
 }
