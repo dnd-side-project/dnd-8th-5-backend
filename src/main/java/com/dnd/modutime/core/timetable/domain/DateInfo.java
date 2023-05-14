@@ -1,11 +1,10 @@
 package com.dnd.modutime.core.timetable.domain;
 
-import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
-import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +16,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
+import com.dnd.modutime.core.timeblock.domain.AvailableTime;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -37,7 +40,7 @@ public class DateInfo {
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn(
-            name = "time_table_id", nullable = false, updatable = false,
+            name = "date_info_id", nullable = false, updatable = false,
             foreignKey = @ForeignKey(name = "fk_time_info_date_info_id_ref_date_info_id")
     )
     private List<TimeInfo> timeInfos;
@@ -56,7 +59,7 @@ public class DateInfo {
         if (!this.date.isEqual(date)) {
             return List.of();
         }
-        if (timesOrNull == null) {
+        if (timesOrNull.isEmpty()) {
             validateTimeInfoIsEmpty();
             return List.of(timeInfos.get(0).getId());
         }
@@ -76,7 +79,7 @@ public class DateInfo {
             return;
         }
         List<AvailableTime> timesOrNull = availableDateTime.getTimesOrNull();
-        if (timesOrNull == null) {
+        if (timesOrNull.isEmpty()) {
             validateTimeInfoIsEmpty();
             TimeInfo timeInfo = timeInfos.get(0);
             timeInfo.removeParticipantName(participantName);
