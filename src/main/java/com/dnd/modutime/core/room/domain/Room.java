@@ -80,6 +80,8 @@ public class Room extends AbstractAggregateRoot<Room> {
         this.headCount = headCount;
         this.uuid = UUID.randomUUID().toString();
         this.deadLine = deadLine;
+
+        sortByDate(roomDates);
     }
 
     private void validateTitle(String title) {
@@ -120,11 +122,9 @@ public class Room extends AbstractAggregateRoot<Room> {
         if (roomDates.isEmpty()) {
             throw new IllegalArgumentException("날짜는 최소 1개이상 존재해야 합니다.");
         }
-
-        sortingByDate(roomDates);
     }
 
-    private void sortingByDate(List<RoomDate> roomDates) {
+    private void sortByDate(List<RoomDate> roomDates) {
         Collections.sort(roomDates, Comparator.comparing(RoomDate::getDate));
     }
 
