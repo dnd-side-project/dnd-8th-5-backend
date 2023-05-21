@@ -10,4 +10,6 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, Long> {
     Optional<TimeBlock> findByRoomUuidAndParticipantName(String roomUuid, String participantName);
 
     List<TimeBlock> findByRoomUuid(String roomUuid);
+
+    boolean existsByRoomUuid(String roomUuid);
 }
