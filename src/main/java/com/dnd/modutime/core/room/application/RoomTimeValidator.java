@@ -47,6 +47,9 @@ public class RoomTimeValidator implements TimeReplaceValidator {
     }
 
     private void validateStartAndEndTime(Room room, List<AvailableDateTime> availableDateTimes) {
+        if (availableDateTimes.isEmpty()) {
+            return;
+        }
         if (room.hasStartAndEndTime() && !hasTime(availableDateTimes)) {
             throw new IllegalArgumentException("해당 방에는 시간 값이 필요합니다.");
         }

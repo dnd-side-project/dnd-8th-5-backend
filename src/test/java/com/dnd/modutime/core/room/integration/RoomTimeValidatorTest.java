@@ -73,6 +73,13 @@ class RoomTimeValidatorTest {
     }
 
     @Test
+    void 시작과_끝나는_시간이_없는_방에_빈_AvailableDateTime_List를_넘겨주면_예외가_발생하지_않는다() {
+        Room room = getRoomByStartEndTime(null, null);
+        Room savedRoom = roomRepository.save(room);
+        assertDoesNotThrow(() -> roomTimeValidator.validate(savedRoom.getUuid(), List.of()));
+    }
+
+    @Test
     void 현재시간이_방의_데드라인이후인경우_예외가_발생한다() {
         Room room = getRoomByStartEndTime(_12_00, _13_00);
         Room savedRoom = roomRepository.save(room);
