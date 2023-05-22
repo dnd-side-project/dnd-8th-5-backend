@@ -9,12 +9,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
-import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
+import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
+import com.dnd.modutime.core.timeblock.application.response.TimeBlockResponse;
 import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -38,7 +41,7 @@ class TimeBlockIntegrationTest {
     @Autowired
     private TimeBlockService timeBlockService;
 
-    @Autowired
+    @SpyBean
     private TimeBlockRepository timeBlockRepository;
 
     @Autowired
@@ -103,6 +106,36 @@ class TimeBlockIntegrationTest {
         // then
         Optional<AvailableDateTime> actual = availableDateTimeRepository.findById(savedAvailableDateTime.getId());
         assertThat(actual.isEmpty()).isTrue();
+    }
+
+    @Test
+    void 시간을_등록하지_않은_참여자로_가능한_시간을_조회하면_빈리스트가_반환된다() {
+        // given
+        given(timeBlockRepository.existsByRoomUuid(ROOM_UUID)).willReturn(true);
+
+        // when
+        TimeBlockResponse timeBlockResponse = timeBlockService.getTimeBlock(ROOM_UUID, "참여자1");
+        List<LocalDateTime> availableDateTimes = timeBlockResponse.getAvailableDateTimes();
+
+        // then
+        assertThat(availableDateTimes).isEmpty();
+    }
+
+    @Test
+    void 시간을_등록했다가_다시지운_참여자로_가능한_시간을_조회하면_빈리스트가_반환된다() {
+        // given
+        given(timeBlockRepository.existsByRoomUuid(ROOM_UUID)).willReturn(true);
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+        timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
+
+        // when
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", false, List.of());
+        timeBlockService.replace(ROOM_UUID, timeReplaceRequest);
+        TimeBlockResponse timeBlockResponse = timeBlockService.getTimeBlock(ROOM_UUID, "참여자1");
+        List<LocalDateTime> availableDateTimes = timeBlockResponse.getAvailableDateTimes();
+
+        // then
+        assertThat(availableDateTimes).isEmpty();
     }
 
     @Test
