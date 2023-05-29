@@ -12,6 +12,7 @@ import com.dnd.modutime.exception.NotFoundException;
 import com.dnd.modutime.core.participant.repository.ParticipantRepository;
 import com.dnd.modutime.util.TimeProvider;
 import com.dnd.modutime.util.Timer;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,14 +70,17 @@ public class RoomService {
     public RoomInfoResponse getInfo(String roomUuid) {
         Room room = getByUuid(roomUuid);
         List<Participant> participants = participantRepository.findByRoomUuid(roomUuid);
+        List<LocalDate> roomDates = room.getRoomDates().stream()
+                .map(RoomDate::getDate)
+                .collect(Collectors.toList());
         return new RoomInfoResponse(room.getTitle(),
                 room.getDeadLineOrNull(),
                 room.getHeadCountOrNull(),
                 participants.stream()
                         .map(Participant::getName)
                         .collect(Collectors.toList()),
-                room.getRoomDates().stream()
-                        .map(RoomDate::getDate)
+                roomDates.stream()
+                        .sorted()
                         .collect(Collectors.toList()),
                 room.getStartTimeOrNull(),
                 room.getEndTimeOrNull());
