@@ -59,7 +59,7 @@ public class DateInfo {
         if (!this.date.isEqual(date)) {
             return List.of();
         }
-        if (timesOrNull.isEmpty()) {
+        if (timesOrNull == null) {
             validateTimeInfoIsEmpty();
             return List.of(timeInfos.get(0).getId());
         }
@@ -79,7 +79,7 @@ public class DateInfo {
             return;
         }
         List<AvailableTime> timesOrNull = availableDateTime.getTimesOrNull();
-        if (timesOrNull.isEmpty()) {
+        if (timesOrNull == null) {
             validateTimeInfoIsEmpty();
             TimeInfo timeInfo = timeInfos.get(0);
             timeInfo.removeParticipantName(participantName);

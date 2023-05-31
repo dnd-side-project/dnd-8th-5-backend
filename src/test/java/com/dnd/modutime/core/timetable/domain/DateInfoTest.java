@@ -44,7 +44,7 @@ public class DateInfoTest {
                 null), "참여자1");
 
         dateInfo.removeParticipantNameIfSameDate(new AvailableDateTime(new TimeBlock(ROOM_UUID, "참여자1"), _2023_02_10,
-                List.of()), "참여자1");
+                null), "참여자1");
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
         assertThat(timeInfo.getTimeInfoParticipantNames().stream()
                 .map(TimeInfoParticipantName::getName)
