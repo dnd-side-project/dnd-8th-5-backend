@@ -33,7 +33,7 @@ public class AvailableDateTime {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn(
             name = "available_date_time_id", nullable = false, updatable = false,
-            foreignKey = @ForeignKey(name = "fk_available_time_available_date_time_id_ref_available_date_time_id")
+            foreignKey = @ForeignKey(name = "fk_at_adt_id_ref_adt_id")
     )
     private List<AvailableTime> times;
 
