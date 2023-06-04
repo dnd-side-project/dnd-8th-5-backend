@@ -43,7 +43,7 @@ public class CandidateDateTime {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn(
             name = "candidate_date_time_id", nullable = false, updatable = false,
-            foreignKey = @ForeignKey(name = "fk_candidate_date_time_participant_name_candidate_date_time_id_ref_candidate_date_time_id")
+            foreignKey = @ForeignKey(name = "fk_cdt_participant_name_cdt_id_ref_cdt_id")
     )
     private List<CandidateDateTimeParticipantName> participantNames;
 
