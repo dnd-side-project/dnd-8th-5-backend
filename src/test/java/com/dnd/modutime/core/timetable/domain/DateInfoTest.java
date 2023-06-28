@@ -12,15 +12,14 @@ import static com.dnd.modutime.fixture.TimeTableFixture.getTimeInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Test;
+
 import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
-import com.dnd.modutime.core.timetable.domain.DateInfo;
-import com.dnd.modutime.core.timetable.domain.TimeInfo;
-import com.dnd.modutime.core.timetable.domain.TimeInfoParticipantName;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
 
 public class DateInfoTest {
 

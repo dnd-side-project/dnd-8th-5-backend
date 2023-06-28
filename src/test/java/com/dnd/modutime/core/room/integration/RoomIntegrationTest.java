@@ -3,6 +3,8 @@ package com.dnd.modutime.core.room.integration;
 import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
 import static com.dnd.modutime.fixture.TimeFixture._13_00;
+import static com.dnd.modutime.fixture.TimeFixture._2023_02_08;
+import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,18 +12,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 import com.dnd.modutime.config.TimeConfiguration;
-import com.dnd.modutime.core.room.application.request.RoomRequest;
-import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
-import com.dnd.modutime.core.timetable.application.response.AvailableTimeInfo;
-import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
-import com.dnd.modutime.core.timetable.application.response.TimeAndCountPerDate;
-import com.dnd.modutime.core.timetable.application.response.TimeTableResponse;
 import com.dnd.modutime.core.participant.application.ParticipantService;
 import com.dnd.modutime.core.room.application.RoomService;
+import com.dnd.modutime.core.room.application.request.RoomRequest;
+import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
+import com.dnd.modutime.core.room.application.response.RoomInfoResponse;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
+import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
 import com.dnd.modutime.core.timeblock.domain.TimeBlockReplaceEvent;
 import com.dnd.modutime.core.timetable.application.TimeTableService;
+import com.dnd.modutime.core.timetable.application.response.AvailableTimeInfo;
+import com.dnd.modutime.core.timetable.application.response.TimeAndCountPerDate;
+import com.dnd.modutime.core.timetable.application.response.TimeTableResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Disabled;
@@ -61,6 +64,20 @@ public class RoomIntegrationTest {
         RoomRequest roomRequest = getRoomRequest();
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
         assertThat(roomCreationResponse.getUuid()).isNotNull();
+    }
+
+    @Test
+    void 방정보_조회시_정렬된_날짜로_조회된다() {
+        // given
+        RoomRequest roomRequest = getRoomRequest(List.of(_2023_02_10, _2023_02_09, _2023_02_08));
+        RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
+
+        // when
+        RoomInfoResponse roomInfo = roomService.getInfo(roomCreationResponse.getUuid());
+
+        // then
+        assertThat(roomInfo.getDates())
+                .containsExactly(_2023_02_08, _2023_02_09, _2023_02_10);
     }
 
     // TODO: 위치 변경 필요
