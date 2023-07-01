@@ -86,7 +86,7 @@ class RoomTimeValidatorTest {
         Room room = getRoomByDeadLine(null);
         Room savedRoom = roomRepository.save(room);
         List<AvailableDateTime> availableDateTimes = List.of(new AvailableDateTime(new TimeBlock(savedRoom.getUuid(),
-                "참여자1"), _2023_02_10, List.of(new AvailableTime(_12_00))));
+            "참여자1"), _2023_02_10, List.of(new AvailableTime(_12_00))));
         timeProvider.setTime(_2023_02_20_00_00);
         assertDoesNotThrow(() -> roomTimeValidator.validate(savedRoom.getUuid(), availableDateTimes));
     }
