@@ -27,7 +27,7 @@ public class DateTimeRoomConvertor implements CandidateDateTimeConvertor {
             List<String> currentParticipantNames = currentDateTimeInfoDto.getParticipantNames();
             LocalDateTime currentStartDateTime = currentDateTimeInfoDto.getDateTime();
 
-            if (isContinuousTime(preStartDateTime, currentStartDateTime, preParticipantNames, currentParticipantNames)) {
+            if (isContinuousTime(preEndDateTime, currentStartDateTime, preParticipantNames, currentParticipantNames)) {
                 preEndDateTime = currentDateTimeInfoDto.getDateTime().plusMinutes(30);
                 continue;
             }
@@ -45,26 +45,22 @@ public class DateTimeRoomConvertor implements CandidateDateTimeConvertor {
         return candidateDateTimes;
     }
 
-    private boolean isContinuousTime(LocalDateTime preDateTime,
-                                     LocalDateTime currentLocalDateTime,
+    private boolean isContinuousTime(LocalDateTime preStartDateTime,
+                                     LocalDateTime currentStartDateTime,
                                      List<String> preParticipantNames,
                                      List<String> currentParticipantNames) {
-        if (isSameSize(preParticipantNames, currentParticipantNames)) {
-            return isContinuousTerm(preDateTime, currentLocalDateTime)
-                    && isSameNames(preParticipantNames, currentParticipantNames);
-        }
-        return false;
+
+        return isSameTime(preStartDateTime, currentStartDateTime) && isSameNames(preParticipantNames, currentParticipantNames);
     }
 
-    private boolean isSameSize(List<String> preParticipantNames, List<String> currentParticipantNames) {
-        return preParticipantNames.size() == currentParticipantNames.size();
-    }
-
-    private boolean isContinuousTerm(LocalDateTime preLocalDateTime, LocalDateTime currentLocalDateTime) {
-        return preLocalDateTime.plusMinutes(30).equals(currentLocalDateTime);
+    private boolean isSameTime(LocalDateTime preStartDateTime, LocalDateTime currentStartDateTime) {
+        return preStartDateTime.isEqual(currentStartDateTime);
     }
 
     private boolean isSameNames(List<String> preParticipantNames, List<String> currentParticipantNames) {
+        if (preParticipantNames.isEmpty()) {
+            return false;
+        }
         return currentParticipantNames.containsAll(preParticipantNames);
     }
 
@@ -72,6 +68,9 @@ public class DateTimeRoomConvertor implements CandidateDateTimeConvertor {
                                   LocalDateTime preStartDateTime,
                                   LocalDateTime preEndDateTime,
                                   List<String> preParticipantNames) {
+        if (preParticipantNames.isEmpty()) {
+            return;
+        }
         candidateDateTimes.add(new CandidateDateTime(null, preStartDateTime, preEndDateTime, null,
                 preParticipantNames.stream()
                         .map(CandidateDateTimeParticipantName::new)
