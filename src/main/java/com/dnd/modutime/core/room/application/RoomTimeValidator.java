@@ -1,14 +1,12 @@
 package com.dnd.modutime.core.room.application;
 
-import com.dnd.modutime.core.room.repository.RoomRepository;
-import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.core.room.domain.Room;
 import com.dnd.modutime.core.room.domain.RoomDate;
+import com.dnd.modutime.core.room.repository.RoomRepository;
+import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import com.dnd.modutime.exception.NotFoundException;
-import com.dnd.modutime.util.TimeProvider;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,21 +18,12 @@ import org.springframework.stereotype.Component;
 public class RoomTimeValidator implements TimeReplaceValidator {
 
     private final RoomRepository roomRepository;
-    private final TimeProvider timeProvider;
 
     @Override
     public void validate(String roomUuid, List<AvailableDateTime> availableDateTimes) {
         Room room = getRoomByRoomUuid(roomUuid);
-        validateDeadLine(room.getDeadLineOrNull());
         validateContainsAllDates(room, availableDateTimes);
         validateStartAndEndTime(room, availableDateTimes);
-    }
-
-    private void validateDeadLine(LocalDateTime deadLineOrNull) {
-        LocalDateTime now = timeProvider.getCurrentLocalDateTime();
-        if (deadLineOrNull != null && now.isAfter(deadLineOrNull)) {
-            throw new IllegalArgumentException("데드라인 이후에는 방을 수정할 수 없습니다.");
-        }
     }
 
     private void validateContainsAllDates(Room room, List<AvailableDateTime> availableDateTimes) {
