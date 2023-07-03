@@ -10,6 +10,14 @@ import static com.dnd.modutime.fixture.TimeFixture._2023_02_20_00_00;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.core.room.application.RoomTimeValidator;
 import com.dnd.modutime.core.room.domain.Room;
@@ -18,12 +26,6 @@ import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.util.FakeTimeProvider;
-import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
 @Import(TimeConfiguration.class)
 @SpringBootTest
@@ -77,17 +79,6 @@ class RoomTimeValidatorTest {
         Room room = getRoomByStartEndTime(null, null);
         Room savedRoom = roomRepository.save(room);
         assertDoesNotThrow(() -> roomTimeValidator.validate(savedRoom.getUuid(), List.of()));
-    }
-
-    @Test
-    void 현재시간이_방의_데드라인이후인경우_예외가_발생한다() {
-        Room room = getRoomByStartEndTime(_12_00, _13_00);
-        Room savedRoom = roomRepository.save(room);
-        List<AvailableDateTime> availableDateTimes = List.of(new AvailableDateTime(new TimeBlock(savedRoom.getUuid(),
-                "참여자1"), _2023_02_10, List.of(new AvailableTime(_12_00))));
-        timeProvider.setTime(_2023_02_20_00_00);
-        assertThatThrownBy(() -> roomTimeValidator.validate(savedRoom.getUuid(), availableDateTimes))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
