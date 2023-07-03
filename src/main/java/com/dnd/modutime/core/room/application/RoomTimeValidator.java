@@ -1,11 +1,5 @@
 package com.dnd.modutime.core.room.application;
 
-import java.time.LocalTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Component;
-
 import com.dnd.modutime.core.room.domain.Room;
 import com.dnd.modutime.core.room.domain.RoomDate;
 import com.dnd.modutime.core.room.repository.RoomRepository;
@@ -13,16 +7,17 @@ import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import com.dnd.modutime.exception.NotFoundException;
-import com.dnd.modutime.util.TimeProvider;
-
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class RoomTimeValidator implements TimeReplaceValidator {
 
     private final RoomRepository roomRepository;
-    private final TimeProvider timeProvider;
 
     @Override
     public void validate(String roomUuid, List<AvailableDateTime> availableDateTimes) {
