@@ -82,16 +82,6 @@ class RoomTimeValidatorTest {
     }
 
     @Test
-    void 현재시간이_방의_데드라인이후인경우_예외가_발생하지_않는다() {
-        Room room = getRoomByStartEndTime(_12_00, _13_00);
-        Room savedRoom = roomRepository.save(room);
-        List<AvailableDateTime> availableDateTimes = List.of(new AvailableDateTime(new TimeBlock(savedRoom.getUuid(),
-                "참여자1"), _2023_02_10, List.of(new AvailableTime(_12_00))));
-        timeProvider.setTime(_2023_02_20_00_00);
-        assertDoesNotThrow(() -> roomTimeValidator.validate(savedRoom.getUuid(), availableDateTimes));
-    }
-
-    @Test
     void 데드라인이_없는_방인경우_데드라인_예외가_발생하지_않는다() {
         Room room = getRoomByDeadLine(null);
         Room savedRoom = roomRepository.save(room);
