@@ -1,6 +1,7 @@
 package com.dnd.modutime.core.timeblock.integration;
 
 import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
+import static com.dnd.modutime.fixture.TimeFixture._00_00;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
 import static com.dnd.modutime.fixture.TimeFixture._13_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
@@ -23,7 +24,6 @@ import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.core.timeblock.repository.AvailableDateTimeRepository;
 import com.dnd.modutime.core.timeblock.repository.TimeBlockRepository;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,7 +79,7 @@ class TimeBlockIntegrationTest {
         TimeBlock savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
 
         // when
-        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", false, List.of(LocalDateTime.of(_2023_02_10, LocalTime.of(0, 0))));
+        TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest("참여자1", false, List.of(LocalDateTime.of(_2023_02_10, _00_00)));
         timeBlockService.replace(ROOM_UUID, timeReplaceRequest);
 
         // then
