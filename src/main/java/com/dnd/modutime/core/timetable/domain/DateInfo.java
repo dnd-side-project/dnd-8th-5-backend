@@ -78,7 +78,7 @@ public class DateInfo {
             return;
         }
         List<AvailableTime> timesOrNull = availableDateTime.getTimesOrNull();
-        if (timesOrNull == null) {
+        if (timesOrNull == null || timesOrNull.isEmpty()) {
             validateTimeInfoIsEmpty();
             TimeInfo timeInfo = timeInfos.get(0);
             timeInfo.removeParticipantName(participantName);
