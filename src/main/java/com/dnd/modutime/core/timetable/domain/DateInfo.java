@@ -59,8 +59,7 @@ public class DateInfo {
         if (!this.date.isEqual(date)) {
             return List.of();
         }
-        if (timesOrNull == null) {
-            validateTimeInfoIsEmpty();
+        if (timesOrNull == null || timesOrNull.isEmpty()) {
             return List.of(timeInfos.get(0).getId());
         }
         List<Long> timeInfoIds = new ArrayList<>();
