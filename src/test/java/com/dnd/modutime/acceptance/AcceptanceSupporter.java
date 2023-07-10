@@ -1,6 +1,7 @@
 package com.dnd.modutime.acceptance;
 
 import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
+import static com.dnd.modutime.fixture.TimeFixture._00_00;
 import static com.dnd.modutime.fixture.TimeFixture._11_00;
 import static com.dnd.modutime.fixture.TimeFixture._11_30;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
@@ -13,15 +14,14 @@ import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
 
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.core.auth.application.request.LoginRequest;
-import com.dnd.modutime.core.room.application.request.RoomRequest;
-import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
+import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
+import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,14 +108,14 @@ public class AcceptanceSupporter {
         로그인후_시간을_등록한다(roomUuid,
                 "김동호",
                 false,
-                List.of(LocalDateTime.of(_2023_02_08, LocalTime.of(0, 0)),
-                        LocalDateTime.of(_2023_02_10, LocalTime.of(0, 0))
+                List.of(LocalDateTime.of(_2023_02_08, _00_00),
+                        LocalDateTime.of(_2023_02_10, _00_00)
                 )
         );
         로그인후_시간을_등록한다(roomUuid,
                 "이수진",
                 false,
-                List.of(LocalDateTime.of(_2023_02_10, LocalTime.of(0, 0)))
+                List.of(LocalDateTime.of(_2023_02_10, _00_00))
         );
     }
 
