@@ -15,6 +15,9 @@ public class DateTimeRoomConvertor implements CandidateDateTimeConvertor {
     @Override
     public List<CandidateDateTime> convert(List<DateTimeInfoDto> dateTimeInfosDto) {
         List<CandidateDateTime> candidateDateTimes = new ArrayList<>();
+        if (dateTimeInfosDto.isEmpty()) {
+            return candidateDateTimes;
+        }
         DateTimeInfoDto firstDateTimeInfoDto = dateTimeInfosDto.get(0);
 
         LocalDateTime preStartDateTime = firstDateTimeInfoDto.getDateTime();

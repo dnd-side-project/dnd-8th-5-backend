@@ -66,4 +66,11 @@ public class DateTimeRoomConvertorTest {
                         .contains("김동호", "이수진")
         );
     }
+
+    @Test
+    void dateInfosDto이_비어있을경우_빈리스트를_반환한다() {
+        List<DateTimeInfoDto> dateTimeInfosDto = List.of();
+        List<CandidateDateTime> candidateDateTimes = dateTimeRoomConvertor.convert(dateTimeInfosDto);
+        assertThat(candidateDateTimes).isEmpty();
+    }
 }
