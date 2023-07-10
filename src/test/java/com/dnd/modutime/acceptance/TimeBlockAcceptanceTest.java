@@ -1,6 +1,7 @@
 package com.dnd.modutime.acceptance;
 
 import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequestNoTime;
+import static com.dnd.modutime.fixture.TimeFixture._00_00;
 import static com.dnd.modutime.fixture.TimeFixture._12_00;
 import static com.dnd.modutime.fixture.TimeFixture._13_00;
 import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
@@ -36,7 +37,7 @@ public class TimeBlockAcceptanceTest extends AcceptanceSupporter {
         String participantName = "참여자1";
         로그인_참여자_1234(roomCreationResponse.getUuid(), participantName);
         ExtractableResponse<Response> response = 시간을_등록한다(roomCreationResponse.getUuid(), participantName, false,
-                List.of(LocalDateTime.of(_2023_02_10, LocalTime.of(0, 0))));
+                List.of(LocalDateTime.of(_2023_02_10, _00_00)));
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
