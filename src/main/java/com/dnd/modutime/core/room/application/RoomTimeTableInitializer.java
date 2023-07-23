@@ -65,11 +65,11 @@ public class RoomTimeTableInitializer implements TimeTableInitializer {
 
     private static void addTimeInfosWhenStartTimeIsAfterEndTime(List<TimeInfo> timeInfos, LocalTime startTime, LocalTime endTime) {
 
-        for (LocalTime time = startTime; !time.equals(ZERO_TIME); time = time.plusMinutes(30)) {
+        for (LocalTime time = ZERO_TIME; time.isBefore(endTime); time = time.plusMinutes(30)) {
             timeInfos.add(new TimeInfo(time, new ArrayList<>()));
         }
 
-        for (LocalTime time = ZERO_TIME; time.isBefore(endTime); time = time.plusMinutes(30)) {
+        for (LocalTime time = startTime; !time.equals(ZERO_TIME); time = time.plusMinutes(30)) {
             timeInfos.add(new TimeInfo(time, new ArrayList<>()));
         }
     }

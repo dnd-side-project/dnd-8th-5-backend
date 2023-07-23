@@ -3,8 +3,8 @@ package com.dnd.modutime.core.room.integration;
 import static com.dnd.modutime.fixture.RoomFixture.*;
 import static com.dnd.modutime.fixture.TimeFixture.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,15 +80,13 @@ public class RoomTimeTableInitializerTest {
         roomTimeTableInitializer.initialize(room.getUuid(), timeTable);
 
         // when
-        List<TimeInfo> timeInfos = timeTable.getDateInfos().get(0).getTimeInfos();
+        List<LocalTime> times = timeTable.getDateInfos().get(0).getTimeInfos().stream()
+            .map(TimeInfo::getTime)
+            .collect(Collectors.toList());
 
         // then
-        assertAll(
-            () -> assertThat(timeInfos.get(0).getTime().equals(_11_00)),
-            () -> assertThat(timeInfos.get(1).getTime().equals(_11_30)),
-            () -> assertThat(timeInfos.get(2).getTime().equals(_12_00)),
-            () -> assertThat(timeInfos.get(3).getTime().equals(_12_30))
-        );
+        assertThat(times).hasSize(4)
+            .containsExactly(_11_00, _11_30, _12_00, _12_30);
     }
 
     @Test
@@ -100,19 +98,13 @@ public class RoomTimeTableInitializerTest {
         roomTimeTableInitializer.initialize(room.getUuid(), timeTable);
 
         // when
-        List<TimeInfo> timeInfos = timeTable.getDateInfos().get(0).getTimeInfos();
+        List<LocalTime> times = timeTable.getDateInfos().get(0).getTimeInfos().stream()
+            .map(TimeInfo::getTime)
+            .collect(Collectors.toList());
 
         // then
-        assertAll(
-            () -> assertThat(timeInfos.get(4).getTime().equals(_22_00)),
-            () -> assertThat(timeInfos.get(5).getTime().equals(_22_30)),
-            () -> assertThat(timeInfos.get(6).getTime().equals(_23_00)),
-            () -> assertThat(timeInfos.get(7).getTime().equals(_23_30)),
-            () -> assertThat(timeInfos.get(0).getTime().equals(_00_00)),
-            () -> assertThat(timeInfos.get(1).getTime().equals(_00_30)),
-            () -> assertThat(timeInfos.get(2).getTime().equals(_01_00)),
-            () -> assertThat(timeInfos.get(3).getTime().equals(_01_30))
-        );
+        assertThat(times).hasSize(8)
+                .containsExactly(_00_00, _00_30, _01_00, _01_30, _22_00, _22_30, _23_00, _23_30);
     }
 
     @Test
@@ -124,14 +116,12 @@ public class RoomTimeTableInitializerTest {
         roomTimeTableInitializer.initialize(room.getUuid(), timeTable);
 
         // when
-        List<TimeInfo> timeInfos = timeTable.getDateInfos().get(0).getTimeInfos();
+        List<LocalTime> times = timeTable.getDateInfos().get(0).getTimeInfos().stream()
+            .map(TimeInfo::getTime)
+            .collect(Collectors.toList());
 
         // then
-        assertAll(
-            () -> assertThat(timeInfos.get(0).getTime().equals(_22_00)),
-            () -> assertThat(timeInfos.get(1).getTime().equals(_22_30)),
-            () -> assertThat(timeInfos.get(2).getTime().equals(_23_00)),
-            () -> assertThat(timeInfos.get(3).getTime().equals(_23_30))
-        );
+        assertThat(times).hasSize(4)
+            .containsExactly(_22_00, _22_30, _23_00, _23_30);
     }
 }
