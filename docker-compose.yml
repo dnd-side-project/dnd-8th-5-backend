@@ -16,3 +16,19 @@ services:
       - "80:80"
     depends_on:
       - web
+
+  dev-web:
+    container_name: web
+    image: ssssujini99/dev-modutime-web
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+
+  dev-nginx:
+    container_name: nginx
+    image: ssssujini99/dev-modutime-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - dev-web
