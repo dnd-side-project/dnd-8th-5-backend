@@ -85,7 +85,7 @@ public class RoomTimeTableInitializerTest {
             .collect(Collectors.toList());
 
         // then
-        assertThat(times).hasSize(4)
+        assertThat(times)
             .containsExactly(_11_00, _11_30, _12_00, _12_30);
     }
 
@@ -103,7 +103,7 @@ public class RoomTimeTableInitializerTest {
             .collect(Collectors.toList());
 
         // then
-        assertThat(times).hasSize(8)
+        assertThat(times)
                 .containsExactly(_00_00, _00_30, _01_00, _01_30, _22_00, _22_30, _23_00, _23_30);
     }
 
@@ -121,7 +121,7 @@ public class RoomTimeTableInitializerTest {
             .collect(Collectors.toList());
 
         // then
-        assertThat(times).hasSize(4)
+        assertThat(times)
             .containsExactly(_22_00, _22_30, _23_00, _23_30);
     }
 }
