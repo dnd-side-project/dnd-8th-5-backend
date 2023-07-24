@@ -1,6 +1,6 @@
 package com.dnd.modutime.core.room.domain;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.GenerationType.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -143,9 +143,9 @@ public class Room extends AbstractAggregateRoot<Room> {
 
     public boolean includeTime(LocalTime time) {
         if (startTime.isBefore(endTime)) {
-            return (!startTime.isAfter(time)) && (time.isBefore(endTime));
+            return (time.equals(startTime) || time.isAfter(startTime)) && time.isBefore(endTime);
         }
-        return !(!endTime.isAfter(time) && time.isBefore(startTime));
+        return (time.equals(startTime) || time.isAfter(startTime)) || time.isBefore(endTime);
     }
 
     public String getTitle() {
