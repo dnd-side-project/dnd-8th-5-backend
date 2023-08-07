@@ -64,7 +64,12 @@ public class DateTimeRoomConvertor implements CandidateDateTimeConvertor {
         if (preParticipantNames.isEmpty()) {
             return false;
         }
-        return currentParticipantNames.containsAll(preParticipantNames);
+        return containsExactly(preParticipantNames, currentParticipantNames);
+    }
+
+    private boolean containsExactly(List<String> preParticipantNames, List<String> currentParticipantNames) {
+        return currentParticipantNames.containsAll(preParticipantNames)
+                && currentParticipantNames.size() == preParticipantNames.size();
     }
 
     private void addCandidateTime(List<CandidateDateTime> candidateDateTimes,
