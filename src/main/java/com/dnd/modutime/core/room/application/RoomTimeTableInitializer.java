@@ -1,26 +1,30 @@
 package com.dnd.modutime.core.room.application;
 
-import com.dnd.modutime.core.room.repository.RoomRepository;
-import com.dnd.modutime.core.timetable.application.TimeTableInitializer;
-import com.dnd.modutime.core.room.domain.Room;
-import com.dnd.modutime.core.room.domain.RoomDate;
-import com.dnd.modutime.core.timetable.domain.DateInfo;
-import com.dnd.modutime.core.timetable.domain.TimeInfo;
-import com.dnd.modutime.core.timetable.domain.TimeTable;
-import com.dnd.modutime.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
+
+import com.dnd.modutime.core.room.domain.Room;
+import com.dnd.modutime.core.room.domain.RoomDate;
+import com.dnd.modutime.core.room.repository.RoomRepository;
+import com.dnd.modutime.core.timetable.application.TimeTableInitializer;
+import com.dnd.modutime.core.timetable.domain.DateInfo;
+import com.dnd.modutime.core.timetable.domain.TimeInfo;
+import com.dnd.modutime.core.timetable.domain.TimeTable;
+import com.dnd.modutime.exception.NotFoundException;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class RoomTimeTableInitializer implements TimeTableInitializer {
 
     private static final int INITIAL_TIME_INFOS_CAPACITY = 50;
+    private static final LocalTime ZERO_TIME = LocalTime.of(0, 0);
 
     private final RoomRepository roomRepository;
 
@@ -49,7 +53,23 @@ public class RoomTimeTableInitializer implements TimeTableInitializer {
             timeInfos.add(new TimeInfo(null, new ArrayList<>()));
             return;
         }
+
+        if (startTime.isAfter(endTime)) {
+            addTimeInfosWhenStartTimeIsAfterEndTime(timeInfos, startTime, endTime);
+            return;
+        }
         for (LocalTime time = startTime; time.isBefore(endTime); time = time.plusMinutes(30)) {
+            timeInfos.add(new TimeInfo(time, new ArrayList<>()));
+        }
+    }
+
+    private static void addTimeInfosWhenStartTimeIsAfterEndTime(List<TimeInfo> timeInfos, LocalTime startTime, LocalTime endTime) {
+
+        for (LocalTime time = ZERO_TIME; time.isBefore(endTime); time = time.plusMinutes(30)) {
+            timeInfos.add(new TimeInfo(time, new ArrayList<>()));
+        }
+
+        for (LocalTime time = startTime; !time.equals(ZERO_TIME); time = time.plusMinutes(30)) {
             timeInfos.add(new TimeInfo(time, new ArrayList<>()));
         }
     }

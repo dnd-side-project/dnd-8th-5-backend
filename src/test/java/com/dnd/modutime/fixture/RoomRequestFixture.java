@@ -1,13 +1,12 @@
 package com.dnd.modutime.fixture;
 
-import static com.dnd.modutime.fixture.TimeFixture._11_00;
-import static com.dnd.modutime.fixture.TimeFixture._14_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.request.TimerRequest;
-import java.time.LocalDate;
-import java.util.List;
 
 public class RoomRequestFixture {
 
@@ -41,4 +40,10 @@ public class RoomRequestFixture {
         return new RoomRequest("이멤버리멤버",
                 10, dates, _11_00, _14_00, timerRequest);
     }
+
+    public static RoomRequest getRoomRequestWithStartTimeIsAfterEndTime() {
+        return new RoomRequest("이멤버리멤버", 10, List.of(_2023_02_10),
+            _01_00, _00_00, new TimerRequest(2, 1, 30));
+    }
+
 }

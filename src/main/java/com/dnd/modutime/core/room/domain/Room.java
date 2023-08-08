@@ -1,12 +1,12 @@
 package com.dnd.modutime.core.room.domain;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.GenerationType.*;
 
-import com.dnd.modutime.util.TimeProvider;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +16,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+
+import org.springframework.data.domain.AbstractAggregateRoot;
+
+import com.dnd.modutime.util.TimeProvider;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -91,9 +95,8 @@ public class Room extends AbstractAggregateRoot<Room> {
             throw new IllegalArgumentException("시작시간과 끝나는 시간은 하나만 null일 수 없습니다.");
         }
 
-
-        if (!startTime.isBefore(endTime)) {
-            throw new IllegalArgumentException("시작시간은 끝나는 시간보다 작아야 합니다.");
+        if (startTime == endTime) {
+            throw new IllegalArgumentException("시작시간과 끝나는 시간은 같을 수 없습니다.");
         }
     }
 
@@ -143,7 +146,10 @@ public class Room extends AbstractAggregateRoot<Room> {
     }
 
     public boolean includeTime(LocalTime time) {
-        return (!startTime.isAfter(time)) && (time.isBefore(endTime));
+        if (startTime.isBefore(endTime)) {
+            return (time.equals(startTime) || time.isAfter(startTime)) && time.isBefore(endTime);
+        }
+        return (time.equals(startTime) || time.isAfter(startTime)) || time.isBefore(endTime);
     }
 
     public String getTitle() {

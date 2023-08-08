@@ -1,16 +1,17 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
-import static com.dnd.modutime.fixture.TimeFixture._00_00;
-import static com.dnd.modutime.fixture.TimeFixture._11_00;
-import static com.dnd.modutime.fixture.TimeFixture._11_30;
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._12_30;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_30;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_08;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
+import static com.dnd.modutime.fixture.RoomRequestFixture.*;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.core.auth.application.request.LoginRequest;
@@ -18,17 +19,10 @@ import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
+
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDateTime;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 
 @Import(TimeConfiguration.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -75,6 +69,12 @@ public class AcceptanceSupporter {
 
     protected RoomCreationResponse 방_생성() {
         RoomRequest roomRequest = getRoomRequest();
+        ExtractableResponse<Response> response = post("/api/room", roomRequest);
+        return response.body().as(RoomCreationResponse.class);
+    }
+
+    protected RoomCreationResponse 시작시간이_끝시간보다_큰_방_생성() {
+        RoomRequest roomRequest = getRoomRequestWithStartTimeIsAfterEndTime();
         ExtractableResponse<Response> response = post("/api/room", roomRequest);
         return response.body().as(RoomCreationResponse.class);
     }

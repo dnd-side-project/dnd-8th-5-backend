@@ -1,24 +1,31 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.TimeFixture._11_00;
-import static com.dnd.modutime.fixture.TimeFixture._14_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import com.dnd.modutime.acceptance.request.RoomRequestWithNoNull;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.room.application.response.RoomInfoResponse;
+
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 public class RoomAcceptanceTest extends AcceptanceSupporter{
 
     @Test
-    void 방을_생성한다() {
+    void 시작시간이_끝시간보다_작은_방을_생성한다() {
         RoomCreationResponse roomCreationResponse = 방_생성();
+        assertThat(roomCreationResponse.getUuid()).isNotNull();
+    }
+
+    @Test
+    void 시작시간이_끝시간보다_큰_방을_생성한다() {
+        RoomCreationResponse roomCreationResponse = 시작시간이_끝시간보다_큰_방_생성();
         assertThat(roomCreationResponse.getUuid()).isNotNull();
     }
 
