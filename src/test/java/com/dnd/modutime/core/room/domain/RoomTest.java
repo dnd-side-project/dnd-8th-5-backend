@@ -1,66 +1,9 @@
 package com.dnd.modutime.core.room.domain;
 
-import static com.dnd.modutime.fixture.RoomFixture.getRoom;
-import static com.dnd.modutime.fixture.RoomFixture.getRoomByHeadCount;
-import static com.dnd.modutime.fixture.RoomFixture.getRoomByRoomDates;
-import static com.dnd.modutime.fixture.RoomFixture.getRoomByStartEndTime;
-import static com.dnd.modutime.fixture.RoomFixture.getRoomByTitle;
-import static com.dnd.modutime.fixture.TimeFixture._00_00;
-import static com.dnd.modutime.fixture.TimeFixture._00_30;
-import static com.dnd.modutime.fixture.TimeFixture._01_00;
-import static com.dnd.modutime.fixture.TimeFixture._01_30;
-import static com.dnd.modutime.fixture.TimeFixture._02_00;
-import static com.dnd.modutime.fixture.TimeFixture._02_30;
-import static com.dnd.modutime.fixture.TimeFixture._03_00;
-import static com.dnd.modutime.fixture.TimeFixture._03_30;
-import static com.dnd.modutime.fixture.TimeFixture._04_00;
-import static com.dnd.modutime.fixture.TimeFixture._04_30;
-import static com.dnd.modutime.fixture.TimeFixture._05_00;
-import static com.dnd.modutime.fixture.TimeFixture._05_30;
-import static com.dnd.modutime.fixture.TimeFixture._06_00;
-import static com.dnd.modutime.fixture.TimeFixture._06_30;
-import static com.dnd.modutime.fixture.TimeFixture._07_00;
-import static com.dnd.modutime.fixture.TimeFixture._07_30;
-import static com.dnd.modutime.fixture.TimeFixture._08_00;
-import static com.dnd.modutime.fixture.TimeFixture._08_30;
-import static com.dnd.modutime.fixture.TimeFixture._09_00;
-import static com.dnd.modutime.fixture.TimeFixture._09_30;
-import static com.dnd.modutime.fixture.TimeFixture._10_00;
-import static com.dnd.modutime.fixture.TimeFixture._10_30;
-import static com.dnd.modutime.fixture.TimeFixture._11_00;
-import static com.dnd.modutime.fixture.TimeFixture._11_30;
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._12_30;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_30;
-import static com.dnd.modutime.fixture.TimeFixture._14_00;
-import static com.dnd.modutime.fixture.TimeFixture._14_30;
-import static com.dnd.modutime.fixture.TimeFixture._15_00;
-import static com.dnd.modutime.fixture.TimeFixture._15_30;
-import static com.dnd.modutime.fixture.TimeFixture._16_00;
-import static com.dnd.modutime.fixture.TimeFixture._16_30;
-import static com.dnd.modutime.fixture.TimeFixture._17_00;
-import static com.dnd.modutime.fixture.TimeFixture._17_30;
-import static com.dnd.modutime.fixture.TimeFixture._18_00;
-import static com.dnd.modutime.fixture.TimeFixture._18_30;
-import static com.dnd.modutime.fixture.TimeFixture._19_00;
-import static com.dnd.modutime.fixture.TimeFixture._19_30;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_08;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10_00_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_20_00_00;
-import static com.dnd.modutime.fixture.TimeFixture._20_00;
-import static com.dnd.modutime.fixture.TimeFixture._20_30;
-import static com.dnd.modutime.fixture.TimeFixture._21_00;
-import static com.dnd.modutime.fixture.TimeFixture._21_30;
-import static com.dnd.modutime.fixture.TimeFixture._22_00;
-import static com.dnd.modutime.fixture.TimeFixture._22_30;
-import static com.dnd.modutime.fixture.TimeFixture._23_00;
-import static com.dnd.modutime.fixture.TimeFixture._23_30;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static com.dnd.modutime.fixture.RoomFixture.*;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -114,6 +57,12 @@ public class RoomTest {
                 () -> assertThat(room.getStartTimeOrNull()).isNull(),
                 () -> assertThat(room.getEndTimeOrNull()).isNull()
         );
+    }
+
+    @Test
+    void 시작시간과_끝시간이_같으면_예외가_발생한다() {
+        assertThatThrownBy(() -> getRoomByStartEndTime(_02_00, _02_00))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
