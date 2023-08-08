@@ -60,7 +60,7 @@ public class RoomTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideAllTime")
+    @MethodSource("provideTimeFrom_00_00To_23_30")
     void 시작시간과_끝시간이_같으면_예외가_발생한다(LocalTime time) {
         assertThatThrownBy(() -> getRoomByStartEndTime(time, time))
             .isInstanceOf(IllegalArgumentException.class);
@@ -155,34 +155,34 @@ public class RoomTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalTimeBetweenStartAndEndTime")
+    @MethodSource("provideTimeFrom_11_00To_12_30")
     void 시작시간이_끝시간보다_큰_경우_사이값의_시간이_포함되면_예외가_발생한다(LocalTime invalidTime) {
         Room room = getRoomByStartEndTime(_13_00, _11_00);
         assertThat(room.includeTime(invalidTime)).isFalse();
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalTimeNotBetweenStartAndEndTime")
+    @MethodSource("provideTimeFrom_13_00To_10_30")
     void 시작시간이_끝시간보다_큰_경우_사이값의_시간이_포함되지_않으면_예외가_발생하지_않는다(LocalTime validTime) {
         Room room = getRoomByStartEndTime(_13_00, _11_00);
         assertThat(room.includeTime(validTime)).isTrue();
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalTimeBetweenStartAndEndTimeWhenEndTimeIsZero")
+    @MethodSource("provideTimeFrom_00_00To_22_30")
     void 끝시간이_00시이고_시작시간이_끝시간보다_큰_경우_사이값의_시간이_포함되면_예외가_발생한다(LocalTime invalidTime) {
         Room room = getRoomByStartEndTime(_23_00, _00_00);
         assertThat(room.includeTime(invalidTime)).isFalse();
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalTimeNotBetweenStartAndEndTimeWhenEndTimeIsZero")
+    @MethodSource("provideTimeFrom_23_00To_23_30")
     void 끝시간이_00시이고_시작시간이_끝시간보다_큰_경우_사이값의_시간이_포함되지_않으면_예외가_발생하지_않는다(LocalTime validTime) {
         Room room = getRoomByStartEndTime(_23_00, _00_00);
         assertThat(room.includeTime(validTime)).isTrue();
     }
 
-    private static Stream<Arguments> provideLocalTimeBetweenStartAndEndTime() {
+    private static Stream<Arguments> provideTimeFrom_11_00To_12_30() {
         return Stream.of(
             Arguments.of(_11_00),
             Arguments.of(_11_30),
@@ -191,7 +191,7 @@ public class RoomTest {
         );
     }
 
-    private static Stream<Arguments> provideLocalTimeNotBetweenStartAndEndTime() {
+    private static Stream<Arguments> provideTimeFrom_13_00To_10_30() {
         return Stream.of(
             Arguments.of(_13_00),
             Arguments.of(_13_30),
@@ -240,7 +240,7 @@ public class RoomTest {
         );
     }
 
-    private static Stream<Arguments> provideLocalTimeBetweenStartAndEndTimeWhenEndTimeIsZero() {
+    private static Stream<Arguments> provideTimeFrom_00_00To_22_30() {
         return Stream.of(
             Arguments.of(_00_00),
             Arguments.of(_00_30),
@@ -291,14 +291,14 @@ public class RoomTest {
         );
     }
 
-    private static Stream<Arguments> provideLocalTimeNotBetweenStartAndEndTimeWhenEndTimeIsZero() {
+    private static Stream<Arguments> provideTimeFrom_23_00To_23_30() {
         return Stream.of(
             Arguments.of(_23_00),
             Arguments.of(_23_30)
         );
     }
 
-    private static Stream<Arguments> provideAllTime() {
+    private static Stream<Arguments> provideTimeFrom_00_00To_23_30() {
         return Stream.of(
             Arguments.of(_00_00),
             Arguments.of(_00_30),
