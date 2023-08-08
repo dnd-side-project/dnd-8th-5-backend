@@ -59,9 +59,10 @@ public class RoomTest {
         );
     }
 
-    @Test
-    void 시작시간과_끝시간이_같으면_예외가_발생한다() {
-        assertThatThrownBy(() -> getRoomByStartEndTime(_02_00, _02_00))
+    @ParameterizedTest
+    @MethodSource("provideAllTime")
+    void 시작시간과_끝시간이_같으면_예외가_발생한다(LocalTime time) {
+        assertThatThrownBy(() -> getRoomByStartEndTime(time, time))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -292,6 +293,59 @@ public class RoomTest {
 
     private static Stream<Arguments> provideLocalTimeNotBetweenStartAndEndTimeWhenEndTimeIsZero() {
         return Stream.of(
+            Arguments.of(_23_00),
+            Arguments.of(_23_30)
+        );
+    }
+
+    private static Stream<Arguments> provideAllTime() {
+        return Stream.of(
+            Arguments.of(_00_00),
+            Arguments.of(_00_30),
+            Arguments.of(_01_00),
+            Arguments.of(_01_30),
+            Arguments.of(_02_00),
+            Arguments.of(_02_30),
+            Arguments.of(_03_00),
+            Arguments.of(_03_30),
+            Arguments.of(_04_00),
+            Arguments.of(_04_30),
+            Arguments.of(_05_00),
+            Arguments.of(_05_30),
+            Arguments.of(_06_00),
+            Arguments.of(_06_30),
+            Arguments.of(_07_00),
+            Arguments.of(_07_30),
+            Arguments.of(_08_00),
+            Arguments.of(_08_30),
+            Arguments.of(_09_00),
+            Arguments.of(_09_30),
+            Arguments.of(_10_00),
+            Arguments.of(_10_30),
+            Arguments.of(_11_00),
+            Arguments.of(_11_30),
+            Arguments.of(_12_00),
+            Arguments.of(_12_30),
+            Arguments.of(_13_00),
+            Arguments.of(_13_30),
+            Arguments.of(_14_00),
+            Arguments.of(_14_30),
+            Arguments.of(_15_00),
+            Arguments.of(_15_30),
+            Arguments.of(_16_00),
+            Arguments.of(_16_30),
+            Arguments.of(_17_00),
+            Arguments.of(_17_30),
+            Arguments.of(_18_00),
+            Arguments.of(_18_30),
+            Arguments.of(_19_00),
+            Arguments.of(_19_30),
+            Arguments.of(_20_00),
+            Arguments.of(_20_30),
+            Arguments.of(_21_00),
+            Arguments.of(_21_30),
+            Arguments.of(_22_00),
+            Arguments.of(_22_30),
             Arguments.of(_23_00),
             Arguments.of(_23_30)
         );
