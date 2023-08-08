@@ -1,66 +1,9 @@
 package com.dnd.modutime.core.room.domain;
 
-import static com.dnd.modutime.fixture.RoomFixture.getRoom;
-import static com.dnd.modutime.fixture.RoomFixture.getRoomByHeadCount;
-import static com.dnd.modutime.fixture.RoomFixture.getRoomByRoomDates;
-import static com.dnd.modutime.fixture.RoomFixture.getRoomByStartEndTime;
-import static com.dnd.modutime.fixture.RoomFixture.getRoomByTitle;
-import static com.dnd.modutime.fixture.TimeFixture._00_00;
-import static com.dnd.modutime.fixture.TimeFixture._00_30;
-import static com.dnd.modutime.fixture.TimeFixture._01_00;
-import static com.dnd.modutime.fixture.TimeFixture._01_30;
-import static com.dnd.modutime.fixture.TimeFixture._02_00;
-import static com.dnd.modutime.fixture.TimeFixture._02_30;
-import static com.dnd.modutime.fixture.TimeFixture._03_00;
-import static com.dnd.modutime.fixture.TimeFixture._03_30;
-import static com.dnd.modutime.fixture.TimeFixture._04_00;
-import static com.dnd.modutime.fixture.TimeFixture._04_30;
-import static com.dnd.modutime.fixture.TimeFixture._05_00;
-import static com.dnd.modutime.fixture.TimeFixture._05_30;
-import static com.dnd.modutime.fixture.TimeFixture._06_00;
-import static com.dnd.modutime.fixture.TimeFixture._06_30;
-import static com.dnd.modutime.fixture.TimeFixture._07_00;
-import static com.dnd.modutime.fixture.TimeFixture._07_30;
-import static com.dnd.modutime.fixture.TimeFixture._08_00;
-import static com.dnd.modutime.fixture.TimeFixture._08_30;
-import static com.dnd.modutime.fixture.TimeFixture._09_00;
-import static com.dnd.modutime.fixture.TimeFixture._09_30;
-import static com.dnd.modutime.fixture.TimeFixture._10_00;
-import static com.dnd.modutime.fixture.TimeFixture._10_30;
-import static com.dnd.modutime.fixture.TimeFixture._11_00;
-import static com.dnd.modutime.fixture.TimeFixture._11_30;
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._12_30;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_30;
-import static com.dnd.modutime.fixture.TimeFixture._14_00;
-import static com.dnd.modutime.fixture.TimeFixture._14_30;
-import static com.dnd.modutime.fixture.TimeFixture._15_00;
-import static com.dnd.modutime.fixture.TimeFixture._15_30;
-import static com.dnd.modutime.fixture.TimeFixture._16_00;
-import static com.dnd.modutime.fixture.TimeFixture._16_30;
-import static com.dnd.modutime.fixture.TimeFixture._17_00;
-import static com.dnd.modutime.fixture.TimeFixture._17_30;
-import static com.dnd.modutime.fixture.TimeFixture._18_00;
-import static com.dnd.modutime.fixture.TimeFixture._18_30;
-import static com.dnd.modutime.fixture.TimeFixture._19_00;
-import static com.dnd.modutime.fixture.TimeFixture._19_30;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_08;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10_00_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_20_00_00;
-import static com.dnd.modutime.fixture.TimeFixture._20_00;
-import static com.dnd.modutime.fixture.TimeFixture._20_30;
-import static com.dnd.modutime.fixture.TimeFixture._21_00;
-import static com.dnd.modutime.fixture.TimeFixture._21_30;
-import static com.dnd.modutime.fixture.TimeFixture._22_00;
-import static com.dnd.modutime.fixture.TimeFixture._22_30;
-import static com.dnd.modutime.fixture.TimeFixture._23_00;
-import static com.dnd.modutime.fixture.TimeFixture._23_30;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static com.dnd.modutime.fixture.RoomFixture.*;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -114,6 +57,13 @@ public class RoomTest {
                 () -> assertThat(room.getStartTimeOrNull()).isNull(),
                 () -> assertThat(room.getEndTimeOrNull()).isNull()
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTimeFrom_00_00To_23_30")
+    void 시작시간과_끝시간이_같으면_예외가_발생한다(LocalTime time) {
+        assertThatThrownBy(() -> getRoomByStartEndTime(time, time))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -205,34 +155,34 @@ public class RoomTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalTimeBetweenStartAndEndTime")
+    @MethodSource("provideTimeFrom_11_00To_12_30")
     void 시작시간이_끝시간보다_큰_경우_사이값의_시간이_포함되면_예외가_발생한다(LocalTime invalidTime) {
         Room room = getRoomByStartEndTime(_13_00, _11_00);
         assertThat(room.includeTime(invalidTime)).isFalse();
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalTimeNotBetweenStartAndEndTime")
+    @MethodSource("provideTimeFrom_13_00To_10_30")
     void 시작시간이_끝시간보다_큰_경우_사이값의_시간이_포함되지_않으면_예외가_발생하지_않는다(LocalTime validTime) {
         Room room = getRoomByStartEndTime(_13_00, _11_00);
         assertThat(room.includeTime(validTime)).isTrue();
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalTimeBetweenStartAndEndTimeWhenEndTimeIsZero")
+    @MethodSource("provideTimeFrom_00_00To_22_30")
     void 끝시간이_00시이고_시작시간이_끝시간보다_큰_경우_사이값의_시간이_포함되면_예외가_발생한다(LocalTime invalidTime) {
         Room room = getRoomByStartEndTime(_23_00, _00_00);
         assertThat(room.includeTime(invalidTime)).isFalse();
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalTimeNotBetweenStartAndEndTimeWhenEndTimeIsZero")
+    @MethodSource("provideTimeFrom_23_00To_23_30")
     void 끝시간이_00시이고_시작시간이_끝시간보다_큰_경우_사이값의_시간이_포함되지_않으면_예외가_발생하지_않는다(LocalTime validTime) {
         Room room = getRoomByStartEndTime(_23_00, _00_00);
         assertThat(room.includeTime(validTime)).isTrue();
     }
 
-    private static Stream<Arguments> provideLocalTimeBetweenStartAndEndTime() {
+    private static Stream<Arguments> provideTimeFrom_11_00To_12_30() {
         return Stream.of(
             Arguments.of(_11_00),
             Arguments.of(_11_30),
@@ -241,7 +191,7 @@ public class RoomTest {
         );
     }
 
-    private static Stream<Arguments> provideLocalTimeNotBetweenStartAndEndTime() {
+    private static Stream<Arguments> provideTimeFrom_13_00To_10_30() {
         return Stream.of(
             Arguments.of(_13_00),
             Arguments.of(_13_30),
@@ -290,7 +240,7 @@ public class RoomTest {
         );
     }
 
-    private static Stream<Arguments> provideLocalTimeBetweenStartAndEndTimeWhenEndTimeIsZero() {
+    private static Stream<Arguments> provideTimeFrom_00_00To_22_30() {
         return Stream.of(
             Arguments.of(_00_00),
             Arguments.of(_00_30),
@@ -341,8 +291,61 @@ public class RoomTest {
         );
     }
 
-    private static Stream<Arguments> provideLocalTimeNotBetweenStartAndEndTimeWhenEndTimeIsZero() {
+    private static Stream<Arguments> provideTimeFrom_23_00To_23_30() {
         return Stream.of(
+            Arguments.of(_23_00),
+            Arguments.of(_23_30)
+        );
+    }
+
+    private static Stream<Arguments> provideTimeFrom_00_00To_23_30() {
+        return Stream.of(
+            Arguments.of(_00_00),
+            Arguments.of(_00_30),
+            Arguments.of(_01_00),
+            Arguments.of(_01_30),
+            Arguments.of(_02_00),
+            Arguments.of(_02_30),
+            Arguments.of(_03_00),
+            Arguments.of(_03_30),
+            Arguments.of(_04_00),
+            Arguments.of(_04_30),
+            Arguments.of(_05_00),
+            Arguments.of(_05_30),
+            Arguments.of(_06_00),
+            Arguments.of(_06_30),
+            Arguments.of(_07_00),
+            Arguments.of(_07_30),
+            Arguments.of(_08_00),
+            Arguments.of(_08_30),
+            Arguments.of(_09_00),
+            Arguments.of(_09_30),
+            Arguments.of(_10_00),
+            Arguments.of(_10_30),
+            Arguments.of(_11_00),
+            Arguments.of(_11_30),
+            Arguments.of(_12_00),
+            Arguments.of(_12_30),
+            Arguments.of(_13_00),
+            Arguments.of(_13_30),
+            Arguments.of(_14_00),
+            Arguments.of(_14_30),
+            Arguments.of(_15_00),
+            Arguments.of(_15_30),
+            Arguments.of(_16_00),
+            Arguments.of(_16_30),
+            Arguments.of(_17_00),
+            Arguments.of(_17_30),
+            Arguments.of(_18_00),
+            Arguments.of(_18_30),
+            Arguments.of(_19_00),
+            Arguments.of(_19_30),
+            Arguments.of(_20_00),
+            Arguments.of(_20_30),
+            Arguments.of(_21_00),
+            Arguments.of(_21_30),
+            Arguments.of(_22_00),
+            Arguments.of(_22_30),
             Arguments.of(_23_00),
             Arguments.of(_23_30)
         );

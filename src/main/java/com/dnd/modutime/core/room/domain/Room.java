@@ -94,6 +94,10 @@ public class Room extends AbstractAggregateRoot<Room> {
         if (startTime == null || endTime == null) {
             throw new IllegalArgumentException("시작시간과 끝나는 시간은 하나만 null일 수 없습니다.");
         }
+
+        if (startTime == endTime) {
+            throw new IllegalArgumentException("시작시간과 끝나는 시간은 같을 수 없습니다.");
+        }
     }
 
     private void validateHeadCount(Integer headCount) {
