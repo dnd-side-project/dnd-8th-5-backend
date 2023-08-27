@@ -45,7 +45,7 @@ public class RoomService {
     }
 
     private LocalDateTime findDeadLineOrNull(TimerRequest timerRequest) {
-        if (hasDeadLine(timerRequest)) {
+        if (!hasDeadLine(timerRequest)) {
             return null;
         }
         return Timer.calculateDeadLine(timerRequest.getDay(),
@@ -55,7 +55,7 @@ public class RoomService {
     }
 
     private boolean hasDeadLine(TimerRequest timerRequest) {
-        return timerRequest == null || checkAllValueZero(timerRequest);
+        return timerRequest != null && !checkAllValueZero(timerRequest);
     }
 
     private boolean checkAllValueZero(TimerRequest timerRequest) {
