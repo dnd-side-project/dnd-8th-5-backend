@@ -2,16 +2,18 @@ package com.dnd.modutime.core.adjustresult.application.response;
 
 import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
 import com.dnd.modutime.core.adjustresult.domain.CandidateDateTimeParticipantName;
+import com.dnd.modutime.core.participant.domain.Participants;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,28 +23,30 @@ public class AdjustmentResultResponse {
     @JsonProperty(value = "candidateTimes")
     private List<CandidateDateTimeResponse> candidateDateTimeResponse;
 
-    public static AdjustmentResultResponse from(List<CandidateDateTime> candidateDateTimes) {
+    public static AdjustmentResultResponse from(List<CandidateDateTime> candidateDateTimes, Participants participants) {
         return new AdjustmentResultResponse(candidateDateTimes.stream()
-                .map(AdjustmentResultResponse::getCandidateDateTimeResponse)
+                .map(it -> getCandidateDateTimeResponse(it, participants))
                 .collect(Collectors.toList()));
     }
 
-    private static CandidateDateTimeResponse getCandidateDateTimeResponse(CandidateDateTime candidateDateTime) {
+    private static CandidateDateTimeResponse getCandidateDateTimeResponse(CandidateDateTime candidateDateTime, Participants participants) {
         LocalTime startTime = candidateDateTime.getStartDateTime().toLocalTime();
         LocalTime endTime = candidateDateTime.getEndDateTime().toLocalTime();
         if (isZeroTime(startTime, endTime)) {
             startTime = null;
             endTime = null;
         }
+        var availableParticipantNames = candidateDateTime.getParticipantNames().stream()
+                .map(CandidateDateTimeParticipantName::getName)
+                .collect(Collectors.toList());
         return new CandidateDateTimeResponse(
                 candidateDateTime.getId(),
                 candidateDateTime.getStartDateTime().toLocalDate(),
                 candidateDateTime.getStartDateTime().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN),
                 startTime,
                 endTime,
-                candidateDateTime.getParticipantNames().stream()
-                        .map(CandidateDateTimeParticipantName::getName)
-                        .collect(Collectors.toList()),
+                availableParticipantNames,
+                participants.getExcludedParticipantNames(availableParticipantNames),
                 candidateDateTime.isConfirmed());
     }
 

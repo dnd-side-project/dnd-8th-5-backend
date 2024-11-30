@@ -42,4 +42,11 @@ public class Participants {
             throw new IllegalArgumentException("이름에 null이 올 수 없습니다.");
         }
     }
+
+    public List<String> getExcludedParticipantNames(List<String> availableParticipantNames) {
+        return participants.stream()
+                .map(Participant::getName)
+                .filter(name -> !availableParticipantNames.contains(name))
+                .collect(Collectors.toList());
+    }
 }
