@@ -10,6 +10,10 @@ name: Java CI with Gradle
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: '배포할 브랜치를 입력합니다. (예: release/1.0.0)'
+        required: true
+        default: 'release/1.0.0'
       tag:
         description: '배포내용을 입력합니다.'
         required: true
@@ -24,6 +28,8 @@ jobs:
 
       - name: checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
