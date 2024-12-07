@@ -35,9 +35,11 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
                 () -> assertThat(candidateDateTimeResponse.getDayOfWeek()).isNotNull(),
                 () -> assertThat(candidateDateTimeResponse.getStartTime()).isNotNull(),
                 () -> assertThat(candidateDateTimeResponse.getEndTime()).isNotNull(),
-                () -> assertThat(candidateDateTimeResponse.getParticipantNames())
+                () -> assertThat(candidateDateTimeResponse.getAvailableParticipantNames())
                         .hasSize(3)
                         .contains("김동호", "이수진", "이세희"),
+                () -> assertThat(candidateDateTimeResponse.getUnavailableParticipantNames())
+                        .isEmpty(),
                 () -> assertThat(candidateDateTimeResponse.getIsConfirmed()).isNotNull()
         );
     }
@@ -59,9 +61,12 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
                 () -> assertThat(candidateDateTimeResponse.getDayOfWeek()).isNotNull(),
                 () -> assertThat(candidateDateTimeResponse.getStartTime()).isNotNull(),
                 () -> assertThat(candidateDateTimeResponse.getEndTime()).isNotNull(),
-                () -> assertThat(candidateDateTimeResponse.getParticipantNames())
+                () -> assertThat(candidateDateTimeResponse.getAvailableParticipantNames())
                         .hasSize(2)
                         .contains("김동호", "이수진"),
+                () -> assertThat(candidateDateTimeResponse.getUnavailableParticipantNames())
+                        .hasSize(1)
+                        .contains("이세희"),
                 () -> assertThat(candidateDateTimeResponse.getIsConfirmed()).isNull()
         );
     }
@@ -83,9 +88,11 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
                 () -> assertThat(candidateDateTimeResponse.getDayOfWeek()).isNotNull(),
                 () -> assertThat(candidateDateTimeResponse.getStartTime()).isNull(),
                 () -> assertThat(candidateDateTimeResponse.getEndTime()).isNull(),
-                () -> assertThat(candidateDateTimeResponse.getParticipantNames())
+                () -> assertThat(candidateDateTimeResponse.getAvailableParticipantNames())
                         .hasSize(2)
                         .contains("김동호", "이수진"),
+                () -> assertThat(candidateDateTimeResponse.getUnavailableParticipantNames())
+                        .isEmpty(),
                 () -> assertThat(candidateDateTimeResponse.getIsConfirmed()).isNotNull()
         );
     }
@@ -107,9 +114,12 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
                 () -> assertThat(candidateDateTimeResponse.getDayOfWeek()).isNotNull(),
                 () -> assertThat(candidateDateTimeResponse.getStartTime()).isNull(),
                 () -> assertThat(candidateDateTimeResponse.getEndTime()).isNull(),
-                () -> assertThat(candidateDateTimeResponse.getParticipantNames())
+                () -> assertThat(candidateDateTimeResponse.getAvailableParticipantNames())
                         .hasSize(1)
                         .contains("김동호"),
+                () -> assertThat(candidateDateTimeResponse.getUnavailableParticipantNames())
+                        .hasSize(1)
+                        .contains("이수진"),
                 () -> assertThat(candidateDateTimeResponse.getIsConfirmed()).isNull()
         );
     }

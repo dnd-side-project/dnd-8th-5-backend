@@ -8,8 +8,11 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '배포내용을 입력합니다.'
+        required: true
 
 permissions:
   contents: read

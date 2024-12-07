@@ -34,12 +34,14 @@ public class AdjustmentResultReplaceService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener
     public void replace(TimeTableReplaceEvent event) {
-        AdjustmentResult adjustmentResult = getByRoomUuid(event.getRoomUuid());
+        var adjustmentResult = getByRoomUuid(event.getRoomUuid());
         candidateDateTimeRepository.deleteAllByAdjustmentResultId(adjustmentResult.getId());
-        List<DateTimeInfoDto> dateTimeInfosDto = convertDateTimeInfosDto(event.getDateInfos());
-        CandidateDateTimeConvertor candidateDateTimeConvertor = candidateDateTimeConvertorFactory.getInstance(event.getRoomUuid());
-        List<CandidateDateTime> candidateDateTimes = candidateDateTimeConvertor.convert(dateTimeInfosDto);
+
+        var dateTimeInfosDto = convertDateTimeInfosDto(event.getDateInfos());
+        var candidateDateTimeConvertor = candidateDateTimeConvertorFactory.getInstance(event.getRoomUuid());
+        var candidateDateTimes = candidateDateTimeConvertor.convert(dateTimeInfosDto);
         candidateDateTimes.forEach(candidateDateTime -> candidateDateTime.makeEntity(adjustmentResult));
+
         candidateDateTimeRepository.saveAll(candidateDateTimes);
         adjustmentResult.replace(candidateDateTimes);
     }

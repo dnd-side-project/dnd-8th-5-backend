@@ -25,6 +25,7 @@ public class CandidateDateTimeResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalTime endTime;
-    private List<String> participantNames;
+    private List<String> availableParticipantNames;
+    private List<String> unavailableParticipantNames;
     private Boolean isConfirmed;
 }

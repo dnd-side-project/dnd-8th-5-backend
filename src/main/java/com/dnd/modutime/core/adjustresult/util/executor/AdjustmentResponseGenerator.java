@@ -1,17 +1,20 @@
 package com.dnd.modutime.core.adjustresult.util.executor;
 
-import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorter;
 import com.dnd.modutime.core.adjustresult.application.CandidateDateTimeSortStandard;
-import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorterFactory;
+import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponse;
 import com.dnd.modutime.core.adjustresult.domain.AdjustmentResult;
 import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
 import com.dnd.modutime.core.adjustresult.repository.AdjustmentResultRepository;
-import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponse;
+import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorter;
+import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorterFactory;
+import com.dnd.modutime.core.participant.domain.Participants;
+import com.dnd.modutime.core.participant.repository.ParticipantRepository;
 import com.dnd.modutime.exception.NotFoundException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class AdjustmentResponseGenerator implements AdjustmentResultResponseGene
 
     private final AdjustmentResultRepository adjustmentResultRepository;
     private final CandidateDateTimesSorterFactory candidateDateTimesSorterFactory;
+    private final ParticipantRepository participantRepository;
 
     @Override
     public AdjustmentResultResponse generate(String roomUuid,
@@ -30,9 +34,11 @@ public class AdjustmentResponseGenerator implements AdjustmentResultResponseGene
         List<CandidateDateTime> candidateDateTimes = adjustmentResult.getCandidateDateTimes();
         CandidateDateTimesSorter candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(candidateDateTimeSortStandard);
         candidateDateTimesSorter.sort(candidateDateTimes);
+        var participants = participantRepository.findByRoomUuid(roomUuid);
         return AdjustmentResultResponse.from(candidateDateTimes.stream()
-                .limit(EXPOSURE_SIZE)
-                .collect(Collectors.toList())
+                        .limit(EXPOSURE_SIZE)
+                        .collect(Collectors.toList()),
+                new Participants(participants)
         );
     }
 
