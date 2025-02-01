@@ -1,11 +1,13 @@
 package com.dnd.modutime.core.adjustresult.domain;
 
+import com.dnd.modutime.core.entity.Auditable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -16,10 +18,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CandidateDateTime {
+public class CandidateDateTime implements Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +50,11 @@ public class CandidateDateTime {
             foreignKey = @ForeignKey(name = "fk_cdt_participant_name_cdt_id_ref_cdt_id")
     )
     private List<CandidateDateTimeParticipantName> participantNames;
+
+    private String createdBy;
+    private LocalDateTime createdAt;
+    private String modifiedBy;
+    private LocalDateTime modifiedAt;
 
     public CandidateDateTime(AdjustmentResult adjustmentResult,
                              LocalDateTime startDateTime,
@@ -90,5 +99,25 @@ public class CandidateDateTime {
 
     public List<CandidateDateTimeParticipantName> getParticipantNames() {
         return participantNames;
+    }
+
+    @Override
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    @Override
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }

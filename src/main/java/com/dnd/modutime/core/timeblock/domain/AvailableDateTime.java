@@ -1,10 +1,12 @@
 package com.dnd.modutime.core.timeblock.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -14,10 +16,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.dnd.modutime.core.entity.Auditable;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AvailableDateTime {
+public class AvailableDateTime implements Auditable {
 
     @Id
     @GeneratedValue
@@ -36,6 +41,11 @@ public class AvailableDateTime {
             foreignKey = @ForeignKey(name = "fk_at_adt_id_ref_adt_id")
     )
     private List<AvailableTime> times;
+
+    private String createdBy;
+    private LocalDateTime createdAt;
+    private String modifiedBy;
+    private LocalDateTime modifiedAt;
 
     public AvailableDateTime(TimeBlock timeBlock,
                              LocalDate date,
@@ -66,5 +76,25 @@ public class AvailableDateTime {
 
     public List<AvailableTime> getTimesOrNull() {
         return times;
+    }
+
+    @Override
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    @Override
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }

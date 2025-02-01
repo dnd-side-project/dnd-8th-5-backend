@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,16 +15,19 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dnd.modutime.core.adjustresult.application.DateTimeInfoDto;
+import com.dnd.modutime.core.entity.Auditable;
 import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TimeTable extends AbstractAggregateRoot<TimeTable> {
+public class TimeTable extends AbstractAggregateRoot<TimeTable> implements Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +38,11 @@ public class TimeTable extends AbstractAggregateRoot<TimeTable> {
 
     @OneToMany(mappedBy = "timeTable", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     private List<DateInfo> dateInfos = List.of();
+
+    private String createdBy;
+    private LocalDateTime createdAt;
+    private String modifiedBy;
+    private LocalDateTime modifiedAt;
 
     public TimeTable(String roomUuid) {
         this.roomUuid = roomUuid;
@@ -103,5 +112,25 @@ public class TimeTable extends AbstractAggregateRoot<TimeTable> {
 
     public List<DateInfo> getDateInfos() {
         return dateInfos;
+    }
+
+    @Override
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    @Override
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }
