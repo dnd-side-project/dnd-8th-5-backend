@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,10 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.dnd.modutime.core.entity.Auditable;
+import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TimeInfo {
+public class TimeInfo implements Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +32,11 @@ public class TimeInfo {
 
     @OneToMany(mappedBy = "timeInfo", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     private List<TimeInfoParticipantName> timeInfoParticipantNames;
+
+    private String createdBy;
+    private LocalDateTime createdAt;
+    private String modifiedBy;
+    private LocalDateTime modifiedAt;
 
     public TimeInfo(LocalTime time,
                     List<TimeInfoParticipantName> timeInfoParticipantNames) {
@@ -114,5 +124,25 @@ public class TimeInfo {
     // TODO: test
     public boolean hasTime() {
         return time != null;
+    }
+
+    @Override
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    @Override
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }
