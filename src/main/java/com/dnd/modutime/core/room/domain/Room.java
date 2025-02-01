@@ -1,32 +1,24 @@
 package com.dnd.modutime.core.room.domain;
 
-import static javax.persistence.GenerationType.*;
+import com.dnd.modutime.core.entity.Auditable;
+import com.dnd.modutime.util.TimeProvider;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-
-import org.springframework.data.domain.AbstractAggregateRoot;
-
-import com.dnd.modutime.util.TimeProvider;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Room extends AbstractAggregateRoot<Room> {
+public class Room extends AbstractAggregateRoot<Room> implements Auditable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -56,6 +48,11 @@ public class Room extends AbstractAggregateRoot<Room> {
 
     @Column
     private LocalDateTime deadLine;
+
+    private String createdBy;
+    private LocalDateTime createdAt;
+    private String modifiedBy;
+    private LocalDateTime modifiedAt;
 
     public Room(String title,
                 LocalTime startTime,
@@ -178,5 +175,25 @@ public class Room extends AbstractAggregateRoot<Room> {
 
     public LocalDateTime getDeadLineOrNull() {
         return deadLine;
+    }
+
+    @Override
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    @Override
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }
