@@ -54,19 +54,6 @@ jobs:
           remote_user: ubuntu
           remote_key: ${{ secrets.KEY }}
 
-      ## create application-prod.yml
-      - name: make application-prod.yml
-        run: |
-          ## create application-prod.yml
-          cd ./src/main/resources
-          
-          # application-database.yml 파일 생성
-          touch ./application-prod.yml
-          
-          # GitHub-Actions 에서 설정한 값을 application-prod.yml 파일에 쓰기
-          echo "${{ secrets.PROD_YML }}" >> ./application-prod.yml
-        shell: bash
-
       ## gradle build
       - name: Build with Gradle
         run: ./gradlew bootJar
@@ -87,6 +74,9 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd /home/ubuntu/srv/ubuntu
+            DB_URL=${{secrets.PROD_DB_URL}}
+            DB_USERNAME=${{secrets.PROD_DB_USERNAME}}
+            DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
             sudo sh install-docker.sh
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
