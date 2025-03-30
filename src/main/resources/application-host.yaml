@@ -1,0 +1,19 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+modutime:
+  host:
+    client: "http://localhost:3000"
+    server: "http://localhost:8080"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+modutime:
+  host:
+    client: "https://www.modutime.site"
+    server: "https://api.modutime.site"

@@ -1,29 +1,36 @@
 package com.dnd.modutime.core.room.util;
 
+import com.dnd.modutime.core.adjustresult.util.convertor.CandidateDateTimeConvertor;
+import com.dnd.modutime.core.adjustresult.util.convertor.DateRoomConvertor;
+import com.dnd.modutime.core.adjustresult.util.convertor.DateTimeRoomConvertor;
+import com.dnd.modutime.core.room.repository.RoomRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.Map;
+import java.util.Optional;
+
 import static com.dnd.modutime.fixture.RoomFixture.getRoom;
 import static com.dnd.modutime.fixture.RoomFixture.getRoomByStartEndTime;
 import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import com.dnd.modutime.core.adjustresult.util.convertor.CandidateDateTimeConvertor;
-import com.dnd.modutime.core.adjustresult.util.convertor.DateRoomConvertor;
-import com.dnd.modutime.core.adjustresult.util.convertor.DateTimeRoomConvertor;
-import com.dnd.modutime.core.room.repository.RoomRepository;
-import java.util.Optional;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-@SpringBootTest
+@DataJpaTest
 class CandidateDateTimeConvertorFactoryTest {
 
-    @Autowired
     private CandidateDateTimeConvertorFactory candidateDateTimeConvertorFactory;
 
     @MockBean
     private RoomRepository roomRepository;
+
+    @BeforeEach
+    void setUp() {
+        var dateTimeRoomConvertor = Map.of("dateTimeRoomConvertor", new DateTimeRoomConvertor(), "dateRoomConvertor", new DateRoomConvertor());
+        candidateDateTimeConvertorFactory = new CandidateDateTimeConvertorFactory(roomRepository, dateTimeRoomConvertor);
+    }
 
     @Test
     void 시간이없는_방이라면_dateRoomConvertor_을_반환한다() {

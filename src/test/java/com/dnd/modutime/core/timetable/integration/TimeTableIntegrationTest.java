@@ -1,33 +1,31 @@
 package com.dnd.modutime.core.timetable.integration;
 
+import com.dnd.modutime.core.participant.application.ParticipantService;
+import com.dnd.modutime.core.timeblock.application.TimeBlockService;
+import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
+import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
+import com.dnd.modutime.core.timeblock.domain.TimeBlockReplaceEvent;
+import com.dnd.modutime.core.timetable.application.TimeTableUpdateService;
+import com.dnd.modutime.util.IntegrationSupporter;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
+import static com.dnd.modutime.fixture.TimeFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
-import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
-import com.dnd.modutime.core.participant.application.ParticipantService;
-import com.dnd.modutime.core.timeblock.application.TimeBlockService;
-import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
-import com.dnd.modutime.core.timeblock.domain.TimeBlockReplaceEvent;
-import com.dnd.modutime.core.timetable.application.TimeTableUpdateService;
-import java.time.LocalDateTime;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
-
-@SpringBootTest
 @RecordApplicationEvents
-public class TimeTableIntegrationTest {
+public class TimeTableIntegrationTest extends IntegrationSupporter {
 
     @MockBean
     private TimeReplaceValidator timeReplaceValidator;

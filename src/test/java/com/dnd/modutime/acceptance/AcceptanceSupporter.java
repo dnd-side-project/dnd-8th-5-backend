@@ -1,32 +1,44 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.RoomRequestFixture.*;
-import static com.dnd.modutime.fixture.TimeFixture.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.core.auth.application.request.LoginRequest;
+import com.dnd.modutime.core.auth.oauth.OAuth2AuthorizationRequestResolverConfig;
+import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenProvider;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
-
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
+import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequestWithStartTimeIsAfterEndTime;
+import static com.dnd.modutime.fixture.TimeFixture.*;
 
 @Import(TimeConfiguration.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class AcceptanceSupporter {
+@SpringBootTestWithoutOAuthConfig(webEnvironment = WebEnvironment.RANDOM_PORT)
+public abstract class AcceptanceSupporter {
+
+    @MockBean
+    private OAuth2AuthorizationRequestResolverConfig oAuth2AuthorizationRequestResolverConfig;
+
+    @MockBean
+    private OAuth2TokenProvider oAuth2TokenProvider;
+
+    @MockBean
+    private OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
 
     @LocalServerPort
     private int port;

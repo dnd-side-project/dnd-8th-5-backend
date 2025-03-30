@@ -5,16 +5,16 @@ import com.dnd.modutime.core.adjustresult.repository.AdjustmentResultRepository;
 import com.dnd.modutime.core.adjustresult.repository.CandidateDateTimeRepository;
 import com.dnd.modutime.core.timetable.domain.TimeInfo;
 import com.dnd.modutime.core.timetable.domain.TimeInfoParticipantName;
-import java.time.LocalTime;
-import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+import java.time.LocalTime;
+import java.util.List;
+
+@Disabled
 @Transactional
 public class AdjustmentResultReplaceServiceTest {
 

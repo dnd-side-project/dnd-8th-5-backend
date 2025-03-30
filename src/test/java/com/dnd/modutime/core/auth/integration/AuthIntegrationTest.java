@@ -1,24 +1,24 @@
 package com.dnd.modutime.core.auth.integration;
 
+import com.dnd.modutime.core.auth.application.AuthService;
+import com.dnd.modutime.core.auth.application.request.LoginRequest;
+import com.dnd.modutime.core.participant.domain.Participant;
+import com.dnd.modutime.core.participant.repository.ParticipantRepository;
+import com.dnd.modutime.core.room.application.RoomService;
+import com.dnd.modutime.core.room.application.request.RoomRequest;
+import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
+import com.dnd.modutime.exception.InvalidPasswordException;
+import com.dnd.modutime.util.IntegrationSupporter;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
+
 import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.dnd.modutime.core.auth.application.AuthService;
-import com.dnd.modutime.exception.InvalidPasswordException;
-import com.dnd.modutime.core.room.application.RoomService;
-import com.dnd.modutime.core.participant.domain.Participant;
-import com.dnd.modutime.core.auth.application.request.LoginRequest;
-import com.dnd.modutime.core.room.application.request.RoomRequest;
-import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
-import com.dnd.modutime.core.participant.repository.ParticipantRepository;
-import java.util.Optional;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-public class AuthIntegrationTest {
+public class AuthIntegrationTest extends IntegrationSupporter {
 
     @Autowired
     private AuthService authService;

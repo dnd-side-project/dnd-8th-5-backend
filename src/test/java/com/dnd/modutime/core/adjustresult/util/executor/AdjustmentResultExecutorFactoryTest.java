@@ -1,32 +1,28 @@
 package com.dnd.modutime.core.adjustresult.util.executor;
 
+import com.dnd.modutime.annotations.MockTest;
+import com.dnd.modutime.core.participant.domain.Participant;
+import com.dnd.modutime.core.participant.repository.ParticipantRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+
+import java.util.List;
+import java.util.Map;
+
 import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
-import com.dnd.modutime.core.adjustresult.util.executor.AdjustmentResponseGenerator;
-import com.dnd.modutime.core.adjustresult.util.executor.AdjustmentResultExecutorFactory;
-import com.dnd.modutime.core.adjustresult.util.executor.AdjustmentResultResponseGenerator;
-import com.dnd.modutime.core.adjustresult.util.executor.TimeTableResponseGenerator;
-import com.dnd.modutime.core.participant.domain.Participant;
-import com.dnd.modutime.core.participant.repository.ParticipantRepository;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-@SpringBootTest
+@MockTest
 public class AdjustmentResultExecutorFactoryTest {
 
-    @Autowired
     private AdjustmentResultExecutorFactory adjustmentResultExecutorFactory;
 
-    @MockBean
+    @Mock
     private ParticipantRepository participantRepository;
 
     @BeforeEach
@@ -34,6 +30,14 @@ public class AdjustmentResultExecutorFactoryTest {
         given(participantRepository.findByRoomUuid(ROOM_UUID)).willReturn(
                 List.of(new Participant(ROOM_UUID, "김동호", "1234"),
                         new Participant(ROOM_UUID, "이수진", "1234"))
+        );
+
+        var adjustmentResponseGenerator = new AdjustmentResponseGenerator(null, null, null);
+        var timeTableResponseGenerator = new TimeTableResponseGenerator(null, null, null, null);
+        adjustmentResultExecutorFactory = new AdjustmentResultExecutorFactory(
+                Map.of("adjustmentResponseGenerator", adjustmentResponseGenerator,
+                        "timeTableResponseGenerator", timeTableResponseGenerator),
+                participantRepository
         );
     }
 
