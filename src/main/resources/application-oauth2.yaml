@@ -8,7 +8,7 @@ spring:
       client:
         registration:
           kakao:
-            client-id: { client-id }
+            client-id: { KAKAO_CLIENT_ID }
             redirect-uri: http://localhost:8080/oauth2/kakao/callback
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
@@ -20,7 +20,7 @@ spring:
             user-name-attribute: id
 
 clients.oauth2:
-  client-mode: stub
+  client-mode: oauth2
   authorization-request-base-uri: /oauth2/authorization
 
 ---
@@ -34,7 +34,7 @@ spring:
       client:
         registration:
           kakao:
-            client-id: { client-id }
+            client-id: { KAKAO_CLIENT_ID }
             redirect-uri: https://api.modutime.site/oauth2/kakao/callback
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email

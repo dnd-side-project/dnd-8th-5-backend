@@ -12,11 +12,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import static org.springframework.http.HttpHeaders.REFERER;
+
 /**
  * OAuth2 인증 성공 핸들러 설정 클래스입니다.
- *
+ * <p>
  * 환경(local, dev, prod)에 따라 적절한 {@link AuthenticationSuccessHandler}를 생성합니다.
- *
+ * <p>
  * local, dev 환경: state 값에 포함된 Referer 헤더를 파싱한 후 해당 주소로 redirect
  * prod 환경: 명시적으로 지정된 프론트의 도메인 주소로 redirect
  *
@@ -46,7 +48,7 @@ public class OAuth2AuthenticationSuccessHandlerConfig {
             return new OAuth2AuthenticationSuccessHandler(
                     this.tokenProvider,
                     this.tokenService,
-                    "Referer" // redirect uri 가 Referer 인 경우 Referer 헤더 사용
+                    REFERER // redirect uri 가 Referer 인 경우 Referer 헤더 사용
             );
         }
     }

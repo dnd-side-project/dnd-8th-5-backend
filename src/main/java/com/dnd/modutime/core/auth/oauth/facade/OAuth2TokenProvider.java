@@ -14,7 +14,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,21 +27,17 @@ import java.util.Date;
 
 @Slf4j
 @Component
+@EnableConfigurationProperties({TokenConfigurationProperties.class})
 public class OAuth2TokenProvider {
 
-    @Value("${token.access-token-expiration-time}")
-    private String accessTokenExpirationTime;
-
-    @Value("${token.refresh-token-expiration-time}")
-    private String refreshTokenExpirationTime;
-
-    @Value("${token.secret}")
-    private String tokenSecret;
-
+    private final TokenConfigurationProperties tokenConfigurationProperties;
     private final UserRepository userRepository;
     private final UserCache userCache;
 
-    public OAuth2TokenProvider(final UserRepository userRepository, final UserCache userCache) {
+    public OAuth2TokenProvider(final TokenConfigurationProperties tokenConfigurationProperties,
+                               final UserRepository userRepository,
+                               final UserCache userCache) {
+        this.tokenConfigurationProperties = tokenConfigurationProperties;
         this.userRepository = userRepository;
         this.userCache = userCache;
     }
@@ -61,11 +57,11 @@ public class OAuth2TokenProvider {
     }
 
     public Date createAccessTokenExpireTime() {
-        return new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpirationTime));
+        return new Date(System.currentTimeMillis() + Long.parseLong(tokenConfigurationProperties.accessTokenExpirationTime()));
     }
 
     public Date createRefreshTokenExpireTime() {
-        return new Date(System.currentTimeMillis() + Long.parseLong(refreshTokenExpirationTime));
+        return new Date(System.currentTimeMillis() + Long.parseLong(tokenConfigurationProperties.refreshTokenExpirationTime()));
     }
 
     public String createOAuth2AccessToken(final String email, final OAuth2Provider provider) {
@@ -74,7 +70,7 @@ public class OAuth2TokenProvider {
                 // .claim(KEY_ROLE, authorities) TODO :: 권한 정책 추가시 설정 필요
                 .setIssuedAt(new Date())
                 .setExpiration(createAccessTokenExpireTime())
-                .signWith(SignatureAlgorithm.HS512, tokenSecret.getBytes(StandardCharsets.UTF_8))
+                .signWith(SignatureAlgorithm.HS512, tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
                 .setHeaderParam("type", "JWT")
                 .compact();
     }
@@ -84,7 +80,7 @@ public class OAuth2TokenProvider {
                 .setSubject(provider.getRegistrationId() + ":" + email)
                 .setIssuedAt(new Date())
                 .setExpiration(createRefreshTokenExpireTime())
-                .signWith(SignatureAlgorithm.HS512, tokenSecret.getBytes(StandardCharsets.UTF_8))
+                .signWith(SignatureAlgorithm.HS512, tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
                 .setHeaderParam("type", "JWT")
                 .compact();
     }
@@ -92,7 +88,7 @@ public class OAuth2TokenProvider {
     public boolean validateOAuth2Token(final String oAuth2AccessToken) {
         try {
             Jwts.parser()
-                    .setSigningKey(tokenSecret.getBytes(StandardCharsets.UTF_8))
+                    .setSigningKey(tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
                     .parseClaimsJws(oAuth2AccessToken);
 
             return true;
@@ -154,7 +150,7 @@ public class OAuth2TokenProvider {
     public Claims getOAuth2TokenClaims(final String accessToken) {
         try {
             return Jwts.parser()
-                    .setSigningKey(tokenSecret.getBytes(StandardCharsets.UTF_8))
+                    .setSigningKey(tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
                     .parseClaimsJws(accessToken)
                     .getBody();
         } catch (ExpiredJwtException e) {

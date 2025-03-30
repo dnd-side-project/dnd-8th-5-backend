@@ -3,6 +3,10 @@ spring:
     active: local
     include:
       - db
+      - oauth2
+      - host
+      - security
+
 logging:
   level:
     org:
