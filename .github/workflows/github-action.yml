@@ -31,7 +31,7 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
 
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
@@ -78,6 +78,8 @@ jobs:
             DB_URL=${{secrets.PROD_DB_URL}}
             DB_USERNAME=${{secrets.PROD_DB_USERNAME}}
             DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
+            KAKAO_CLIENT_ID=${{secrets.KAKAO_CLIENT_ID}}
+            JWT_SECRET=${{secrets.JWT_SECRET}}
             EOL
             
             sudo sh install-docker.sh
