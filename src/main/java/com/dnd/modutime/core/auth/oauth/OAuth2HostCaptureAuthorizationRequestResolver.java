@@ -8,6 +8,9 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.dnd.modutime.core.auth.oauth.OAuth2Constants.TRAILING_SLASH;
+import static org.springframework.http.HttpHeaders.REFERER;
+
 /**
  * 클라이언트에서 OAuth2 인증 요청 시 Referer Header를 추출하여 state 값에 추가합니다.
  * {@link OAuth2AuthenticationSuccessHandler} 에서 state 값을 파싱하여 Redirect URL을 생성할 때 사용합니다.
@@ -27,13 +30,13 @@ public class OAuth2HostCaptureAuthorizationRequestResolver implements OAuth2Auth
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
-        OAuth2AuthorizationRequest authorizationRequest = defaultResolver.resolve(request);
+        var authorizationRequest = defaultResolver.resolve(request);
         return customizeAuthorizationRequest(authorizationRequest, request);
     }
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
-        OAuth2AuthorizationRequest authorizationRequest = defaultResolver.resolve(request, clientRegistrationId);
+        var authorizationRequest = defaultResolver.resolve(request, clientRegistrationId);
         return customizeAuthorizationRequest(authorizationRequest, request);
     }
 
@@ -42,24 +45,22 @@ public class OAuth2HostCaptureAuthorizationRequestResolver implements OAuth2Auth
             return null;
         }
 
-        var referer = request.getHeader("Referer");
-        var state = authorizationRequest.getState(); // CSRF 방지를 위한 랜덤 state 값
-
-        // 요청에서 사용자 정의 파라미터 추출
-        String roomUuid = request.getParameter("room-uuid");
-
-        String normalizedReferer = normalizeReferer(referer);
-
-        // referer와 사용자 정의 파라미터를 state에 추가
-        if (roomUuid != null && !roomUuid.isEmpty()) {
-            state = state + "|" + normalizedReferer + "|" + roomUuid;
-        } else {
-            state = state + "|" + normalizedReferer;
-        }
+        var enhancedState = buildEnhancedState(authorizationRequest.getState(), request);
 
         return OAuth2AuthorizationRequest.from(authorizationRequest)
-                .state(state)
+                .state(enhancedState)
                 .build();
+    }
+
+    private String buildEnhancedState(String originalState, HttpServletRequest request) {
+        var referer = normalizeReferer(request.getHeader(REFERER));
+        var roomUuid = request.getParameter("room-uuid");
+
+        if (roomUuid != null && !roomUuid.isEmpty()) {
+            return String.format("%s|%s|%s", originalState, referer, roomUuid);
+        }
+
+        return String.format("%s|%s", originalState, referer);
     }
 
     /**
@@ -73,6 +74,8 @@ public class OAuth2HostCaptureAuthorizationRequestResolver implements OAuth2Auth
             return null;
         }
 
-        return referer.endsWith("/") ? referer.substring(0, referer.length() - 1) : referer; // 마지막 슬래시(/) 제거
+        return referer.endsWith(TRAILING_SLASH)
+                ? referer.substring(0, referer.length() - 1)
+                : referer;
     }
 }

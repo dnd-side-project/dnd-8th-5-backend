@@ -21,6 +21,8 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import static com.dnd.modutime.core.auth.oauth.OAuth2Constants.REDIRECT_END_POINT;
+
 @Slf4j
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -41,64 +43,83 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response,
                                         final Authentication authentication) throws IOException {
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String email = authentication.getName().split(":")[1];
-        OAuth2Provider provider = oAuth2User.getProvider();
+        var oAuth2User = (OAuth2User) authentication.getPrincipal();
+        var email = authentication.getName().split(":")[1];
+        var provider = oAuth2User.getProvider();
 
-        JwtTokenResponse oAuth2JwtTokenResponse = this.oAuth2TokenProvider.createOAuth2JwtTokenResponse(email, provider);
+        var tokenResponse = createAndSaveTokens(email, provider);
 
-        this.oAuth2TokenService.saveOrUpdateOAuth2RefreshToken(email, provider, oAuth2JwtTokenResponse);
-
-        // access token은 쿼리 파라미터로 전송, refresh token은 쿠키로 전송
-        addCookie(response, "refreshToken", oAuth2JwtTokenResponse.refreshToken(), REFRESH_TOKEN_EXPIRE_TIME);
-        addCookie(response, "refreshTokenExpireTime", DateTimeUtils.toISO8601(oAuth2JwtTokenResponse.refreshTokenExpireTime()), REFRESH_TOKEN_EXPIRE_TIME);
+        addRefreshTokenCookies(response, tokenResponse);
 
         clearAuthenticationAttributes(request);
 
-        String accessToken = URLEncoder.encode(oAuth2JwtTokenResponse.accessToken(), StandardCharsets.UTF_8);
-        String accessTokenExpireTime = URLEncoder.encode(
-                DateTimeUtils.toISO8601(oAuth2JwtTokenResponse.accessTokenExpireTime()),
+        var redirectUrl = buildRedirectUrl(request, tokenResponse);
+        response.sendRedirect(redirectUrl);
+    }
+
+    private JwtTokenResponse createAndSaveTokens(String email, OAuth2Provider provider) {
+        var tokenResponse = this.oAuth2TokenProvider.createOAuth2JwtTokenResponse(email, provider);
+        this.oAuth2TokenService.saveOrUpdateOAuth2RefreshToken(email, provider, tokenResponse);
+        return tokenResponse;
+    }
+
+    private void addRefreshTokenCookies(HttpServletResponse response, JwtTokenResponse tokenResponse) {
+        addCookie(response, "refreshToken", tokenResponse.refreshToken(), REFRESH_TOKEN_EXPIRE_TIME);
+        addCookie(
+                response,
+                "refreshTokenExpireTime",
+                DateTimeUtils.toISO8601(tokenResponse.refreshTokenExpireTime()),
+                REFRESH_TOKEN_EXPIRE_TIME
+        );
+    }
+
+    private String buildRedirectUrl(HttpServletRequest request, JwtTokenResponse tokenResponse) {
+        var accessToken = URLEncoder.encode(tokenResponse.accessToken(), StandardCharsets.UTF_8);
+        var accessTokenExpireTime = URLEncoder.encode(
+                DateTimeUtils.toISO8601(tokenResponse.accessTokenExpireTime()),
                 StandardCharsets.UTF_8
         );
 
-        // state 파라미터에서 리디렉션 URI와 사용자 정의 파라미터 추출
-        String state = request.getParameter("state");
-        String[] stateParts = state.split("\\|");
+        var stateParts = extractStateParts(request);
+        updateRedirectUriIfNeeded(stateParts);
+        var roomUuid = extractRoomUuid(stateParts);
 
-        // 리디렉션 URI 추출 (기존 로직)
-        if (HttpHeaders.REFERER.equals(this.clientRedirectUri)) {
+        var baseRedirectUrl = URI.create(clientRedirectUri).resolve(REDIRECT_END_POINT);
+        log.info("redirectUrl: {}", baseRedirectUrl);
+
+        return buildFinalRedirectUrl(baseRedirectUrl, accessToken, accessTokenExpireTime, roomUuid);
+    }
+
+    private String[] extractStateParts(HttpServletRequest request) {
+        var state = request.getParameter("state");
+        return state.split("\\|");
+    }
+
+    private void updateRedirectUriIfNeeded(String[] stateParts) {
+        if (HttpHeaders.REFERER.equals(this.clientRedirectUri) && stateParts.length > 1) {
             clientRedirectUri = stateParts[1];
         }
+    }
 
-        // 사용자 정의 파라미터 추출 (새로운 로직)
-        String roomUuid = null;
+    private String extractRoomUuid(String[] stateParts) {
         if (stateParts.length > 2) {
-            roomUuid = stateParts[2];
+            return stateParts[2];
         }
+        return null;
+    }
 
-        String endpoint = "kakao/oauth2"; // TODO:
-        URI redirectUrl = URI.create(clientRedirectUri).resolve(endpoint);
-        log.info("redirectUrl: {}", redirectUrl);
-
-        // URI 빌더 생성
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(redirectUrl.toString())
+    private String buildFinalRedirectUrl(URI baseUrl, String accessToken, String accessTokenExpireTime, String roomUuid) {
+        var uriBuilder = UriComponentsBuilder.fromUriString(baseUrl.toString())
                 .queryParam("access_token", accessToken)
                 .queryParam("access_token_expiration_time", accessTokenExpireTime);
 
-        // 사용자 정의 파라미터가 있으면 추가
         if (roomUuid != null && !roomUuid.isEmpty()) {
             uriBuilder.queryParam("room_uuid", roomUuid);
         }
 
-        URI redirectUriWithParams = uriBuilder.build(true).toUri();
-
-        response.sendRedirect(redirectUriWithParams.toString());
+        return uriBuilder.build(true).toUri().toString();
     }
 
-    /**
-     * 이 메서드는 인증 과정 중에 세션에 저장된 임시 데이터를 제거하기 위해 사용됩니다.
-     * 임시 데이터는 주로 인증 실패 시에 저장된 정보로, 예를 들어 사용자가 잘못된 자격 증명을 입력했을 때 발생한 예외 정보 등이 포함됩니다.
-     */
     protected final void clearAuthenticationAttributes(final HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -109,8 +130,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);  // XSS 공격 방어
-        // cookie.setSecure(true); // HTTPS 연결에서만 전송 TODO :: 운영서버 배포 후 쿠키 설정 점검
-        // cookie.setDomain(); // 도메인 설정
         cookie.setPath("/");
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
