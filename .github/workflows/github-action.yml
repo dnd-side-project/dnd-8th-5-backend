@@ -40,7 +40,7 @@ jobs:
       - name: create remote directory
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_2 }}
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: mkdir -p /home/ubuntu/srv/ubuntu
@@ -50,7 +50,7 @@ jobs:
         with:
           switches: -avzr --delete
           remote_path: /home/ubuntu/srv/ubuntu
-          remote_host: ${{ secrets.HOST }}
+          remote_host: ${{ secrets.HOST_2 }}
           remote_user: ubuntu
           remote_key: ${{ secrets.KEY }}
 
@@ -69,7 +69,7 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_2 }}
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: |
