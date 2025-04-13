@@ -84,5 +84,5 @@ jobs:
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-nginx
-            sudo docker-compose --env-file /home/ubuntu/.env up -d
+            sudo docker-compose --env-file /home/ubuntu/srv/ubuntu/.env up -d
             sudo docker image prune -f
