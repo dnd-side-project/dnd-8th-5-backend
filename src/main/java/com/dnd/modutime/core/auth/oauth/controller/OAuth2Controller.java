@@ -6,10 +6,7 @@ import com.dnd.modutime.core.auth.oauth.controller.dto.OAuth2ReIssueTokenRespons
 import com.dnd.modutime.core.auth.oauth.facade.BadCredentialsException;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenService;
 import com.dnd.modutime.core.common.ErrorCode;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class OAuth2Controller {
@@ -39,7 +36,7 @@ public class OAuth2Controller {
      * @see OAuth2SecurityConfig
      */
     @GetMapping("/oauth2/authorization/{registrationId}")
-    public OAuth2LoginResponse oAuth2Login() {
+    public OAuth2LoginResponse oAuth2Login(@RequestParam(value = "roomUuid", required = false) String roomUuid) {
         return null;
     }
 

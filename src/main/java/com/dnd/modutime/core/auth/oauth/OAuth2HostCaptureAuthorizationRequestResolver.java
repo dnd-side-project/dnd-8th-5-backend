@@ -11,8 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 클라이언트에서 OAuth2 인증 요청 시 Referer Header를 추출하여 state 값에 추가합니다.
  * {@link OAuth2AuthenticationSuccessHandler} 에서 state 값을 파싱하여 Redirect URL을 생성할 때 사용합니다.
- *
+ * <p>
  * local, dev 환경에서 사용됩니다.
+ *
  * @see OAuth2AuthorizationRequestResolverConfig
  */
 @Slf4j
@@ -44,8 +45,17 @@ public class OAuth2HostCaptureAuthorizationRequestResolver implements OAuth2Auth
         var referer = request.getHeader("Referer");
         var state = authorizationRequest.getState(); // CSRF 방지를 위한 랜덤 state 값
 
+        // 요청에서 사용자 정의 파라미터 추출
+        String roomUuid = request.getParameter("room-uuid");
+
         String normalizedReferer = normalizeReferer(referer);
-        state = state + "|" + normalizedReferer;
+
+        // referer와 사용자 정의 파라미터를 state에 추가
+        if (roomUuid != null && !roomUuid.isEmpty()) {
+            state = state + "|" + normalizedReferer + "|" + roomUuid;
+        } else {
+            state = state + "|" + normalizedReferer;
+        }
 
         return OAuth2AuthorizationRequest.from(authorizationRequest)
                 .state(state)
@@ -54,7 +64,7 @@ public class OAuth2HostCaptureAuthorizationRequestResolver implements OAuth2Auth
 
     /**
      * Referer URL을 정규화하여 trailing slash(/)를 제거합니다.
-     * 
+     *
      * @param referer 원본 Referer URL
      * @return 정규화된 Referer URL
      */

@@ -61,25 +61,41 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                 StandardCharsets.UTF_8
         );
 
+        // state 파라미터에서 리디렉션 URI와 사용자 정의 파라미터 추출
+        String state = request.getParameter("state");
+        String[] stateParts = state.split("\\|");
+
+        // 리디렉션 URI 추출 (기존 로직)
         if (HttpHeaders.REFERER.equals(this.clientRedirectUri)) {
-            String state = request.getParameter("state");
-            clientRedirectUri = state.split("\\|")[1];
+            clientRedirectUri = stateParts[1];
         }
 
-        String endpoint = "auth";
+        // 사용자 정의 파라미터 추출 (새로운 로직)
+        String roomUuid = null;
+        if (stateParts.length > 2) {
+            roomUuid = stateParts[2];
+        }
+
+        String endpoint = "kakao/oauth2"; // TODO:
         URI redirectUrl = URI.create(clientRedirectUri).resolve(endpoint);
         log.info("redirectUrl: {}", redirectUrl);
 
-        URI redirectUriWithParams = UriComponentsBuilder.fromUriString(redirectUrl.toString())
+        // URI 빌더 생성
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(redirectUrl.toString())
                 .queryParam("access_token", accessToken)
-                .queryParam("access_token_expiration_time", accessTokenExpireTime)
-                .build(true)
-                .toUri();
+                .queryParam("access_token_expiration_time", accessTokenExpireTime);
+
+        // 사용자 정의 파라미터가 있으면 추가
+        if (roomUuid != null && !roomUuid.isEmpty()) {
+            uriBuilder.queryParam("room_uuid", roomUuid);
+        }
+
+        URI redirectUriWithParams = uriBuilder.build(true).toUri();
 
         response.sendRedirect(redirectUriWithParams.toString());
     }
 
-    /**\
+    /**
      * 이 메서드는 인증 과정 중에 세션에 저장된 임시 데이터를 제거하기 위해 사용됩니다.
      * 임시 데이터는 주로 인증 실패 시에 저장된 정보로, 예를 들어 사용자가 잘못된 자격 증명을 입력했을 때 발생한 예외 정보 등이 포함됩니다.
      */

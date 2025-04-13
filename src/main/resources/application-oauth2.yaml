@@ -20,7 +20,7 @@ spring:
             user-name-attribute: id
 
 clients.oauth2:
-  client-mode: oauth2
+  client-mode: stub
   authorization-request-base-uri: /oauth2/authorization
 
 ---
