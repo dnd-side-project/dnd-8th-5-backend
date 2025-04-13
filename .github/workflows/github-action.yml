@@ -74,9 +74,11 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd /home/ubuntu/srv/ubuntu
+            cat > .env << EOL
             DB_URL=${{secrets.PROD_DB_URL}}
             DB_USERNAME=${{secrets.PROD_DB_USERNAME}}
             DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
+            EOL
             sudo sh install-docker.sh
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
