@@ -40,7 +40,7 @@ jobs:
       - name: create remote directory
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_2 }}
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: mkdir -p /home/ubuntu/srv/ubuntu
@@ -50,7 +50,7 @@ jobs:
         with:
           switches: -avzr --delete
           remote_path: /home/ubuntu/srv/ubuntu
-          remote_host: ${{ secrets.HOST }}
+          remote_host: ${{ secrets.HOST_2 }}
           remote_user: ubuntu
           remote_key: ${{ secrets.KEY }}
 
@@ -69,17 +69,21 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_2 }}
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: |
             cd /home/ubuntu/srv/ubuntu
+            cat > .env << EOL
             DB_URL=${{secrets.PROD_DB_URL}}
             DB_USERNAME=${{secrets.PROD_DB_USERNAME}}
             DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
+            EOL
+            
             sudo sh install-docker.sh
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-nginx
-            sudo docker-compose up -d
+
+            sudo docker-compose --env-file .env up -d
             sudo docker image prune -f
