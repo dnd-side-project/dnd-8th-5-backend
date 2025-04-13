@@ -79,9 +79,10 @@ jobs:
             DB_USERNAME=${{secrets.PROD_DB_USERNAME}}
             DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
             EOL
+            
             sudo sh install-docker.sh
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-nginx
-            sudo docker-compose up -d
+            sudo docker-compose --env-file /home/ubuntu/.env up -d
             sudo docker image prune -f
