@@ -77,8 +77,8 @@ public class Participant extends AbstractAggregateRoot<Participant> implements A
     }
 
     @PreRemove
-    private void registerDeleteEvent() {
-        registerEvent(new ParticipantDeletionEvent(this.roomUuid, this.name));
+    private void registerRemovedEvent() {
+        registerEvent(new ParticipantRemovedEvent(this.roomUuid, this.name));
     }
 
     private boolean isRightPassword(String password) {

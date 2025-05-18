@@ -1,19 +1,5 @@
 package com.dnd.modutime.core.timeblock.integration;
 
-import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
-import static com.dnd.modutime.fixture.TimeFixture._00_00;
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
@@ -23,16 +9,28 @@ import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.core.timeblock.repository.AvailableDateTimeRepository;
 import com.dnd.modutime.core.timeblock.repository.TimeBlockRepository;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 @Transactional
 @SpringBootTest
@@ -150,5 +148,34 @@ class TimeBlockIntegrationTest {
         // then
         assertThatThrownBy(() -> timeBlockService.replace(ROOM_UUID, timeReplaceRequest))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("타임 블록을 생성한다.")
+    @Test
+    void test01() {
+        // given
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+
+        // when
+        timeBlockService.create(ROOM_UUID, "참여자1");
+
+        // then
+        var timeBlock = timeBlockRepository.findByRoomUuidAndParticipantName(ROOM_UUID, "참여자1").get();
+        assertThat(timeBlock.getParticipantName()).isEqualTo("참여자1");
+    }
+
+    @DisplayName("타임 블록을 삭제한다.")
+    @Test
+    void test02() {
+        // given
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+        var savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
+        availableDateTimeRepository.save(new AvailableDateTime(savedTimeBlock, _2023_02_10, List.of(new AvailableTime(_12_00))));
+
+        // when
+        timeBlockService.remove(ROOM_UUID, "참여자1");
+
+        // then
+        assertThat(timeBlockRepository.findById(savedTimeBlock.getId()).isEmpty()).isTrue();
     }
 }

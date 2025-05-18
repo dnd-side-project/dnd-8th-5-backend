@@ -1,7 +1,6 @@
 package com.dnd.modutime.core.timetable.integration;
 
 import com.dnd.modutime.core.participant.application.ParticipantService;
-import com.dnd.modutime.core.timeblock.application.TimeBlockCreateService;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
@@ -39,9 +38,6 @@ public class TimeTableIntegrationTest {
 
     @Autowired
     private TimeBlockService timeBlockService;
-
-    @Autowired
-    private TimeBlockCreateService timeBlockCreateService;
 
     @Autowired
     private ParticipantService participantService;

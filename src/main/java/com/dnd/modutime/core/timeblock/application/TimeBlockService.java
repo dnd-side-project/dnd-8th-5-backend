@@ -23,6 +23,11 @@ public class TimeBlockService {
     private final AvailableDateTimeRepository availableDateTimeRepository;
     private final DateTimeToAvailableDateTimeConvertorFactory dateTimeToAvailableDateTimeConvertorFactory;
 
+    public void create(String roomUuid, String participantName) {
+        var timeBlock = new TimeBlock(roomUuid, participantName);
+        timeBlockRepository.save(timeBlock);
+    }
+
     public void replace(String roomUuid, TimeReplaceRequest timeReplaceRequest) {
         var timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, timeReplaceRequest.getName());
 
@@ -35,6 +40,12 @@ public class TimeBlockService {
         availableDateTimeRepository.saveAll(availableDateTimes);
         timeBlock.replace(availableDateTimes);
         timeBlockRepository.save(timeBlock);
+    }
+
+    public void remove(String roomUuid, String participantName) {
+        var timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, participantName);
+        availableDateTimeRepository.deleteAllByTimeBlockId(timeBlock.getId());
+        timeBlockRepository.delete(timeBlock);
     }
 
     private TimeBlock getTimeBlockByRoomUuidAndParticipantName(String roomUuid, String participantName) {

@@ -1,29 +1,23 @@
 package com.dnd.modutime.core.timetable.domain;
 
+import com.dnd.modutime.core.adjustresult.application.DateTimeInfoDto;
+import com.dnd.modutime.core.entity.Auditable;
+import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-import org.springframework.data.domain.AbstractAggregateRoot;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import com.dnd.modutime.core.adjustresult.application.DateTimeInfoDto;
-import com.dnd.modutime.core.entity.Auditable;
-import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
+/**
+ * TimeTable은 '방에 할당된 시간표' 를 나타내는 엔티티입니다.
+ * 방에 속한 모든 날짜와 시간 정보를 포함하고 있으며, 각 날짜/시간에 등록한 참여자 정보도 포함합니다.
+ * 참여자가 자신의 TimeBlock 을 수정하면 TimeTable도 수정됩니다.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
