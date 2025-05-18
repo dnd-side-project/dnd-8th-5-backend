@@ -69,7 +69,12 @@ public class TimeBlock extends AbstractAggregateRoot<TimeBlock> implements Audit
 
     @PreRemove
     private void registerRemovedEvent() {
-        registerEvent(new TimeBlockRemovedEvent());
+        registerEvent(TimeBlockRemovedEvent.of(
+                this.roomUuid,
+                this.availableDateTimes,
+                List.of(),
+                this.participantName
+        ));
     }
 
     public Long getId() {
