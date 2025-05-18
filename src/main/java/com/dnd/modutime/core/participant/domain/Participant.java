@@ -1,24 +1,17 @@
 package com.dnd.modutime.core.participant.domain;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import com.dnd.modutime.core.entity.Auditable;
 import com.dnd.modutime.core.timeblock.application.ParticipantCreationEvent;
-import java.time.LocalDateTime;
-import java.util.regex.Pattern;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PostPersist;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.regex.Pattern;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -80,7 +73,12 @@ public class Participant extends AbstractAggregateRoot<Participant> implements A
 
     @PostPersist
     private void registerCreateEvent() {
-        registerEvent(new ParticipantCreationEvent(roomUuid, name));
+        registerEvent(new ParticipantCreationEvent(this.roomUuid, this.name));
+    }
+
+    @PreRemove
+    private void registerDeleteEvent() {
+        registerEvent(new ParticipantDeletionEvent(this.roomUuid, this.name));
     }
 
     private boolean isRightPassword(String password) {

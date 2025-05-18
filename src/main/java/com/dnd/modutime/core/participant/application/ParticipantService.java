@@ -1,10 +1,10 @@
 package com.dnd.modutime.core.participant.application;
 
+import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
+import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.participant.domain.Email;
 import com.dnd.modutime.core.participant.domain.Participant;
 import com.dnd.modutime.core.participant.repository.ParticipantRepository;
-import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
-import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,5 +42,10 @@ public class ParticipantService {
     public Participant getByRoomUuidAndName(String roomUuid, String name) {
         return participantRepository.findByRoomUuidAndName(roomUuid, name)
                 .orElseThrow(() -> new NotFoundException("해당하는 참여자를 찾을 수 없습니다."));
+    }
+
+    public void delete(String roomUuid, String name) {
+        var participant = getByRoomUuidAndName(roomUuid, name);
+        participantRepository.delete(participant);
     }
 }
