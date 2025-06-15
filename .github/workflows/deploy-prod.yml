@@ -14,7 +14,7 @@ on:
         description: '배포할 브랜치를 입력합니다. (예: release/1.0.0)'
         required: true
         default: 'release/1.0.0'
-      tag:
+      info:
         description: '배포내용을 입력합니다.'
         required: true
 
@@ -25,7 +25,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
+      - name: 배포내용을 출력한다.
+        if: ${{ always() }}
+        run: |
+          echo "배포 내용"
+          echo "- 배포 내용 : ${{ inputs.info }}"
       - name: checkout
         uses: actions/checkout@v3
         with:
