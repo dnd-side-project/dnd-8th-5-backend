@@ -31,7 +31,7 @@ public class ParticipantFacade {
 
     @Transactional
     public void delete(ParticipantsDeleteCommand command) {
-        var participants = queryService.getByRoomUuidAndName(command.getRoomUuid(), command.getParticipantNames());
+        var participants = queryService.getByRoomUuidAndIds(command.getRoomUuid(), command.getParticipantIds());
         command.assign(participants);
         commandHandler.handle(command);
     }

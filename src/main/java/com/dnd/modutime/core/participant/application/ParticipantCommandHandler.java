@@ -24,7 +24,7 @@ public class ParticipantCommandHandler {
     }
 
     @Transactional
-    public void handle(ParticipantCreateCommand command) {
-        participantRepository.save(command.execute());
+    public Participant handle(ParticipantCreateCommand command) {
+        return participantRepository.save(command.execute());
     }
 }

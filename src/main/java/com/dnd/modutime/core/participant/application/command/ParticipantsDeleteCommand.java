@@ -12,14 +12,14 @@ import java.util.List;
 public class ParticipantsDeleteCommand {
 
     private String roomUuid;
-    private List<String> participantNames;
+    private List<Long> participantIds;
 
     private List<Participant> participants;
 
-    public static ParticipantsDeleteCommand of(String roomUuid, List<String> participantNames) {
+    public static ParticipantsDeleteCommand of(String roomUuid, List<Long> participantIds) {
         var command = new ParticipantsDeleteCommand();
         command.roomUuid = roomUuid;
-        command.participantNames = participantNames;
+        command.participantIds = participantIds;
         return command;
     }
 

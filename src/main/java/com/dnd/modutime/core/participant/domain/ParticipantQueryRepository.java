@@ -11,4 +11,6 @@ public interface ParticipantQueryRepository {
     List<Participant> findByRoomUuid(String roomUuid);
 
     List<Participant> findByRoomUuidAndNameIn(String roomUuid, List<String> participantNames);
+
+    List<Participant> findByRoomUuidAndIdIn(String roomUuid, List<Long> participantIds);
 }

@@ -61,10 +61,10 @@ class TimeBlockEventHandlerTest {
     @Test
     void test01() {
         var participantName = "참여자1";
-        participantCommandHandler.handle(ParticipantCreateCommand.of(ROOM_UUID, participantName, "1234"));
+        var participant = participantCommandHandler.handle(ParticipantCreateCommand.of(ROOM_UUID, participantName, "1234"));
 
         // when
-        var command = ParticipantsDeleteCommand.of(ROOM_UUID, List.of(participantName));
+        var command = ParticipantsDeleteCommand.of(ROOM_UUID, List.of(participant.getId()));
         participantFacade.delete(command);
 
         // then

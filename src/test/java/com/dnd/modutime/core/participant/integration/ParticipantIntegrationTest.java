@@ -39,11 +39,11 @@ public class ParticipantIntegrationTest {
         var roomUuid = "roomUuid";
         var name = "name";
         var password = "1234";
-        participantCommandHandler.handle(ParticipantCreateCommand.of(roomUuid, name, password));
-        participantCommandHandler.handle(ParticipantCreateCommand.of(roomUuid, "name2", password));
+        var participant1 = participantCommandHandler.handle(ParticipantCreateCommand.of(roomUuid, name, password));
+        var participant2 = participantCommandHandler.handle(ParticipantCreateCommand.of(roomUuid, "name2", password));
 
         // when
-        var command = ParticipantsDeleteCommand.of(roomUuid, List.of(name, "name2"));
+        var command = ParticipantsDeleteCommand.of(roomUuid, List.of(participant1.getId(), participant2.getId()));
         participantFacade.delete(command);
 
         // then

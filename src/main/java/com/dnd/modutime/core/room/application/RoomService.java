@@ -6,6 +6,7 @@ import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.request.TimerRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.room.application.response.RoomInfoResponse;
+import com.dnd.modutime.core.room.application.response.V2RoomInfoResponse;
 import com.dnd.modutime.core.room.domain.Room;
 import com.dnd.modutime.core.room.domain.RoomDate;
 import com.dnd.modutime.core.room.repository.RoomRepository;
@@ -79,6 +80,25 @@ public class RoomService {
                 room.getHeadCountOrNull(),
                 participants.stream()
                         .map(Participant::getName)
+                        .collect(Collectors.toList()),
+                roomDates.stream()
+                        .sorted()
+                        .collect(Collectors.toList()),
+                room.getStartTimeOrNull(),
+                room.getEndTimeOrNull());
+    }
+
+    public V2RoomInfoResponse v2getInfo(String roomUuid) {
+        var room = getByUuid(roomUuid);
+        var participants = participantQueryService.getByRoomUuid(roomUuid);
+        var roomDates = room.getRoomDates().stream()
+                .map(RoomDate::getDate)
+                .toList();
+        return new V2RoomInfoResponse(room.getTitle(),
+                room.getDeadLineOrNull(),
+                room.getHeadCountOrNull(),
+                participants.stream()
+                        .map(participant -> new V2RoomInfoResponse.Participant(participant.getId(), participant.getName()))
                         .collect(Collectors.toList()),
                 roomDates.stream()
                         .sorted()
