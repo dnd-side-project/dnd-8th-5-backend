@@ -2,6 +2,7 @@ package com.dnd.modutime.acceptance;
 
 import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
+import com.dnd.modutime.core.participant.controller.dto.ParticipantsDeleteRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.room.application.response.RoomInfoResponse;
 import io.restassured.response.ExtractableResponse;
@@ -72,20 +73,22 @@ public class ParticipantAcceptanceTest extends AcceptanceSupporter {
     void test01() {
         RoomCreationResponse roomCreationResponse = 방_생성();
         String roomUuid = roomCreationResponse.getUuid();
-        로그인_참여자_1234(roomUuid, PARTICIPANT_NAME);
+        로그인_참여자_1234(roomUuid, "이채민");
+        로그인_참여자_1234(roomUuid, "김주현");
+        로그인_참여자_1234(roomUuid, "김동호");
         시간을_등록한다(roomUuid, PARTICIPANT_NAME, false,
                 List.of(LocalDateTime.of(_2023_02_09, _11_00),
                         LocalDateTime.of(_2023_02_09, _12_00))
         );
-        var response = 참여자를_삭제한다(roomUuid, PARTICIPANT_NAME);
+        var request = new ParticipantsDeleteRequest(List.of("이채민", "김주현"));
+        var response = 참여자를_삭제한다(roomUuid, request);
 
         ExtractableResponse<Response> roomInfoResponse = get("/api/room/" + roomCreationResponse.getUuid());
         RoomInfoResponse roomInfo = roomInfoResponse.body().as(RoomInfoResponse.class);
-//        RoomInfoResponse roomInfoResponse = response.body().as(RoomInfoResponse.class);
 
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            softAssertions.assertThat(roomInfo.getParticipantNames()).hasSize(0);
+            softAssertions.assertThat(roomInfo.getParticipantNames()).hasSize(1).containsExactly("김동호");
         });
     }
 }

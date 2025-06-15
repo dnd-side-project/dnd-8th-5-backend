@@ -3,9 +3,12 @@ package com.dnd.modutime.core.participant.controller;
 import com.dnd.modutime.core.participant.application.ParticipantService;
 import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
+import com.dnd.modutime.core.participant.controller.dto.ParticipantsDeleteRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +34,13 @@ public class ParticipantController {
     public ResponseEntity<Void> deleteParticipant(@PathVariable String roomUuid,
                                                   @PathVariable String name) {
         participantService.delete(roomUuid, name);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/api/room/{roomUuid}")
+    public ResponseEntity<Void> deleteParticipants(@PathVariable String roomUuid,
+                                                   @RequestBody @Valid ParticipantsDeleteRequest request) {
+        participantService.delete(roomUuid, request.participantNames());
         return ResponseEntity.ok().build();
     }
 }

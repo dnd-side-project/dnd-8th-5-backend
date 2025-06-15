@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -47,5 +49,14 @@ public class ParticipantService {
     public void delete(String roomUuid, String name) {
         var participant = getByRoomUuidAndName(roomUuid, name);
         participantRepository.delete(participant);
+    }
+
+    public void delete(String roomUuid, List<String> participantNames) {
+        var participants = getByRoomUuidAndName(roomUuid, participantNames);
+        participantRepository.deleteAll(participants);
+    }
+
+    private List<Participant> getByRoomUuidAndName(String roomUuid, List<String> participantNames) {
+        return participantRepository.findByRoomUuidAndNameIn(roomUuid, participantNames);
     }
 }

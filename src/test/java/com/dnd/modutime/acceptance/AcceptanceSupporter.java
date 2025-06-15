@@ -3,6 +3,7 @@ package com.dnd.modutime.acceptance;
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.core.auth.application.request.LoginRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
+import com.dnd.modutime.core.participant.controller.dto.ParticipantsDeleteRequest;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
@@ -110,8 +111,8 @@ public class AcceptanceSupporter {
         return put("/api/room/" + roomUuid + "/available-time", timeReplaceRequest);
     }
 
-    protected ExtractableResponse<Response> 참여자를_삭제한다(String roomUuid, String participantName) {
-        return delete("/api/room/" + roomUuid + "/participants/" + participantName);
+    protected ExtractableResponse<Response> 참여자를_삭제한다(String roomUuid, ParticipantsDeleteRequest request) {
+        return delete("/api/room/" + roomUuid, request);
     }
 
     protected void 로그인후_시간을_등록한다(String roomUuid, String participantName, Boolean hasTime, List<LocalDateTime> requests) {
