@@ -41,28 +41,28 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: create remote directory
+      - name: create remote directory & container down
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_2 }}
           username: ubuntu
           key: ${{ secrets.KEY }}
-          script: mkdir -p /home/ubuntu/srv/ubuntu
-
-      - name: 기존 컨테이너 삭제 및 캐시 삭제
-        run: |
-          # 실행 중인 컨테이너가 있으면 중지
-          if [ "$(docker ps -q)" ]; then
+          script: |
+            # 디렉토리 생성
+            mkdir -p /home/ubuntu/srv/ubuntu
+            
+            # 실행 중인 컨테이너가 있으면 중지
+            if [ "$(docker ps -q)" ]; then
             sudo docker stop $(docker ps -q)
-          fi
-          
-          # 모든 컨테이너가 있으면 삭제
-          if [ "$(docker ps -qa)" ]; then
+            fi
+            
+            # 모든 컨테이너가 있으면 삭제
+            if [ "$(docker ps -qa)" ]; then
             sudo docker rm $(docker ps -qa)
-          fi
-          
-          # 이미지 정리
-          sudo docker image prune -a -f
+            fi
+            
+            # 이미지 정리
+            sudo docker image prune -a -f
 
       - name: copy source via ssh key
         uses: burnett01/rsync-deployments@4.1
