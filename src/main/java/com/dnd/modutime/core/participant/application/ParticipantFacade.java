@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.participant.application;
 
+import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
 import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.participant.domain.Email;
@@ -8,19 +9,19 @@ import com.dnd.modutime.core.participant.repository.ParticipantRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional
-public class ParticipantService {
+public class ParticipantFacade {
 
     private final ParticipantRepository participantRepository;
     private final ParticipantQueryService participantQueryService;
+    private final ParticipantCommandHandler participantCommandHandler;
 
-    public ParticipantService(ParticipantRepository participantRepository,
-                              ParticipantQueryService participantQueryService) {
+    public ParticipantFacade(ParticipantRepository participantRepository,
+                             ParticipantQueryService participantQueryService, ParticipantCommandHandler participantCommandHandler) {
         this.participantRepository = participantRepository;
         this.participantQueryService = participantQueryService;
+        this.participantCommandHandler = participantCommandHandler;
     }
 
     public void create(String roomUuid, String name, String password) {
@@ -35,7 +36,7 @@ public class ParticipantService {
 
     public void registerEmail(String roomUuid,
                               EmailCreationRequest emailCreationRequest) {
-        var participant = getByRoomUuidAndName(roomUuid, emailCreationRequest.getName());
+        var participant = participantQueryService.getByRoomUuidAndName(roomUuid, emailCreationRequest.getName());
         participant.registerEmail(new Email(emailCreationRequest.getEmail()));
     }
 
@@ -44,18 +45,9 @@ public class ParticipantService {
         return EmailResponse.from(participant.getEmailOrNull());
     }
 
-    @Transactional(readOnly = true)
-    public Participant getByRoomUuidAndName(String roomUuid, String name) {
-        return participantQueryService.getByRoomUuidAndName(roomUuid, name);
-    }
-
-    public void delete(String roomUuid, String name) {
-        var participant = getByRoomUuidAndName(roomUuid, name);
-        participantRepository.delete(participant);
-    }
-
-    public void delete(String roomUuid, List<String> participantNames) {
-        var participants = participantQueryService.getByRoomUuidAndName(roomUuid, participantNames);
-        participantRepository.deleteAll(participants);
+    public void delete(ParticipantsDeleteCommand command) {
+        var participants = participantQueryService.getByRoomUuidAndName(command.getRoomUuid(), command.getParticipantNames());
+        command.assign(participants);
+        participantCommandHandler.handle(command);
     }
 }

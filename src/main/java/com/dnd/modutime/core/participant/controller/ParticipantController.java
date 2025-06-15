@@ -1,6 +1,6 @@
 package com.dnd.modutime.core.participant.controller;
 
-import com.dnd.modutime.core.participant.application.ParticipantService;
+import com.dnd.modutime.core.participant.application.ParticipantFacade;
 import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.participant.controller.dto.ParticipantsDeleteRequest;
@@ -14,33 +14,26 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class ParticipantController {
 
-    private final ParticipantService participantService;
+    private final ParticipantFacade participantFacade;
 
     @PostMapping("/api/room/{roomUuid}/email")
     public ResponseEntity<Void> registerEmail(@PathVariable String roomUuid,
                                               @RequestBody EmailCreationRequest emailCreationRequest) {
-        participantService.registerEmail(roomUuid, emailCreationRequest);
+        participantFacade.registerEmail(roomUuid, emailCreationRequest);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/api/room/{roomUuid}/email")
     public ResponseEntity<EmailResponse> getEmail(@PathVariable String roomUuid,
                                                   @RequestParam String name) {
-        EmailResponse emailResponse = participantService.getEmail(roomUuid, name);
+        EmailResponse emailResponse = participantFacade.getEmail(roomUuid, name);
         return ResponseEntity.ok(emailResponse);
-    }
-
-    @DeleteMapping("/api/room/{roomUuid}/participants/{name}")
-    public ResponseEntity<Void> deleteParticipant(@PathVariable String roomUuid,
-                                                  @PathVariable String name) {
-        participantService.delete(roomUuid, name);
-        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/api/room/{roomUuid}")
     public ResponseEntity<Void> deleteParticipants(@PathVariable String roomUuid,
                                                    @RequestBody @Valid ParticipantsDeleteRequest request) {
-        participantService.delete(roomUuid, request.participantNames());
+        participantFacade.delete(request.toCommand(roomUuid));
         return ResponseEntity.ok().build();
     }
 }
