@@ -7,8 +7,8 @@ import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
 import com.dnd.modutime.core.adjustresult.util.convertor.CandidateDateTimeConvertor;
 import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorter;
 import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorterFactory;
+import com.dnd.modutime.core.participant.application.ParticipantQueryService;
 import com.dnd.modutime.core.participant.domain.Participants;
-import com.dnd.modutime.core.participant.repository.ParticipantRepository;
 import com.dnd.modutime.core.room.util.CandidateDateTimeConvertorFactory;
 import com.dnd.modutime.core.timetable.domain.TimeTable;
 import com.dnd.modutime.core.timetable.repository.TimeTableRepository;
@@ -26,7 +26,7 @@ public class TimeTableResponseGenerator implements AdjustmentResultResponseGener
     private final TimeTableRepository timeTableRepository;
     private final CandidateDateTimeConvertorFactory candidateDateTimeConvertorFactory;
     private final CandidateDateTimesSorterFactory candidateDateTimesSorterFactory;
-    private final ParticipantRepository participantRepository;
+    private final ParticipantQueryService participantQueryService;
 
     @Override
     public AdjustmentResultResponse generate(String roomUuid,
@@ -38,7 +38,7 @@ public class TimeTableResponseGenerator implements AdjustmentResultResponseGener
         List<CandidateDateTime> candidateDateTimes = candidateDateTimeConvertor.convert(dateTimeInfosDto);
         CandidateDateTimesSorter candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(candidateDateTimeSortStandard);
         candidateDateTimesSorter.sort(candidateDateTimes);
-        var participants = participantRepository.findByRoomUuid(roomUuid);
+        var participants = participantQueryService.getByRoomUuid(roomUuid);
         return AdjustmentResultResponse.from(candidateDateTimes.stream()
                         .limit(5)
                         .collect(Collectors.toList()),

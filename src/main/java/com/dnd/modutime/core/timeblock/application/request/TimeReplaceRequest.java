@@ -15,6 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 public class TimeReplaceRequest {
 
+    /**
+     * Participant의 name
+     */
     private String name;
     private Boolean hasTime;
 

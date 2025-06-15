@@ -1,45 +1,55 @@
 package com.dnd.modutime.core.participant.integration;
 
-import com.dnd.modutime.core.participant.application.ParticipantService;
-import com.dnd.modutime.core.participant.repository.ParticipantRepository;
-import com.dnd.modutime.core.timeblock.application.ParticipantCreationEvent;
-import com.dnd.modutime.core.timeblock.domain.TimeBlock;
-import com.dnd.modutime.core.timeblock.repository.TimeBlockRepository;
+import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
+import com.dnd.modutime.core.participant.application.ParticipantFacade;
+import com.dnd.modutime.core.participant.application.ParticipantQueryService;
+import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
+import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
+import com.dnd.modutime.core.participant.domain.ParticipantRemovedEvent;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
-import java.util.Optional;
-
-import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import java.util.List;
 
 @SpringBootTest
 @RecordApplicationEvents
 public class ParticipantIntegrationTest {
 
     @Autowired
-    private ParticipantService participantService;
+    private ParticipantCommandHandler participantCommandHandler;
 
     @Autowired
-    private ParticipantRepository participantRepository;
+    private ParticipantFacade participantFacade;
 
     @Autowired
-    private TimeBlockRepository timeBlockRepository;
+    private ParticipantQueryService participantQueryService;
 
     @Autowired
     private ApplicationEvents events;
 
+    @DisplayName("참여자를 삭제한다.")
     @Test
-    void 참여자가_생성되면_참여자의_TimeBlock이_생성된다() {
-        participantService.create(ROOM_UUID, "참여자1", "1234");
-        Optional<TimeBlock> actual = timeBlockRepository.findByRoomUuidAndParticipantName(ROOM_UUID, "참여자1");
-        assertAll(
-                () -> assertThat(actual.isPresent()).isTrue(),
-                () -> assertThat(events.stream(ParticipantCreationEvent.class).count()).isEqualTo(1)
-        );
+    void test01() {
+        // given
+        var roomUuid = "roomUuid";
+        var name = "name";
+        var password = "1234";
+        var participant1 = participantCommandHandler.handle(ParticipantCreateCommand.of(roomUuid, name, password));
+        var participant2 = participantCommandHandler.handle(ParticipantCreateCommand.of(roomUuid, "name2", password));
+
+        // when
+        var command = ParticipantsDeleteCommand.of(roomUuid, List.of(participant1.getId(), participant2.getId()));
+        participantFacade.delete(command);
+
+        // then
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(participantQueryService.getByRoomUuidAndName(roomUuid, name)).isEmpty();
+            softly.assertThat(events.stream(ParticipantRemovedEvent.class).count()).isEqualTo(2);
+        });
     }
 }

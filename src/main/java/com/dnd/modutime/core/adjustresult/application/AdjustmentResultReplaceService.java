@@ -1,27 +1,23 @@
 package com.dnd.modutime.core.adjustresult.application;
 
+import com.dnd.modutime.core.adjustresult.application.command.AdjustmentResultReplaceCommand;
 import com.dnd.modutime.core.adjustresult.domain.AdjustmentResult;
-import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
 import com.dnd.modutime.core.adjustresult.repository.AdjustmentResultRepository;
 import com.dnd.modutime.core.adjustresult.repository.CandidateDateTimeRepository;
 import com.dnd.modutime.core.room.util.CandidateDateTimeConvertorFactory;
-import com.dnd.modutime.core.adjustresult.util.convertor.CandidateDateTimeConvertor;
 import com.dnd.modutime.core.timetable.domain.DateInfo;
 import com.dnd.modutime.core.timetable.domain.TimeInfo;
 import com.dnd.modutime.core.timetable.domain.TimeInfoParticipantName;
-import com.dnd.modutime.core.timetable.domain.TimeTableReplaceEvent;
 import com.dnd.modutime.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
 @RequiredArgsConstructor
@@ -31,14 +27,12 @@ public class AdjustmentResultReplaceService {
     private final CandidateDateTimeRepository candidateDateTimeRepository;
     private final CandidateDateTimeConvertorFactory candidateDateTimeConvertorFactory;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @TransactionalEventListener
-    public void replace(TimeTableReplaceEvent event) {
-        var adjustmentResult = getByRoomUuid(event.getRoomUuid());
+    public void replace(AdjustmentResultReplaceCommand command) {
+        var adjustmentResult = getByRoomUuid(command.getRoomUuid());
         candidateDateTimeRepository.deleteAllByAdjustmentResultId(adjustmentResult.getId());
 
-        var dateTimeInfosDto = convertDateTimeInfosDto(event.getDateInfos());
-        var candidateDateTimeConvertor = candidateDateTimeConvertorFactory.getInstance(event.getRoomUuid());
+        var dateTimeInfosDto = convertDateTimeInfosDto(command.getDateInfos());
+        var candidateDateTimeConvertor = candidateDateTimeConvertorFactory.getInstance(command.getRoomUuid());
         var candidateDateTimes = candidateDateTimeConvertor.convert(dateTimeInfosDto);
         candidateDateTimes.forEach(candidateDateTime -> candidateDateTime.makeEntity(adjustmentResult));
 

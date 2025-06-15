@@ -1,18 +1,8 @@
 package com.dnd.modutime.core.room.integration;
 
-import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_08;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-
 import com.dnd.modutime.config.TimeConfiguration;
-import com.dnd.modutime.core.participant.application.ParticipantService;
+import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
+import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.room.application.RoomService;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
@@ -25,8 +15,6 @@ import com.dnd.modutime.core.timetable.application.TimeTableService;
 import com.dnd.modutime.core.timetable.application.response.AvailableTimeInfo;
 import com.dnd.modutime.core.timetable.application.response.TimeAndCountPerDate;
 import com.dnd.modutime.core.timetable.application.response.TimeTableResponse;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +23,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @Import(TimeConfiguration.class)
 @RecordApplicationEvents
@@ -48,7 +46,7 @@ public class RoomIntegrationTest {
     private TimeTableService timeTableService;
 
     @Autowired
-    private ParticipantService participantService;
+    private ParticipantCommandHandler participantCommandHandler;
 
     @MockBean
     private TimeReplaceValidator timeReplaceValidator;
@@ -89,7 +87,8 @@ public class RoomIntegrationTest {
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
         String roomUuid = roomCreationResponse.getUuid();
         timeTableService.create(roomUuid);
-        participantService.create(roomUuid, "참여자1", "1234");
+        var command = ParticipantCreateCommand.of(roomUuid, "참여자1", "1234");
+        participantCommandHandler.handle(command);
 
         // when
         doNothing().when(timeReplaceValidator).validate(any(), any());
