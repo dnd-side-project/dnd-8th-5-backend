@@ -14,7 +14,7 @@ on:
         description: '배포할 브랜치를 입력합니다. (예: release/1.0.0)'
         required: true
         default: 'release/1.0.0'
-      tag:
+      info:
         description: '배포내용을 입력합니다.'
         required: true
 
@@ -25,7 +25,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
+      - name: 배포내용을 출력한다.
+        if: ${{ always() }}
+        run: |
+          echo "배포 내용"
+          echo "- 배포 내용 : ${{ inputs.info }}"
       - name: checkout
         uses: actions/checkout@v3
         with:
@@ -44,6 +48,21 @@ jobs:
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: mkdir -p /home/ubuntu/srv/ubuntu
+
+      - name: 기존 컨테이너 삭제 및 캐시 삭제
+        run: |
+          # 실행 중인 컨테이너가 있으면 중지
+          if [ "$(docker ps -q)" ]; then
+            sudo docker stop $(docker ps -q)
+          fi
+          
+          # 모든 컨테이너가 있으면 삭제
+          if [ "$(docker ps -qa)" ]; then
+            sudo docker rm $(docker ps -qa)
+          fi
+          
+          # 이미지 정리
+          sudo docker image prune -a -f
 
       - name: copy source via ssh key
         uses: burnett01/rsync-deployments@4.1
@@ -86,4 +105,4 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-nginx
 
             sudo docker-compose --env-file .env up -d
-            sudo docker image prune -f
+            sudo docker system prune -af
