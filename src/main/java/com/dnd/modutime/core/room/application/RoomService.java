@@ -1,23 +1,24 @@
 package com.dnd.modutime.core.room.application;
 
-import com.dnd.modutime.core.room.repository.RoomRepository;
+import com.dnd.modutime.core.participant.application.ParticipantQueryService;
 import com.dnd.modutime.core.participant.domain.Participant;
-import com.dnd.modutime.core.room.domain.Room;
-import com.dnd.modutime.core.room.domain.RoomDate;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.request.TimerRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.room.application.response.RoomInfoResponse;
+import com.dnd.modutime.core.room.domain.Room;
+import com.dnd.modutime.core.room.domain.RoomDate;
+import com.dnd.modutime.core.room.repository.RoomRepository;
 import com.dnd.modutime.exception.NotFoundException;
-import com.dnd.modutime.core.participant.repository.ParticipantRepository;
 import com.dnd.modutime.util.TimeProvider;
 import com.dnd.modutime.util.Timer;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class RoomService {
 
     private final TimeProvider timeProvider;
     private final RoomRepository roomRepository;
-    private final ParticipantRepository participantRepository;
+    private final ParticipantQueryService participantQueryService;
 
     public RoomCreationResponse create(RoomRequest roomRequest) {
         TimerRequest timerRequest = roomRequest.getTimerRequest();
@@ -69,7 +70,7 @@ public class RoomService {
 
     public RoomInfoResponse getInfo(String roomUuid) {
         Room room = getByUuid(roomUuid);
-        List<Participant> participants = participantRepository.findByRoomUuid(roomUuid);
+        List<Participant> participants = participantQueryService.getByRoomUuid(roomUuid);
         List<LocalDate> roomDates = room.getRoomDates().stream()
                 .map(RoomDate::getDate)
                 .collect(Collectors.toList());

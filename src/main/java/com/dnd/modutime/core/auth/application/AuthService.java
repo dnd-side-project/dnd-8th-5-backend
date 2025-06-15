@@ -20,9 +20,9 @@ public class AuthService {
 
     public void login(String roomUuid, LoginRequest loginRequest) {
         if (!participantFacade.existsByName(roomUuid, loginRequest.getName())) {
-            participantFacade.create(roomUuid, loginRequest.getName(), loginRequest.getPassword());
+            participantFacade.create(loginRequest.toParticipantCreateCommand(roomUuid));
         }
-        Participant participant = participantQueryService.getByRoomUuidAndName(roomUuid, loginRequest.getName());
+        Participant participant = participantQueryService.findByRoomUuidAndName(roomUuid, loginRequest.getName());
         if (!participant.matchPassword(loginRequest.getPassword())) {
             throw new InvalidPasswordException();
         }

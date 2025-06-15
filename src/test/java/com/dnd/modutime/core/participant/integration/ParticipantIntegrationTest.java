@@ -1,9 +1,10 @@
 package com.dnd.modutime.core.participant.integration;
 
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
+import com.dnd.modutime.core.participant.application.ParticipantQueryService;
+import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
 import com.dnd.modutime.core.participant.domain.ParticipantRemovedEvent;
-import com.dnd.modutime.core.participant.repository.ParticipantRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ public class ParticipantIntegrationTest {
     private ParticipantFacade participantFacade;
 
     @Autowired
-    private ParticipantRepository participantRepository;
+    private ParticipantQueryService participantQueryService;
 
     @Autowired
     private ApplicationEvents events;
@@ -34,8 +35,8 @@ public class ParticipantIntegrationTest {
         var roomUuid = "roomUuid";
         var name = "name";
         var password = "1234";
-        participantFacade.create(roomUuid, name, password);
-        participantFacade.create(roomUuid, "name2", password);
+        participantFacade.create(ParticipantCreateCommand.of(roomUuid, name, password));
+        participantFacade.create(ParticipantCreateCommand.of(roomUuid, "name2", password));
 
         // when
         var command = ParticipantsDeleteCommand.of(roomUuid, List.of(name, "name2"));
@@ -43,7 +44,7 @@ public class ParticipantIntegrationTest {
 
         // then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(participantRepository.findByRoomUuidAndName(roomUuid, name)).isEmpty();
+            softly.assertThat(participantQueryService.getByRoomUuidAndName(roomUuid, name)).isEmpty();
             softly.assertThat(events.stream(ParticipantRemovedEvent.class).count()).isEqualTo(2);
         });
     }

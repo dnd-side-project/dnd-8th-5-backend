@@ -1,11 +1,10 @@
 package com.dnd.modutime.core.participant.application;
 
+import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
 import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.participant.domain.Email;
-import com.dnd.modutime.core.participant.domain.Participant;
-import com.dnd.modutime.core.participant.repository.ParticipantRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,41 +12,37 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ParticipantFacade {
 
-    private final ParticipantRepository participantRepository;
-    private final ParticipantQueryService participantQueryService;
-    private final ParticipantCommandHandler participantCommandHandler;
+    private final ParticipantQueryService queryService;
+    private final ParticipantCommandHandler commandHandler;
 
-    public ParticipantFacade(ParticipantRepository participantRepository,
-                             ParticipantQueryService participantQueryService, ParticipantCommandHandler participantCommandHandler) {
-        this.participantRepository = participantRepository;
-        this.participantQueryService = participantQueryService;
-        this.participantCommandHandler = participantCommandHandler;
+    public ParticipantFacade(ParticipantQueryService queryService, ParticipantCommandHandler commandHandler) {
+        this.queryService = queryService;
+        this.commandHandler = commandHandler;
     }
 
-    public void create(String roomUuid, String name, String password) {
-        var participant = new Participant(roomUuid, name, password);
-        participantRepository.save(participant);
+    public void create(ParticipantCreateCommand command) {
+        commandHandler.handle(command);
     }
 
     @Transactional(readOnly = true)
     public boolean existsByName(String roomUuid, String name) {
-        return participantQueryService.existsBy(roomUuid, name);
+        return queryService.existsBy(roomUuid, name);
     }
 
     public void registerEmail(String roomUuid,
                               EmailCreationRequest emailCreationRequest) {
-        var participant = participantQueryService.getByRoomUuidAndName(roomUuid, emailCreationRequest.getName());
+        var participant = queryService.findByRoomUuidAndName(roomUuid, emailCreationRequest.getName());
         participant.registerEmail(new Email(emailCreationRequest.getEmail()));
     }
 
     public EmailResponse getEmail(String roomUuid, String name) {
-        var participant = participantQueryService.getByRoomUuidAndName(roomUuid, name);
+        var participant = queryService.findByRoomUuidAndName(roomUuid, name);
         return EmailResponse.from(participant.getEmailOrNull());
     }
 
     public void delete(ParticipantsDeleteCommand command) {
-        var participants = participantQueryService.getByRoomUuidAndName(command.getRoomUuid(), command.getParticipantNames());
+        var participants = queryService.getByRoomUuidAndName(command.getRoomUuid(), command.getParticipantNames());
         command.assign(participants);
-        participantCommandHandler.handle(command);
+        commandHandler.handle(command);
     }
 }

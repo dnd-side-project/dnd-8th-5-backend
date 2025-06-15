@@ -1,9 +1,11 @@
 package com.dnd.modutime.core.participant.application;
 
+import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
 import com.dnd.modutime.core.participant.domain.Participant;
 import com.dnd.modutime.core.participant.domain.ParticipantRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ParticipantCommandHandler {
@@ -19,5 +21,10 @@ public class ParticipantCommandHandler {
         for (Participant participant : participants) {
             participantRepository.delete(participant);
         }
+    }
+
+    @Transactional
+    public void handle(ParticipantCreateCommand command) {
+        participantRepository.save(command.execute());
     }
 }

@@ -1,6 +1,7 @@
 package com.dnd.modutime.core.timeblock.application;
 
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
+import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
 import com.dnd.modutime.core.participant.domain.ParticipantRemovedEvent;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
@@ -42,7 +43,8 @@ class TimeBlockEventHandlerTest {
     @Test
     void 참여자가_생성되면_참여자의_TimeBlock이_생성된다() {
         var participantName = "참여자1";
-        participantFacade.create(ROOM_UUID, participantName, "1234");
+        var command = ParticipantCreateCommand.of(ROOM_UUID, participantName, "1234");
+        participantFacade.create(command);
         Optional<TimeBlock> actual = timeBlockRepository.findByRoomUuidAndParticipantName(ROOM_UUID, participantName);
         assertAll(
                 () -> assertThat(actual.isPresent()).isTrue(),
@@ -55,7 +57,7 @@ class TimeBlockEventHandlerTest {
     @Test
     void test01() {
         var participantName = "참여자1";
-        participantFacade.create(ROOM_UUID, participantName, "1234");
+        participantFacade.create(ParticipantCreateCommand.of(ROOM_UUID, participantName, "1234"));
 
         // when
         var command = ParticipantsDeleteCommand.of(ROOM_UUID, List.of(participantName));

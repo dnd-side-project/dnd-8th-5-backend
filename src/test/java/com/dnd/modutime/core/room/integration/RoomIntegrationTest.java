@@ -2,6 +2,7 @@ package com.dnd.modutime.core.room.integration;
 
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
+import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.room.application.RoomService;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
@@ -86,7 +87,8 @@ public class RoomIntegrationTest {
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
         String roomUuid = roomCreationResponse.getUuid();
         timeTableService.create(roomUuid);
-        participantFacade.create(roomUuid, "참여자1", "1234");
+        var command = ParticipantCreateCommand.of(roomUuid, "참여자1", "1234");
+        participantFacade.create(command);
 
         // when
         doNothing().when(timeReplaceValidator).validate(any(), any());
