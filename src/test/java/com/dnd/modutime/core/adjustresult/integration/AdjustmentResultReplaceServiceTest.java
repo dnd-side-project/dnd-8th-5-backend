@@ -1,18 +1,32 @@
 package com.dnd.modutime.core.adjustresult.integration;
 
 import com.dnd.modutime.core.adjustresult.application.AdjustmentResultReplaceService;
+import com.dnd.modutime.core.adjustresult.application.command.AdjustmentResultReplaceCommand;
+import com.dnd.modutime.core.adjustresult.domain.AdjustmentResult;
+import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
+import com.dnd.modutime.core.adjustresult.domain.CandidateDateTimeParticipantName;
 import com.dnd.modutime.core.adjustresult.repository.AdjustmentResultRepository;
 import com.dnd.modutime.core.adjustresult.repository.CandidateDateTimeRepository;
 import com.dnd.modutime.core.timetable.domain.TimeInfo;
 import com.dnd.modutime.core.timetable.domain.TimeInfoParticipantName;
-import java.time.LocalTime;
-import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.dnd.modutime.fixture.RoomRequestFixture.ROOM_UUID;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static com.dnd.modutime.fixture.TimeTableFixture.getDateInfo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 @Transactional
@@ -32,14 +46,19 @@ public class AdjustmentResultReplaceServiceTest {
     @Test
     @Disabled
     void 기존의_후보시간은_삭제하고_새로운_후보시간이_생성된다() {
-        /*
-        given(adjustmentResultRepository.findByRoomUuid(ROOM_UUID)).willReturn(new AdjustmentResult(1L, ROOM_UUID, List.of()));
-        AdjustmentResult adjustmentResult = adjustmentResultRepository.save(new AdjustmentResult(ROOM_UUID, List.of()));
+        var adjustmentResult = new AdjustmentResult(ROOM_UUID, List.of());
+        given(adjustmentResultRepository.findByRoomUuid(ROOM_UUID)).willReturn(Optional.of(adjustmentResult));
+        var savedAdjustmentResult = adjustmentResultRepository.save(adjustmentResult);
         candidateDateTimeRepository.save(
-                new CandidateDateTime(adjustmentResult, _2023_02_10, _11_00, _11_30, true, List.of(
-                        new CandidateDateTimeParticipantName("김동호"), new CandidateDateTimeParticipantName("이수진"))));
+                new CandidateDateTime(
+                        savedAdjustmentResult,
+                        _2023_02_09_00_00,
+                        _2023_02_10_00_00,
+                        true,
+                        List.of(new CandidateDateTimeParticipantName("김동호"), new CandidateDateTimeParticipantName("이수진")))
+        );
 
-        adjustmentResultReplaceService.replace(new TimeTableReplaceEvent(ROOM_UUID, List.of(getDateInfo(_2023_02_09,
+        adjustmentResultReplaceService.replace(AdjustmentResultReplaceCommand.of(ROOM_UUID, List.of(getDateInfo(_2023_02_09,
                 List.of(getTimeInfo(_12_00), getTimeInfo(_13_00))
         ))));
 
@@ -58,7 +77,6 @@ public class AdjustmentResultReplaceServiceTest {
                         .collect(Collectors.toList())).hasSize(1)
                         .contains("김동호")
         );
-        */
     }
 
     private TimeInfo getTimeInfo(LocalTime time) {

@@ -1,36 +1,36 @@
 package com.dnd.modutime.core.participant.controller;
 
+import com.dnd.modutime.core.participant.application.ParticipantService;
 import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
-import com.dnd.modutime.core.participant.application.ParticipantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/room/{roomUuid}")
 @RequiredArgsConstructor
 public class ParticipantController {
 
     private final ParticipantService participantService;
 
-    @PostMapping("/email")
+    @PostMapping("/api/room/{roomUuid}/email")
     public ResponseEntity<Void> registerEmail(@PathVariable String roomUuid,
                                               @RequestBody EmailCreationRequest emailCreationRequest) {
         participantService.registerEmail(roomUuid, emailCreationRequest);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/email")
+    @GetMapping("/api/room/{roomUuid}/email")
     public ResponseEntity<EmailResponse> getEmail(@PathVariable String roomUuid,
                                                   @RequestParam String name) {
         EmailResponse emailResponse = participantService.getEmail(roomUuid, name);
         return ResponseEntity.ok(emailResponse);
+    }
+
+    @DeleteMapping("/api/room/{roomUuid}/participants/{name}")
+    public ResponseEntity<Void> deleteParticipant(@PathVariable String roomUuid,
+                                                  @PathVariable String name) {
+        participantService.delete(roomUuid, name);
+        return ResponseEntity.ok().build();
     }
 }

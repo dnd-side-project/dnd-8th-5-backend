@@ -27,21 +27,6 @@ public class AdjustmentResultReplaceService {
     private final CandidateDateTimeRepository candidateDateTimeRepository;
     private final CandidateDateTimeConvertorFactory candidateDateTimeConvertorFactory;
 
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    @TransactionalEventListener
-//    public void replace(TimeTableReplaceEvent event) {
-//        var adjustmentResult = getByRoomUuid(event.getRoomUuid());
-//        candidateDateTimeRepository.deleteAllByAdjustmentResultId(adjustmentResult.getId());
-//
-//        var dateTimeInfosDto = convertDateTimeInfosDto(event.getDateInfos());
-//        var candidateDateTimeConvertor = candidateDateTimeConvertorFactory.getInstance(event.getRoomUuid());
-//        var candidateDateTimes = candidateDateTimeConvertor.convert(dateTimeInfosDto);
-//        candidateDateTimes.forEach(candidateDateTime -> candidateDateTime.makeEntity(adjustmentResult));
-//
-//        candidateDateTimeRepository.saveAll(candidateDateTimes);
-//        adjustmentResult.replace(candidateDateTimes);
-//    }
-
     public void replace(AdjustmentResultReplaceCommand command) {
         var adjustmentResult = getByRoomUuid(command.getRoomUuid());
         candidateDateTimeRepository.deleteAllByAdjustmentResultId(adjustmentResult.getId());

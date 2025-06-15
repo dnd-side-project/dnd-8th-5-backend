@@ -1,19 +1,21 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.TimeFixture._11_00;
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
+import com.dnd.modutime.core.room.application.response.RoomInfoResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDateTime;
-import java.util.List;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ParticipantAcceptanceTest extends AcceptanceSupporter {
 
@@ -63,5 +65,27 @@ public class ParticipantAcceptanceTest extends AcceptanceSupporter {
 
         EmailResponse emailResponse = 이메일을_조회한다(roomUuid, PARTICIPANT_NAME);
         assertThat(emailResponse.getEmail()).isNull();
+    }
+
+    @DisplayName("참여자를 삭제한다.")
+    @Test
+    void test01() {
+        RoomCreationResponse roomCreationResponse = 방_생성();
+        String roomUuid = roomCreationResponse.getUuid();
+        로그인_참여자_1234(roomUuid, PARTICIPANT_NAME);
+        시간을_등록한다(roomUuid, PARTICIPANT_NAME, false,
+                List.of(LocalDateTime.of(_2023_02_09, _11_00),
+                        LocalDateTime.of(_2023_02_09, _12_00))
+        );
+        var response = 참여자를_삭제한다(roomUuid, PARTICIPANT_NAME);
+
+        ExtractableResponse<Response> roomInfoResponse = get("/api/room/" + roomCreationResponse.getUuid());
+        RoomInfoResponse roomInfo = roomInfoResponse.body().as(RoomInfoResponse.class);
+//        RoomInfoResponse roomInfoResponse = response.body().as(RoomInfoResponse.class);
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+            softAssertions.assertThat(roomInfo.getParticipantNames()).hasSize(0);
+        });
     }
 }

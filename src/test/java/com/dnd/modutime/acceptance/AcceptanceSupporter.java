@@ -1,11 +1,14 @@
 package com.dnd.modutime.acceptance;
 
-import static com.dnd.modutime.fixture.RoomRequestFixture.*;
-import static com.dnd.modutime.fixture.TimeFixture.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.dnd.modutime.config.TimeConfiguration;
+import com.dnd.modutime.core.auth.application.request.LoginRequest;
+import com.dnd.modutime.core.participant.application.response.EmailResponse;
+import com.dnd.modutime.core.room.application.request.RoomRequest;
+import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
+import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
+import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -13,16 +16,12 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 
-import com.dnd.modutime.config.TimeConfiguration;
-import com.dnd.modutime.core.auth.application.request.LoginRequest;
-import com.dnd.modutime.core.participant.application.response.EmailResponse;
-import com.dnd.modutime.core.room.application.request.RoomRequest;
-import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
-import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
+import java.time.LocalDateTime;
+import java.util.List;
 
-import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
+import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
+import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequestWithStartTimeIsAfterEndTime;
+import static com.dnd.modutime.fixture.TimeFixture.*;
 
 @Import(TimeConfiguration.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -62,6 +61,23 @@ public class AcceptanceSupporter {
                 .extract();
     }
 
+    protected ExtractableResponse<Response> delete(String uri, Object body) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .when().delete(uri)
+                .then().log().all()
+                .extract();
+    }
+
+    protected ExtractableResponse<Response> delete(String uri) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().delete(uri)
+                .then().log().all()
+                .extract();
+    }
+
     protected RoomCreationResponse 방_생성(RoomRequest roomRequest) {
         ExtractableResponse<Response> response = post("/api/room", roomRequest);
         return response.body().as(RoomCreationResponse.class);
@@ -92,6 +108,10 @@ public class AcceptanceSupporter {
     protected ExtractableResponse<Response> 시간을_등록한다(String roomUuid, String participantName, Boolean hasTime, List<LocalDateTime> dateTimes) {
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest(participantName, hasTime, dateTimes);
         return put("/api/room/" + roomUuid + "/available-time", timeReplaceRequest);
+    }
+
+    protected ExtractableResponse<Response> 참여자를_삭제한다(String roomUuid, String participantName) {
+        return delete("/api/room/" + roomUuid + "/participants/" + participantName);
     }
 
     protected void 로그인후_시간을_등록한다(String roomUuid, String participantName, Boolean hasTime, List<LocalDateTime> requests) {
