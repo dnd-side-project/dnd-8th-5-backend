@@ -6,7 +6,7 @@ on:
     types: [ opened, synchronize, reopened ]
 
 jobs:
-  sonar:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
