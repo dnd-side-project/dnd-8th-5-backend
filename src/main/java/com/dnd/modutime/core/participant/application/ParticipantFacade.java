@@ -5,6 +5,7 @@ import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteC
 import com.dnd.modutime.core.participant.application.request.EmailCreationRequest;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.participant.domain.Email;
+import com.dnd.modutime.exception.InvalidPasswordException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,18 +16,21 @@ public class ParticipantFacade {
     private final ParticipantQueryService queryService;
     private final ParticipantCommandHandler commandHandler;
 
-    public ParticipantFacade(ParticipantQueryService queryService, ParticipantCommandHandler commandHandler) {
+    public ParticipantFacade(ParticipantQueryService queryService,
+                             ParticipantCommandHandler commandHandler) {
         this.queryService = queryService;
         this.commandHandler = commandHandler;
     }
 
-    public void create(ParticipantCreateCommand command) {
-        commandHandler.handle(command);
-    }
-
-    @Transactional(readOnly = true)
-    public boolean existsByName(String roomUuid, String name) {
-        return queryService.existsBy(roomUuid, name);
+    public void login(ParticipantCreateCommand command) {
+        if (!queryService.existsBy(command.getRoomUuid(), command.getName())) {
+            commandHandler.handle(command);
+            return;
+        }
+        var participant = queryService.findByRoomUuidAndName(command.getRoomUuid(), command.getName());
+        if (!participant.matchPassword(command.getPassword())) {
+            throw new InvalidPasswordException();
+        }
     }
 
     public void registerEmail(String roomUuid,

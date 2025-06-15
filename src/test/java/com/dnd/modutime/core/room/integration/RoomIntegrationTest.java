@@ -1,7 +1,7 @@
 package com.dnd.modutime.core.room.integration;
 
 import com.dnd.modutime.config.TimeConfiguration;
-import com.dnd.modutime.core.participant.application.ParticipantFacade;
+import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
 import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.room.application.RoomService;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
@@ -46,7 +46,7 @@ public class RoomIntegrationTest {
     private TimeTableService timeTableService;
 
     @Autowired
-    private ParticipantFacade participantFacade;
+    private ParticipantCommandHandler participantCommandHandler;
 
     @MockBean
     private TimeReplaceValidator timeReplaceValidator;
@@ -88,7 +88,7 @@ public class RoomIntegrationTest {
         String roomUuid = roomCreationResponse.getUuid();
         timeTableService.create(roomUuid);
         var command = ParticipantCreateCommand.of(roomUuid, "참여자1", "1234");
-        participantFacade.create(command);
+        participantCommandHandler.handle(command);
 
         // when
         doNothing().when(timeReplaceValidator).validate(any(), any());

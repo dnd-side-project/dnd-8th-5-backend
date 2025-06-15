@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.timeblock.application;
 
+import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
 import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
@@ -28,6 +29,9 @@ import static org.mockito.Mockito.verify;
 class TimeBlockEventHandlerTest {
 
     @Autowired
+    private ParticipantCommandHandler participantCommandHandler;
+
+    @Autowired
     private ParticipantFacade participantFacade;
 
     @Autowired
@@ -44,7 +48,7 @@ class TimeBlockEventHandlerTest {
     void 참여자가_생성되면_참여자의_TimeBlock이_생성된다() {
         var participantName = "참여자1";
         var command = ParticipantCreateCommand.of(ROOM_UUID, participantName, "1234");
-        participantFacade.create(command);
+        participantCommandHandler.handle(command);
         Optional<TimeBlock> actual = timeBlockRepository.findByRoomUuidAndParticipantName(ROOM_UUID, participantName);
         assertAll(
                 () -> assertThat(actual.isPresent()).isTrue(),
@@ -57,7 +61,7 @@ class TimeBlockEventHandlerTest {
     @Test
     void test01() {
         var participantName = "참여자1";
-        participantFacade.create(ParticipantCreateCommand.of(ROOM_UUID, participantName, "1234"));
+        participantCommandHandler.handle(ParticipantCreateCommand.of(ROOM_UUID, participantName, "1234"));
 
         // when
         var command = ParticipantsDeleteCommand.of(ROOM_UUID, List.of(participantName));

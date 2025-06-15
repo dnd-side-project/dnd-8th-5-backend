@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.participant.integration;
 
+import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
 import com.dnd.modutime.core.participant.application.ParticipantQueryService;
 import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
@@ -20,6 +21,9 @@ import java.util.List;
 public class ParticipantIntegrationTest {
 
     @Autowired
+    private ParticipantCommandHandler participantCommandHandler;
+
+    @Autowired
     private ParticipantFacade participantFacade;
 
     @Autowired
@@ -35,8 +39,8 @@ public class ParticipantIntegrationTest {
         var roomUuid = "roomUuid";
         var name = "name";
         var password = "1234";
-        participantFacade.create(ParticipantCreateCommand.of(roomUuid, name, password));
-        participantFacade.create(ParticipantCreateCommand.of(roomUuid, "name2", password));
+        participantCommandHandler.handle(ParticipantCreateCommand.of(roomUuid, name, password));
+        participantCommandHandler.handle(ParticipantCreateCommand.of(roomUuid, "name2", password));
 
         // when
         var command = ParticipantsDeleteCommand.of(roomUuid, List.of(name, "name2"));
