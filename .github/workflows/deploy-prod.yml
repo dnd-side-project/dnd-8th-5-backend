@@ -49,6 +49,11 @@ jobs:
           key: ${{ secrets.KEY }}
           script: mkdir -p /home/ubuntu/srv/ubuntu
 
+      - name: 기존 컨테이너 삭제 및 캐시 삭제
+        run: |
+          sudo docker stop $(docker ps -qa)
+          sudo docker image prune -a
+
       - name: copy source via ssh key
         uses: burnett01/rsync-deployments@4.1
         with:
@@ -90,4 +95,4 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-nginx
 
             sudo docker-compose --env-file .env up -d
-            sudo docker image prune -f
+            sudo docker system prune -af
