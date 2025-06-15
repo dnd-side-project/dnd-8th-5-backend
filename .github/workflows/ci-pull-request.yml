@@ -1,0 +1,41 @@
+# Pull Request 이벤트 발생시 통합테스트 수행
+name: "CI: Pull Request"
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Disabling shallow clone is recommended for improving relevancy of reporting
+
+      - name: Setup Java
+        uses: actions/setup-java@v3 #@see https://github.com/actions/setup-java
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Setup local-cache
+        uses: maxnowack/local-cache@v1
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Build with gradle
+        run: ./gradlew clean test --info --build-cache
+
+      #https://github.com/actions/upload-artifact
+      - name: "Upload failure test report"
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-report
+          path: '**/build/reports/tests/test'
+          retention-days: 1
