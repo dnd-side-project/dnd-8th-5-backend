@@ -7,10 +7,8 @@ import com.dnd.modutime.core.participant.application.response.EmailResponse;
 import com.dnd.modutime.core.participant.domain.Email;
 import com.dnd.modutime.exception.InvalidPasswordException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class ParticipantFacade {
 
     private final ParticipantQueryService queryService;
