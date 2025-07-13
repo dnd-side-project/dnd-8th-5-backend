@@ -106,4 +106,5 @@ public class TimeInfoTest {
 
         assertThat(timeInfo.hasAnyParticipant(participantNames)).isFalse();
     }
+
 }

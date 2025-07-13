@@ -103,6 +103,16 @@ public class TimeInfo implements Auditable {
         return timeInfoParticipantNames.size();
     }
 
+    public int getParticipantsSize(List<String> participantNames) {
+        if (participantNames == null || participantNames.isEmpty()) {
+            return this.getParticipantsSize();
+        }
+        return this.timeInfoParticipantNames.stream()
+                .filter(timeInfoParticipantName -> participantNames.contains(timeInfoParticipantName.getName()))
+                .toList()
+                .size();
+    }
+
     public LocalTime getTime() {
         return time;
     }

@@ -4,6 +4,7 @@ import com.dnd.modutime.core.timetable.domain.DateInfo;
 import com.dnd.modutime.core.timetable.domain.TimeInfo;
 import com.dnd.modutime.core.timetable.domain.TimeTable;
 import com.dnd.modutime.util.JsonUtils;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -78,14 +79,15 @@ class TimeTableOverviewTest {
 
         // then
         var timeAndCountPerDates = overview.getTimeAndCountPerDates();
-        assertAll(
-                () -> assertThat(timeAndCountPerDates).hasSize(1),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableDate()).isEqualTo(_2023_02_08),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos()).hasSize(2),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos())
-                        .extracting("time")
-                        .containsExactlyInAnyOrder(_12_00, _14_00)
-        );
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(timeAndCountPerDates).hasSize(1);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableDate()).isEqualTo(_2023_02_08);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos()).hasSize(2);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_12_00);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(0).getCount()).isEqualTo(1);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(1).getTime()).isEqualTo(_14_00);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(1).getCount()).isEqualTo(1);
+        });
     }
 
     @Test
@@ -102,15 +104,15 @@ class TimeTableOverviewTest {
         var overview = TimeTableOverview.from(timeTable, List.of("김동호", "이채민"));
 
         // then
-        var timeAndCountPerDates = overview.getTimeAndCountPerDates();
-        assertAll(
-                () -> assertThat(timeAndCountPerDates).hasSize(1),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableDate()).isEqualTo(_2023_02_08),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos()).hasSize(2),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos())
-                        .extracting("time")
-                        .containsExactlyInAnyOrder(_12_00, _13_00)
-        );
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(overview.getTimeAndCountPerDates()).hasSize(1);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableDate()).isEqualTo(_2023_02_08);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos()).hasSize(2);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_12_00);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getCount()).isEqualTo(1);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(1).getTime()).isEqualTo(_13_00);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(1).getCount()).isEqualTo(1);
+        });
     }
 
     @Test
@@ -127,14 +129,18 @@ class TimeTableOverviewTest {
         var overview = TimeTableOverview.from(timeTable, null);
 
         // then
-        var timeAndCountPerDates = overview.getTimeAndCountPerDates();
-        assertAll(
-                () -> assertThat(timeAndCountPerDates).hasSize(2),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableDate()).isEqualTo(_2023_02_08),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos()).hasSize(1),
-                () -> assertThat(timeAndCountPerDates.get(1).getAvailableDate()).isEqualTo(_2023_02_09),
-                () -> assertThat(timeAndCountPerDates.get(1).getAvailableTimeInfos()).hasSize(1)
-        );
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(overview.getTimeAndCountPerDates()).hasSize(2);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableDate()).isEqualTo(_2023_02_08);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos()).hasSize(1);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_12_00);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getCount()).isEqualTo(1);
+
+            softly.assertThat(overview.getTimeAndCountPerDates().get(1).getAvailableDate()).isEqualTo(_2023_02_09);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(1).getAvailableTimeInfos()).hasSize(1);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(1).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_13_00);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(1).getAvailableTimeInfos().get(0).getCount()).isEqualTo(1);
+        });
     }
 
     @Test
@@ -168,11 +174,13 @@ class TimeTableOverviewTest {
         var overview = TimeTableOverview.from(timeTable, null);
 
         // then
-        var timeAndCountPerDates = overview.getTimeAndCountPerDates();
-        assertAll(
-                () -> assertThat(timeAndCountPerDates).hasSize(1),
-                () -> assertThat(timeAndCountPerDates.get(0).getAvailableDate()).isEqualTo(_2023_02_08)
-        );
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(overview.getTimeAndCountPerDates()).hasSize(1);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableDate()).isEqualTo(_2023_02_08);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos()).hasSize(1);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_12_00);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getCount()).isEqualTo(1);
+        });
     }
 
     private TimeInfo createTimeInfo(LocalTime time, List<String> participantNames) {

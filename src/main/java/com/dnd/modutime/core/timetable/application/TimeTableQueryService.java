@@ -16,4 +16,6 @@ public class TimeTableQueryService {
         return timeTableRepository.findByRoomUuid(roomUuid)
                 .orElseThrow(() -> new NotFoundException("해당하는 TimeTable을 찾을 수 없습니다."));
     }
+
+
 }

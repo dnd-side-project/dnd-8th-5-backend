@@ -39,7 +39,7 @@ public class TimeTableOverview {
     private static Optional<TimeAndCountPerDate> createTimeAndCountPerDate(DateInfo dateInfo, List<String> participantNames) {
         var timeInfos = getTimeInfos(dateInfo, participantNames);
         var availableTimeInfos = timeInfos.stream()
-                .map(AvailableTimeInfo::from)
+                .map(timeInfo -> AvailableTimeInfo.from(timeInfo, participantNames))
                 .collect(Collectors.toList());
 
         return availableTimeInfos.isEmpty()
@@ -78,11 +78,11 @@ public class TimeTableOverview {
         private LocalTime time;
         private int count;
 
-        public static AvailableTimeInfo from(TimeInfo timeInfo) {
+        public static AvailableTimeInfo from(TimeInfo timeInfo, List<String> participantNames) {
             var info = new AvailableTimeInfo();
             info.timeInfoId = timeInfo.getId();
             info.time = timeInfo.getTime();
-            info.count = timeInfo.getParticipantsSize();
+            info.count = timeInfo.getParticipantsSize(participantNames);
 
             return info;
         }
