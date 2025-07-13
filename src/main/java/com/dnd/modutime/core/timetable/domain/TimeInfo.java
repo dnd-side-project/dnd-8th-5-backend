@@ -86,12 +86,31 @@ public class TimeInfo implements Auditable {
                 .containsAll(participantNames);
     }
 
+    public boolean hasAnyParticipant(List<String> participantNames) {
+        if (participantNames == null || participantNames.isEmpty()) {
+            return false;
+        }
+
+        return timeInfoParticipantNames.stream()
+                .anyMatch(participantName -> participantNames.contains(participantName.getName()));
+    }
+
     public Long getId() {
         return id;
     }
 
     public int getParticipantsSize() {
         return timeInfoParticipantNames.size();
+    }
+
+    public int getParticipantsSize(List<String> participantNames) {
+        if (participantNames == null || participantNames.isEmpty()) {
+            return this.getParticipantsSize();
+        }
+        return this.timeInfoParticipantNames.stream()
+                .filter(timeInfoParticipantName -> participantNames.contains(timeInfoParticipantName.getName()))
+                .toList()
+                .size();
     }
 
     public LocalTime getTime() {

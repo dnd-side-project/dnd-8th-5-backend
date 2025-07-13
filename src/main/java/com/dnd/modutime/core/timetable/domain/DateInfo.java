@@ -1,32 +1,18 @@
 package com.dnd.modutime.core.timetable.domain;
 
+import com.dnd.modutime.core.entity.Auditable;
+import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
+import com.dnd.modutime.core.timeblock.domain.AvailableTime;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import com.dnd.modutime.core.entity.Auditable;
-import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
-import com.dnd.modutime.core.timeblock.domain.AvailableTime;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -141,6 +127,12 @@ public class DateInfo implements Auditable {
     public List<TimeInfo> getTimeInfosByParticipantNames(List<String> participantNames) {
         return timeInfos.stream()
                 .filter(timeInfo -> timeInfo.containsAllParticipantName(participantNames))
+                .collect(Collectors.toList());
+    }
+
+    public List<TimeInfo> hasAnyParticipant(List<String> participantNames) {
+        return timeInfos.stream()
+                .filter(timeInfo -> timeInfo.hasAnyParticipant(participantNames))
                 .collect(Collectors.toList());
     }
 
