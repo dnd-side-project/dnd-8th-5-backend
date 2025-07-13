@@ -1,0 +1,4 @@
+### 타임 테이블 조회
+GET {{host}}/api/room/dc486f92-69d6-454f-9fa1-1e5cbf0f7310/available-time/overview
+    ?participantNames=동호1
+Content-Type: application/json
