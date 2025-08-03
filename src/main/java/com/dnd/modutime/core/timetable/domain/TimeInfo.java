@@ -1,22 +1,15 @@
 package com.dnd.modutime.core.timetable.domain;
 
-import java.time.LocalTime;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import com.dnd.modutime.core.entity.Auditable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import com.dnd.modutime.core.entity.Auditable;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -93,12 +86,31 @@ public class TimeInfo implements Auditable {
                 .containsAll(participantNames);
     }
 
+    public boolean hasAnyParticipant(List<String> participantNames) {
+        if (participantNames == null || participantNames.isEmpty()) {
+            return false;
+        }
+
+        return timeInfoParticipantNames.stream()
+                .anyMatch(participantName -> participantNames.contains(participantName.getName()));
+    }
+
     public Long getId() {
         return id;
     }
 
     public int getParticipantsSize() {
         return timeInfoParticipantNames.size();
+    }
+
+    public int getParticipantsSize(List<String> participantNames) {
+        if (participantNames == null || participantNames.isEmpty()) {
+            return this.getParticipantsSize();
+        }
+        return this.timeInfoParticipantNames.stream()
+                .filter(timeInfoParticipantName -> participantNames.contains(timeInfoParticipantName.getName()))
+                .toList()
+                .size();
     }
 
     public LocalTime getTime() {

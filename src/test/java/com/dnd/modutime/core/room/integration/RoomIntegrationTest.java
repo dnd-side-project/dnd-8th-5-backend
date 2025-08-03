@@ -1,7 +1,8 @@
 package com.dnd.modutime.core.room.integration;
 
 import com.dnd.modutime.config.TimeConfiguration;
-import com.dnd.modutime.core.participant.application.ParticipantService;
+import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
+import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.room.application.RoomService;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
@@ -14,11 +15,10 @@ import com.dnd.modutime.core.timetable.application.TimeTableService;
 import com.dnd.modutime.core.timetable.application.response.AvailableTimeInfo;
 import com.dnd.modutime.core.timetable.application.response.TimeAndCountPerDate;
 import com.dnd.modutime.core.timetable.application.response.TimeTableResponse;
-import com.dnd.modutime.util.IntegrationSupporter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.ApplicationEvents;
@@ -36,8 +36,8 @@ import static org.mockito.Mockito.doNothing;
 
 @Import(TimeConfiguration.class)
 @RecordApplicationEvents
-@EnableAutoConfiguration
-public class RoomIntegrationTest extends IntegrationSupporter {
+@SpringBootTest
+public class RoomIntegrationTest {
 
     @Autowired
     private RoomService roomService;
@@ -46,7 +46,7 @@ public class RoomIntegrationTest extends IntegrationSupporter {
     private TimeTableService timeTableService;
 
     @Autowired
-    private ParticipantService participantService;
+    private ParticipantCommandHandler participantCommandHandler;
 
     @MockBean
     private TimeReplaceValidator timeReplaceValidator;
@@ -87,7 +87,8 @@ public class RoomIntegrationTest extends IntegrationSupporter {
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
         String roomUuid = roomCreationResponse.getUuid();
         timeTableService.create(roomUuid);
-        participantService.create(roomUuid, "참여자1", "1234");
+        var command = ParticipantCreateCommand.of(roomUuid, "참여자1", "1234");
+        participantCommandHandler.handle(command);
 
         // when
         doNothing().when(timeReplaceValidator).validate(any(), any());

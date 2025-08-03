@@ -1,7 +1,9 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.8'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'java'
+    id 'org.springframework.boot' version '2.7.8'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'com.epages.restdocs-api-spec' version '0.16.4'
 }
 
 group = 'com.dnd'
@@ -9,40 +11,120 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    asciidoctorExt
+}
+
+ext {
+    springDocsOpenApiVersion = "1.7.0"
+    springRestDocsApiSpecVersion = "0.16.4"
+    snippetsDir = file('build/generated-snippets')
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	compileOnly 'org.projectlombok:lombok:1.18.30'
-	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
-	// cache
-	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+    // cache
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 
-	// jwt
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	implementation 'com.sun.xml.bind:jaxb-impl:4.0.1'
-	implementation 'com.sun.xml.bind:jaxb-core:4.0.1'
-	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'com.sun.xml.bind:jaxb-impl:4.0.1'
+    implementation 'com.sun.xml.bind:jaxb-core:4.0.1'
+    implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
 
-	// test
-	testImplementation 'io.rest-assured:rest-assured:4.4.0'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Spring REST Docs - Spring Boot 2.7.8과 호환되는 버전
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+
+    // swagger(springdoc) - Spring Boot 2.7.8과 호환되는 버전
+    implementation("org.springdoc:springdoc-openapi-ui:$springDocsOpenApiVersion")
+
+    // Spring Boot 2.7.8을 지원하는 restdocs-api-spec 버전
+    testImplementation("com.epages:restdocs-api-spec:$springRestDocsApiSpecVersion")
+    testImplementation("com.epages:restdocs-api-spec-mockmvc:$springRestDocsApiSpecVersion")
+
+    // test
+    testImplementation 'io.rest-assured:rest-assured:4.4.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+/**
+ * asciidoctor 태스크 정의
+ */
+asciidoctor {
+    dependsOn "apiDocsTest"
+
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    baseDirFollowsSourceDir()
+
+    // 출력 디렉토리 명시적 설정 (다른 서비스와 동일하게)
+    outputDir = file('build/docs/asciidoc')
+
+    attributes 'snippets': snippetsDir
+}
+
+tasks.register("apiDocsTest", Test) {
+    systemProperty('user.timezone', 'Asia/Seoul')
+    outputs.dir snippetsDir
+    useJUnitPlatform {
+        includeTags("apiDocs")
+        excludeTags("exclude", "unit", "integration")
+    }
+}
+
+// JVM 인코딩 설정
+tasks.withType(Test) {
+    systemProperty "file.encoding", "UTF-8"
+    systemProperty "sun.jnu.encoding", "UTF-8"
+    jvmArgs '-Dfile.encoding=UTF-8'
+}
+
+// 컴파일 시 인코딩 설정
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+openapi3 {
+    servers = [
+            { url = 'http://localhost:8080' },
+            { url = 'https://api2.modutime.site' },
+    ]
+    title = '모두타임(Modutime) API'
+    description = '모두타임 API'
+    version = "${project.version}"
+    format = 'yaml'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+}
+
+jar.enabled = false
+bootJar {
+    if (project.hasProperty("include-api-docs")) {
+        dependsOn asciidoctor
+        dependsOn "openapi3"
+
+        from("${asciidoctor.outputDir}") {
+            into "BOOT-INF/classes/static/docs"
+        }
+    }
+
+    archiveFileName = "application.jar"
 }

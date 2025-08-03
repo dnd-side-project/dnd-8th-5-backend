@@ -1,25 +1,21 @@
 package com.dnd.modutime.core.timeblock.domain;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import com.dnd.modutime.core.entity.Auditable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import com.dnd.modutime.core.entity.Auditable;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
+/**
+ * TimeBlock은 '참여자의 시간 블록'을 조작하는 엔티티입니다.
+ * 참여자는 자신의 시간 블록을 등록하고, 수정하고, 삭제할 수 있습니다.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -69,6 +65,16 @@ public class TimeBlock extends AbstractAggregateRoot<TimeBlock> implements Audit
         List<AvailableDateTime> oldAvailableDateTimes = this.availableDateTimes;
         this.availableDateTimes = availableDateTimes;
         registerEvent(new TimeBlockReplaceEvent(roomUuid, oldAvailableDateTimes, availableDateTimes, participantName));
+    }
+
+    @PreRemove
+    private void registerRemovedEvent() {
+        registerEvent(TimeBlockRemovedEvent.of(
+                this.roomUuid,
+                this.availableDateTimes,
+                List.of(),
+                this.participantName
+        ));
     }
 
     public Long getId() {

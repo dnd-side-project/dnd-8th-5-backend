@@ -1,19 +1,13 @@
 package com.dnd.modutime.core.adjustresult.domain;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import com.dnd.modutime.core.entity.Auditable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import com.dnd.modutime.core.entity.Auditable;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -39,7 +33,7 @@ public class AdjustmentResult implements Auditable {
     private LocalDateTime modifiedAt;
 
     public AdjustmentResult(String roomUuid,
-                             List<CandidateDateTime> candidateDateTimes) {
+                            List<CandidateDateTime> candidateDateTimes) {
         this.roomUuid = roomUuid;
         this.candidateDateTimes = candidateDateTimes;
         this.confirmation = false;

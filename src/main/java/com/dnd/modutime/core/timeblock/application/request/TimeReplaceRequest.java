@@ -16,6 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 public class TimeReplaceRequest {
 
+    /**
+     * Participant의 name
+     */
     @NotNull(message = "이름은 필수입니다.")
     private String name;
     private Boolean hasTime;

@@ -12,8 +12,10 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StringUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * JSON 처리 유틸리티(modutime 내부에서만 활용)
+ * JSON 처리 유틸리티
  */
 public class JsonUtils {
     private static final ObjectMapper MAPPER;
@@ -242,27 +244,33 @@ public class JsonUtils {
         }
     }
 
-    public static <T> T fromJsonFile(String resourceClasspath, Class<T> clazz) {
-        if (resourceClasspath == null) {
+    public static <T> T fromJsonFile(String fileAbsolutePath, Class<T> clazz) {
+        if (StringUtils.isEmpty(fileAbsolutePath)) {
             return null;
         }
 
-        var classpathResource = new ClassPathResource(resourceClasspath);
-        try {
-            return MAPPER.readValue(classpathResource.getInputStream(), clazz);
+        var jsonFile = new File(fileAbsolutePath);
+        if (!jsonFile.exists()) {
+            return null;
+        }
+        try (var jsonFileInputStream = new FileInputStream(jsonFile)) {
+            return MAPPER.readValue(jsonFileInputStream, clazz);
         } catch (IOException e) {
             throw new JsonDecodeException(e);
         }
     }
 
-    public static <T> T fromJsonFile(String resourceClasspath, TypeReference<T> typeReference) {
-        if (resourceClasspath == null) {
+    public static <T> T fromJsonFile(String fileAbsolutePath, TypeReference<T> typeReference) {
+        if (StringUtils.isEmpty(fileAbsolutePath)) {
             return null;
         }
 
-        var classpathResource = new ClassPathResource(resourceClasspath);
-        try {
-            return MAPPER.readValue(classpathResource.getInputStream(), typeReference);
+        var jsonFile = new File(fileAbsolutePath);
+        if (!jsonFile.exists()) {
+            return null;
+        }
+        try (var jsonFileInputStream = new FileInputStream(jsonFile)) {
+            return MAPPER.readValue(jsonFileInputStream, typeReference);
         } catch (IOException e) {
             throw new JsonDecodeException(e);
         }

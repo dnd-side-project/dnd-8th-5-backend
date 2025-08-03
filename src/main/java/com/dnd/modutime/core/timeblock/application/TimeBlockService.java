@@ -2,17 +2,16 @@ package com.dnd.modutime.core.timeblock.application;
 
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
 import com.dnd.modutime.core.timeblock.application.response.TimeBlockResponse;
-import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.core.timeblock.repository.AvailableDateTimeRepository;
 import com.dnd.modutime.core.timeblock.repository.TimeBlockRepository;
-import com.dnd.modutime.core.timeblock.util.DateTimeToAvailableDateTimeConvertor;
 import com.dnd.modutime.core.timeblock.util.DateTimeToAvailableDateTimeConvertorFactory;
 import com.dnd.modutime.exception.NotFoundException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -24,18 +23,29 @@ public class TimeBlockService {
     private final AvailableDateTimeRepository availableDateTimeRepository;
     private final DateTimeToAvailableDateTimeConvertorFactory dateTimeToAvailableDateTimeConvertorFactory;
 
-    public void replace(String roomUuid, TimeReplaceRequest timeReplaceRequest) {
-        TimeBlock timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, timeReplaceRequest.getName());
+    public void create(String roomUuid, String participantName) {
+        var timeBlock = new TimeBlock(roomUuid, participantName);
+        timeBlockRepository.save(timeBlock);
+    }
 
-        DateTimeToAvailableDateTimeConvertor dateTimeToAvailableDateTimeConvertor = dateTimeToAvailableDateTimeConvertorFactory
+    public void replace(String roomUuid, TimeReplaceRequest timeReplaceRequest) {
+        var timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, timeReplaceRequest.getName());
+
+        var dateTimeToAvailableDateTimeConvertor = dateTimeToAvailableDateTimeConvertorFactory
                 .getInstance(timeReplaceRequest.getHasTime());
-        List<AvailableDateTime> availableDateTimes = dateTimeToAvailableDateTimeConvertor.convert(timeBlock, timeReplaceRequest.getAvailableDateTimes());
+        var availableDateTimes = dateTimeToAvailableDateTimeConvertor.convert(timeBlock, timeReplaceRequest.getAvailableDateTimes());
 
         timeReplaceValidator.validate(roomUuid, availableDateTimes);
         availableDateTimeRepository.deleteAllByTimeBlockId(timeBlock.getId());
         availableDateTimeRepository.saveAll(availableDateTimes);
         timeBlock.replace(availableDateTimes);
         timeBlockRepository.save(timeBlock);
+    }
+
+    public void remove(String roomUuid, String participantName) {
+        var timeBlock = getTimeBlockByRoomUuidAndParticipantName(roomUuid, participantName);
+        availableDateTimeRepository.deleteAllByTimeBlockId(timeBlock.getId());
+        timeBlockRepository.delete(timeBlock);
     }
 
     private TimeBlock getTimeBlockByRoomUuidAndParticipantName(String roomUuid, String participantName) {

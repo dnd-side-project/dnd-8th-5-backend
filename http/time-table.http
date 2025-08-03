@@ -1,0 +1,4 @@
+### 타임 테이블 조회
+GET https://api2.modutime.site/api/room/41616ae0-c45a-4ea8-a468-9f664051fec8/available-time/overview
+    ?participantNames=동호1,동호3
+Content-Type: application/json

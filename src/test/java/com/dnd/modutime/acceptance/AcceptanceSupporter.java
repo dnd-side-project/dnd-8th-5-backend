@@ -6,6 +6,7 @@ import com.dnd.modutime.core.auth.application.request.LoginRequest;
 import com.dnd.modutime.core.auth.oauth.OAuth2AuthorizationRequestResolverConfig;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenProvider;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
+import com.dnd.modutime.core.participant.controller.dto.ParticipantsDeleteRequest;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
@@ -74,6 +75,23 @@ public abstract class AcceptanceSupporter {
                 .extract();
     }
 
+    protected ExtractableResponse<Response> delete(String uri, Object body) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .when().delete(uri)
+                .then().log().all()
+                .extract();
+    }
+
+    protected ExtractableResponse<Response> delete(String uri) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().delete(uri)
+                .then().log().all()
+                .extract();
+    }
+
     protected RoomCreationResponse 방_생성(RoomRequest roomRequest) {
         ExtractableResponse<Response> response = post("/api/room", roomRequest);
         return response.body().as(RoomCreationResponse.class);
@@ -104,6 +122,10 @@ public abstract class AcceptanceSupporter {
     protected ExtractableResponse<Response> 시간을_등록한다(String roomUuid, String participantName, Boolean hasTime, List<LocalDateTime> dateTimes) {
         TimeReplaceRequest timeReplaceRequest = new TimeReplaceRequest(participantName, hasTime, dateTimes);
         return put("/api/room/" + roomUuid + "/available-time", timeReplaceRequest);
+    }
+
+    protected ExtractableResponse<Response> 참여자를_삭제한다(String roomUuid, ParticipantsDeleteRequest request) {
+        return delete("/api/room/" + roomUuid, request);
     }
 
     protected void 로그인후_시간을_등록한다(String roomUuid, String participantName, Boolean hasTime, List<LocalDateTime> requests) {

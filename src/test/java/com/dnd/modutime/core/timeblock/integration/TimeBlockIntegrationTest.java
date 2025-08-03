@@ -9,9 +9,10 @@ import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.core.timeblock.repository.AvailableDateTimeRepository;
 import com.dnd.modutime.core.timeblock.repository.TimeBlockRepository;
-import com.dnd.modutime.util.IntegrationSupporter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
 @Transactional
-class TimeBlockIntegrationTest extends IntegrationSupporter {
+@SpringBootTest
+class TimeBlockIntegrationTest {
 
     @Autowired
     private TimeBlockService timeBlockService;
@@ -146,5 +148,34 @@ class TimeBlockIntegrationTest extends IntegrationSupporter {
         // then
         assertThatThrownBy(() -> timeBlockService.replace(ROOM_UUID, timeReplaceRequest))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("타임 블록을 생성한다.")
+    @Test
+    void test01() {
+        // given
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+
+        // when
+        timeBlockService.create(ROOM_UUID, "참여자1");
+
+        // then
+        var timeBlock = timeBlockRepository.findByRoomUuidAndParticipantName(ROOM_UUID, "참여자1").get();
+        assertThat(timeBlock.getParticipantName()).isEqualTo("참여자1");
+    }
+
+    @DisplayName("타임 블록을 삭제한다.")
+    @Test
+    void test02() {
+        // given
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+        var savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
+        availableDateTimeRepository.save(new AvailableDateTime(savedTimeBlock, _2023_02_10, List.of(new AvailableTime(_12_00))));
+
+        // when
+        timeBlockService.remove(ROOM_UUID, "참여자1");
+
+        // then
+        assertThat(timeBlockRepository.findById(savedTimeBlock.getId()).isEmpty()).isTrue();
     }
 }
