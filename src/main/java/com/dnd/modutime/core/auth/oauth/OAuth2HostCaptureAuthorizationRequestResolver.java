@@ -54,7 +54,7 @@ public class OAuth2HostCaptureAuthorizationRequestResolver implements OAuth2Auth
 
     private String buildEnhancedState(String originalState, HttpServletRequest request) {
         var referer = normalizeReferer(request.getHeader(REFERER));
-        var roomUuid = request.getParameter("room-uuid");
+        var roomUuid = request.getParameter("roomUuid");
 
         if (roomUuid != null && !roomUuid.isEmpty()) {
             return String.format("%s|%s|%s", originalState, referer, roomUuid);
