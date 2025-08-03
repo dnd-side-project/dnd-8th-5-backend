@@ -77,7 +77,7 @@ public class TestJsonUtils {
 
         var classpathResource = new ClassPathResource(resourceClasspath);
         try {
-            return toPrettyJson(MOCK_MVC_MAPPER.readTree(classpathResource.getFile()));
+            return toPrettyJson(MOCK_MVC_MAPPER.readTree(classpathResource.getInputStream()));
         } catch (IOException e) {
             throw new JsonDecodeException(e);
         }

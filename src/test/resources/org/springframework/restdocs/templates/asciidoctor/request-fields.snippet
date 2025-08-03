@@ -5,7 +5,7 @@
 
 {{#parameters}}
 |{{#tableCellContent}}`+{{name}}+`{{/tableCellContent}}
-|{{^optional}}필수{{/optional}}
+|{{^optional}}필수{{/optional}}{{#optional}}선택{{/optional}}
 |{{#tableCellContent}}{{description}}{{/tableCellContent}}
 |{{#format}}{{format}}{{/format}}{{^format}}{{/format}}
 {{/parameters}}
