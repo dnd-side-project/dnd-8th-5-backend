@@ -1,0 +1,14 @@
+.응답필드
+[cols="2,1,1,4a"]
+|===
+|필드|타입|필수값|설명
+
+{{#fields}}
+|{{path}}
+|{{type}}
+|{{^optional}}필수{{/optional}}
+|{{description}} +
+{{#format}}{{format}}{{/format}}{{^format}}{{/format}}
+{{/fields}}
+
+|===

@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.8'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'com.epages.restdocs-api-spec' version '0.16.4'
 }
 
 group = 'com.dnd'
@@ -12,6 +14,13 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExt
+}
+
+ext {
+    springDocsOpenApiVersion = "1.7.0"
+    springRestDocsApiSpecVersion = "0.16.4"
+    snippetsDir = file('build/generated-snippets')
 }
 
 repositories {
@@ -27,9 +36,79 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // Spring REST Docs - Spring Boot 2.7.8과 호환되는 버전
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+
+    // swagger(springdoc) - Spring Boot 2.7.8과 호환되는 버전
+    implementation("org.springdoc:springdoc-openapi-ui:$springDocsOpenApiVersion")
+
+    // Spring Boot 2.7.8을 지원하는 restdocs-api-spec 버전
+    testImplementation("com.epages:restdocs-api-spec:$springRestDocsApiSpecVersion")
+    testImplementation("com.epages:restdocs-api-spec-mockmvc:$springRestDocsApiSpecVersion")
+
     // test
     testImplementation 'io.rest-assured:rest-assured:4.4.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+/**
+ * asciidoctor 태스크 정의
+ *
+ * @see <a href="https://asciidoctor.github.io/asciidoctor-gradle-plugin/development-3.x/user-guide/">Asciidoctor Gradle Plugin Suite</a>
+ */
+asciidoctor {
+    dependsOn "apiDocsTest"
+
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    baseDirFollowsSourceDir()
+
+    attributes 'snippets': snippetsDir
+
+    // 한글 인코딩 설정 추가
+    options doctype: 'book',
+            eruby: 'erubis'
+
+    attributes 'source-highlighter': 'coderay',
+            'imagesdir': './images',
+            'toc': 'left',
+            'icons': 'font',
+            'setanchors': '',
+            'idprefix': '',
+            'idseparator': '-',
+            'docinfo1': '',
+            'encoding': 'utf-8'
+}
+
+// JVM 인코딩 설정
+tasks.withType(Test) {
+    systemProperty "file.encoding", "UTF-8"
+    systemProperty "sun.jnu.encoding", "UTF-8"
+    jvmArgs '-Dfile.encoding=UTF-8'
+}
+
+// 컴파일 시 인코딩 설정
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// asciidoctor 태스크에 인코딩 설정
+asciidoctor {
+    doFirst {
+        System.setProperty("file.encoding", "UTF-8")
+        System.setProperty("sun.jnu.encoding", "UTF-8")
+    }
+}
+
+openapi3 {
+    servers = [
+            { url = 'http://localhost:9090' },
+    ]
+    title = '모두타임(Modutime) API'
+    description = '모두타임 API'
+    version = "${project.version}"
+    format = 'yaml'
 }
 
 tasks.named('test') {
