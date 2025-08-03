@@ -21,6 +21,7 @@ ext {
     springDocsOpenApiVersion = "1.7.0"
     springRestDocsApiSpecVersion = "0.16.4"
     snippetsDir = file('build/generated-snippets')
+    tsidVersion = "2.1.2"
 }
 
 repositories {
@@ -35,6 +36,9 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // tsid
+    implementation("io.hypersistence:hypersistence-tsid:$tsidVersion")
 
     // Spring REST Docs - Spring Boot 2.7.8과 호환되는 버전
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
