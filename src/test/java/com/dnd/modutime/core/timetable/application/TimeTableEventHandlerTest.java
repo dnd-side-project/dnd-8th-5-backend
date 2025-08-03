@@ -1,15 +1,16 @@
 package com.dnd.modutime.core.timetable.application;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
 import com.dnd.modutime.core.timeblock.domain.TimeBlockRemovedEvent;
 import com.dnd.modutime.core.timeblock.domain.TimeBlockReplaceEvent;
 import com.dnd.modutime.core.timetable.application.command.TimeTableUpdateCommand;
+import com.dnd.modutime.util.IntegrationSupporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.event.ApplicationEvents;
@@ -26,9 +27,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
+@SpringBootTestWithoutOAuthConfig
 @RecordApplicationEvents
-class TimeTableEventHandlerTest {
+class TimeTableEventHandlerTest extends IntegrationSupporter {
 
     @Autowired
     private ApplicationEvents events;

@@ -1,24 +1,25 @@
 package com.dnd.modutime.core.participant.integration;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
 import com.dnd.modutime.core.participant.application.ParticipantQueryService;
 import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
 import com.dnd.modutime.core.participant.domain.ParticipantRemovedEvent;
+import com.dnd.modutime.util.IntegrationSupporter;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
 import java.util.List;
 
-@SpringBootTest
+@SpringBootTestWithoutOAuthConfig
 @RecordApplicationEvents
-public class ParticipantIntegrationTest {
+public class ParticipantIntegrationTest extends IntegrationSupporter {
 
     @Autowired
     private ParticipantCommandHandler participantCommandHandler;

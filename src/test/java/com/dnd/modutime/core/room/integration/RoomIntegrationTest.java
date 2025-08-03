@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.room.integration;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
 import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
@@ -15,10 +16,10 @@ import com.dnd.modutime.core.timetable.application.TimeTableService;
 import com.dnd.modutime.core.timetable.application.response.AvailableTimeInfo;
 import com.dnd.modutime.core.timetable.application.response.TimeAndCountPerDate;
 import com.dnd.modutime.core.timetable.application.response.TimeTableResponse;
+import com.dnd.modutime.util.IntegrationSupporter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.ApplicationEvents;
@@ -36,8 +37,8 @@ import static org.mockito.Mockito.doNothing;
 
 @Import(TimeConfiguration.class)
 @RecordApplicationEvents
-@SpringBootTest
-public class RoomIntegrationTest {
+@SpringBootTestWithoutOAuthConfig
+public class RoomIntegrationTest extends IntegrationSupporter {
 
     @Autowired
     private RoomService roomService;
