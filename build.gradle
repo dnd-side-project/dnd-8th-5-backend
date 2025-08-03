@@ -54,8 +54,6 @@ dependencies {
 
 /**
  * asciidoctor 태스크 정의
- *
- * @see <a href="https://asciidoctor.github.io/asciidoctor-gradle-plugin/development-3.x/user-guide/">Asciidoctor Gradle Plugin Suite</a>
  */
 asciidoctor {
     dependsOn "apiDocsTest"
@@ -64,21 +62,19 @@ asciidoctor {
     configurations 'asciidoctorExt'
     baseDirFollowsSourceDir()
 
+    // 출력 디렉토리 명시적 설정 (다른 서비스와 동일하게)
+    outputDir = file('build/docs/asciidoc')
+
     attributes 'snippets': snippetsDir
+}
 
-    // 한글 인코딩 설정 추가
-    options doctype: 'book',
-            eruby: 'erubis'
-
-    attributes 'source-highlighter': 'coderay',
-            'imagesdir': './images',
-            'toc': 'left',
-            'icons': 'font',
-            'setanchors': '',
-            'idprefix': '',
-            'idseparator': '-',
-            'docinfo1': '',
-            'encoding': 'utf-8'
+tasks.register("apiDocsTest", Test) {
+    systemProperty('user.timezone', 'Asia/Seoul')
+    outputs.dir snippetsDir
+    useJUnitPlatform {
+        includeTags("apiDocs")
+        excludeTags("exclude", "unit", "integration")
+    }
 }
 
 // JVM 인코딩 설정
@@ -93,17 +89,10 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-// asciidoctor 태스크에 인코딩 설정
-asciidoctor {
-    doFirst {
-        System.setProperty("file.encoding", "UTF-8")
-        System.setProperty("sun.jnu.encoding", "UTF-8")
-    }
-}
-
 openapi3 {
     servers = [
-            { url = 'http://localhost:9090' },
+            { url = 'http://localhost:8080' },
+            { url = 'https://api2.modutime.site' },
     ]
     title = '모두타임(Modutime) API'
     description = '모두타임 API'
@@ -113,4 +102,18 @@ openapi3 {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jar.enabled = false
+bootJar {
+    if (project.hasProperty("include-api-docs")) {
+        dependsOn asciidoctor
+        dependsOn "openapi3"
+
+        from("${asciidoctor.outputDir}") {
+            into "BOOT-INF/classes/static/docs"
+        }
+    }
+
+    archiveFileName = "application.jar"
 }
