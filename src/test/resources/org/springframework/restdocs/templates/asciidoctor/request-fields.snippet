@@ -1,0 +1,13 @@
+.요청파라미터
+[cols="3,2,3,2a"]
+|===
+|파라미터|필수여부|설명|형식
+
+{{#parameters}}
+|{{#tableCellContent}}`+{{name}}+`{{/tableCellContent}}
+|{{^optional}}필수{{/optional}}{{#optional}}선택{{/optional}}
+|{{#tableCellContent}}{{description}}{{/tableCellContent}}
+|{{#format}}{{format}}{{/format}}{{^format}}{{/format}}
+{{/parameters}}
+
+|===

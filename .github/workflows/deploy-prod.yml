@@ -75,7 +75,7 @@ jobs:
 
       ## gradle build
       - name: Build with Gradle
-        run: ./gradlew bootJar
+        run: ./gradlew clean bootJar --info --build-cache -x test -Pinclude-api-docs
 
       ## 웹 이미지 빌드 및 도커허브에 push
       - name: web docker build and push

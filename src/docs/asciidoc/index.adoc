@@ -1,0 +1,31 @@
+= 모두의 시간 API
+모두의 시간팀, <modumodutime@gmail.com>
+v0.0.1, 2025-07-18
+//문서 초기 설정
+:doctype: book
+:icons: font
+:source-highlighter: coderay
+:toc: left
+:toc-title: 목차
+:toclevels: 3
+:sectlinks:
+:sectnums:
+
+== 공통
+
+모두의 시간(Modutime API) 입니다.
+
+[NOTE]
+====
+쉽고 빠른 약속 정하기, 모두타임
+====
+
+.담당자
+|====
+|담당 |이름 |이메일 |비고
+
+|개발 |김동호 |mailto:dongho1088@gmail.com[] |
+|====
+
+// 코드
+include::timetable.adoc[]
