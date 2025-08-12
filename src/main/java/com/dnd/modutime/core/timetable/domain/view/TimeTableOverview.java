@@ -37,20 +37,12 @@ public class TimeTableOverview {
     }
 
     private static Optional<TimeAndCountPerDate> createTimeAndCountPerDate(DateInfo dateInfo, List<String> participantNames) {
-        var timeInfos = getTimeInfos(dateInfo, participantNames);
+        var timeInfos = dateInfo.getTimeInfos();
         var availableTimeInfos = timeInfos.stream()
                 .map(timeInfo -> AvailableTimeInfo.from(timeInfo, participantNames))
                 .collect(Collectors.toList());
 
-        return availableTimeInfos.isEmpty()
-                ? Optional.empty()
-                : Optional.of(TimeAndCountPerDate.of(dateInfo.getDate(), availableTimeInfos));
-    }
-
-    private static List<TimeInfo> getTimeInfos(DateInfo dateInfo, List<String> participantNames) {
-        return (participantNames != null && !participantNames.isEmpty())
-                ? dateInfo.hasAnyParticipant(participantNames)
-                : dateInfo.getTimeInfos();
+        return Optional.of(TimeAndCountPerDate.of(dateInfo.getDate(), availableTimeInfos));
     }
 
     @Getter
