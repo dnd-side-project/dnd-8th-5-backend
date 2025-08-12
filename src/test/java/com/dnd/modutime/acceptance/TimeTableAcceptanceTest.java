@@ -85,22 +85,25 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
                 () -> {
                     var _02_08 = timeAndCountPerDates.get(0);
                     assertThat(_02_08.getAvailableDate()).isEqualTo(_2023_02_08);
-                    assertThat(_02_08.getAvailableTimeInfos()).hasSize(6);
-                    assertThat(_02_08.getAvailableTimeInfos()).extracting("time")
+                    assertThat(_02_08.getAvailableTimeInfos())
+                            .hasSize(6)
+                            .extracting("time")
                             .containsExactlyInAnyOrder(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30);
                 },
                 () -> {
                     var _02_09 = timeAndCountPerDates.get(1);
                     assertThat(_02_09.getAvailableDate()).isEqualTo(_2023_02_09);
-                    assertThat(_02_09.getAvailableTimeInfos()).hasSize(6);
-                    assertThat(_02_09.getAvailableTimeInfos()).extracting("time")
+                    assertThat(_02_09.getAvailableTimeInfos())
+                            .hasSize(6)
+                            .extracting("time")
                             .containsExactlyInAnyOrder(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30);
                 },
                 () -> {
                     var _02_10 = timeAndCountPerDates.get(2);
                     assertThat(_02_10.getAvailableDate()).isEqualTo(_2023_02_10);
-                    assertThat(_02_10.getAvailableTimeInfos()).hasSize(6);
-                    assertThat(_02_10.getAvailableTimeInfos()).extracting("time")
+                    assertThat(_02_10.getAvailableTimeInfos())
+                            .hasSize(6)
+                            .extracting("time")
                             .containsExactlyInAnyOrder(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30);
                 }
         );
@@ -143,7 +146,7 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
     }
 
     @Test
-    void v2_빈_시간대도_빈_배열과_함께_응답에_포함한다() {
+    void v2_빈_시간대도_응답에_포함한다() {
         // given - 4개 날짜로 방을 생성하되, 일부 날짜에만 시간을 등록
         var roomCreationResponse = 방_생성(getRoomRequest(List.of(_2023_02_08, _2023_02_09, _2023_02_10, _2023_02_11)));
         var roomUuid = roomCreationResponse.getUuid();
@@ -189,7 +192,7 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
                             .containsExactly(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30);
                 },
 
-                // 2023-02-10: 빈 시간대 - 빈 배열로 포함되어야 함
+                // 2023-02-10: 빈 시간대
                 () -> {
                     var _02_10 = timeAndCountPerDates.get(2);
                     assertThat(_02_10.getAvailableDate()).isEqualTo(_2023_02_10);
@@ -199,7 +202,7 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
                             .containsExactly(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30);
                 },
 
-                // 2023-02-11: 빈 시간대 - 빈 배열로 포함되어야 함
+                // 2023-02-11: 빈 시간대
                 () -> {
                     var _02_11 = timeAndCountPerDates.get(3);
                     assertThat(_02_11.getAvailableDate()).isEqualTo(_2023_02_11);
@@ -266,13 +269,13 @@ public class TimeTableAcceptanceTest extends AcceptanceSupporter {
         assertAll(
                 () -> assertThat(_02_08.getAvailableDate()).isEqualTo(_2023_02_08),
                 () -> assertThat(_02_08.getAvailableTimeInfos()).extracting("time")
-                        .containsExactlyInAnyOrder(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30),
+                        .containsExactly(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30),
                 () -> assertThat(_02_09.getAvailableDate()).isEqualTo(_2023_02_09),
                 () -> assertThat(_02_09.getAvailableTimeInfos()).extracting("time")
-                        .containsExactlyInAnyOrder(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30),
+                        .containsExactly(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30),
                 () -> assertThat(_02_10.getAvailableDate()).isEqualTo(_2023_02_10),
                 () -> assertThat(_02_10.getAvailableTimeInfos()).extracting("time")
-                        .containsExactlyInAnyOrder(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30)
+                        .containsExactly(_11_00, _11_30, _12_00, _12_30, _13_00, _13_30)
         );
     }
 
