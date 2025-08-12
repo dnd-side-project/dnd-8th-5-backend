@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -29,28 +28,17 @@ public class TimeTableOverview {
     public static TimeTableOverview from(TimeTable timeTable, List<String> participantNames) {
         var timeAndCountPerDates = timeTable.getDateInfos().stream()
                 .map(dateInfo -> createTimeAndCountPerDate(dateInfo, participantNames))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .collect(Collectors.toList());
 
         return new TimeTableOverview(timeAndCountPerDates);
     }
 
-    private static Optional<TimeAndCountPerDate> createTimeAndCountPerDate(DateInfo dateInfo, List<String> participantNames) {
-        var timeInfos = getTimeInfos(dateInfo, participantNames);
+    private static TimeAndCountPerDate createTimeAndCountPerDate(DateInfo dateInfo, List<String> participantNames) {
+        var timeInfos = dateInfo.getTimeInfos();
         var availableTimeInfos = timeInfos.stream()
                 .map(timeInfo -> AvailableTimeInfo.from(timeInfo, participantNames))
                 .collect(Collectors.toList());
-
-        return availableTimeInfos.isEmpty()
-                ? Optional.empty()
-                : Optional.of(TimeAndCountPerDate.of(dateInfo.getDate(), availableTimeInfos));
-    }
-
-    private static List<TimeInfo> getTimeInfos(DateInfo dateInfo, List<String> participantNames) {
-        return (participantNames != null && !participantNames.isEmpty())
-                ? dateInfo.hasAnyParticipant(participantNames)
-                : dateInfo.getTimeInfos();
+        return TimeAndCountPerDate.of(dateInfo.getDate(), availableTimeInfos);
     }
 
     @Getter
