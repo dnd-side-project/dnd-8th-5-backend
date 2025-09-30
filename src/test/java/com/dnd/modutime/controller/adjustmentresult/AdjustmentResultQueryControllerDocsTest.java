@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
-import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -15,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dnd.modutime.annotation.ApiDocsTest;
 import com.dnd.modutime.core.adjustresult.application.AdjustmentResultService;
-import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponse;
+import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponseV1;
 import com.dnd.modutime.core.adjustresult.controller.AdjustmentResultController;
 import com.dnd.modutime.documentation.DocumentUtils;
 import com.dnd.modutime.documentation.MockMvcFactory;
@@ -67,7 +66,6 @@ public class AdjustmentResultQueryControllerDocsTest {
                 fieldWithPath("candidateTimes[].endTime").type(STRING).description("후보 목록 요소: 종료 일시"),
                 fieldWithPath("candidateTimes[].availableParticipantNames").type(ARRAY).description("후보 목록 요소: 가능한 참여자 이름 목록"),
                 fieldWithPath("candidateTimes[].unavailableParticipantNames").type(ARRAY).description("후보 목록 요소: 불가능한 참여자 이름 목록"),
-                fieldWithPath("candidateTimes[].isConfirmed").type(BOOLEAN).description("후보 목록 요소: 확정 여부"),
         };
 
         //language=JSON
@@ -85,13 +83,12 @@ public class AdjustmentResultQueryControllerDocsTest {
                       ],
                       "unavailableParticipantNames": [
                         "수진", "현"
-                      ],
-                      "isConfirmed": false
+                      ]
                     }
                   ]
                 }
                 """;
-        var response = TestJsonUtils.readValue(responseLiteral, AdjustmentResultResponse.class);
+        var response = TestJsonUtils.readValue(responseLiteral, AdjustmentResultResponseV1.class);
         when(adjustmentResultService.v1getByRoomUuidAndSortedAndNames(any(), any(), any())).thenReturn(response);
 
         MockMvcFactory.getRestDocsMockMvc(contextProvider, LOCALHOST, controller)

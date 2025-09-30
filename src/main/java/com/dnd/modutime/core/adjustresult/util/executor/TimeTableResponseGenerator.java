@@ -3,6 +3,7 @@ package com.dnd.modutime.core.adjustresult.util.executor;
 import com.dnd.modutime.core.adjustresult.application.CandidateDateTimeSortStandard;
 import com.dnd.modutime.core.adjustresult.application.DateTimeInfoDto;
 import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponse;
+import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponseV1;
 import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
 import com.dnd.modutime.core.adjustresult.util.convertor.CandidateDateTimeConvertor;
 import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorter;
@@ -47,7 +48,7 @@ public class TimeTableResponseGenerator implements AdjustmentResultResponseGener
     }
 
     @Override
-    public AdjustmentResultResponse v1generate(String roomUuid,
+    public AdjustmentResultResponseV1 v1generate(String roomUuid,
                                                CandidateDateTimeSortStandard candidateDateTimeSortStandard,
                                                List<String> names) {
         var timeTable = getTimeTableByRoomUuid(roomUuid);
@@ -57,8 +58,7 @@ public class TimeTableResponseGenerator implements AdjustmentResultResponseGener
         var candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(candidateDateTimeSortStandard);
         candidateDateTimesSorter.sort(candidateDateTimes);
         var participants = participantQueryService.getByRoomUuid(roomUuid);
-        return AdjustmentResultResponse.from(new ArrayList<>(candidateDateTimes), new Participants(participants)
-        );
+        return AdjustmentResultResponseV1.of(new ArrayList<>(candidateDateTimes), new Participants(participants));
     }
 
     private TimeTable getTimeTableByRoomUuid(String roomUuid) {

@@ -1,6 +1,7 @@
 package com.dnd.modutime.core.adjustresult.application;
 
 import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponse;
+import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponseV1;
 import com.dnd.modutime.core.adjustresult.domain.AdjustmentResult;
 import com.dnd.modutime.core.adjustresult.repository.AdjustmentResultRepository;
 import com.dnd.modutime.core.adjustresult.util.executor.AdjustmentResultExecutorFactory;
@@ -27,10 +28,10 @@ public class AdjustmentResultService {
     }
 
     @Transactional(readOnly = true)
-    public AdjustmentResultResponse v1getByRoomUuidAndSortedAndNames(String roomUuid,
-                                                                     String sorted,
-                                                                     List<String> names) {
-        var adjustmentResultResponseGenerator = adjustmentResultExecutorFactory.getInstance(roomUuid, names);
+    public AdjustmentResultResponseV1 v1getByRoomUuidAndSortedAndNames(String roomUuid,
+                                                                       String sorted,
+                                                                       List<String> names) {
+        var adjustmentResultResponseGenerator = this.adjustmentResultExecutorFactory.getInstance(roomUuid, names);
         return adjustmentResultResponseGenerator.v1generate(roomUuid, CandidateDateTimeSortStandard.getByValue(sorted), names);
     }
 
