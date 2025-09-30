@@ -10,11 +10,11 @@ import com.dnd.modutime.core.adjustresult.util.sorter.CandidateDateTimesSorterFa
 import com.dnd.modutime.core.participant.application.ParticipantQueryService;
 import com.dnd.modutime.core.participant.domain.Participants;
 import com.dnd.modutime.exception.NotFoundException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -39,6 +39,19 @@ public class AdjustmentResponseGenerator implements AdjustmentResultResponseGene
                         .limit(EXPOSURE_SIZE)
                         .collect(Collectors.toList()),
                 new Participants(participants)
+        );
+    }
+
+    @Override
+    public AdjustmentResultResponse v1generate(String roomUuid,
+                                               CandidateDateTimeSortStandard candidateDateTimeSortStandard,
+                                               List<String> names) {
+        var adjustmentResult = getAdjustmentResultByRoomUuid(roomUuid);
+        var candidateDateTimes = adjustmentResult.getCandidateDateTimes();
+        var candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(candidateDateTimeSortStandard);
+        candidateDateTimesSorter.sort(candidateDateTimes);
+        var participants = participantQueryService.getByRoomUuid(roomUuid);
+        return AdjustmentResultResponse.from(new ArrayList<>(candidateDateTimes), new Participants(participants)
         );
     }
 

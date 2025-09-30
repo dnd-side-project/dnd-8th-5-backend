@@ -9,4 +9,8 @@ public interface AdjustmentResultResponseGenerator {
     AdjustmentResultResponse generate(String roomUuid,
                                       CandidateDateTimeSortStandard candidateDateTimeSortStandard,
                                       List<String> names);
+
+    AdjustmentResultResponse v1generate(String roomUuid,
+                                        CandidateDateTimeSortStandard candidateDateTimeSortStandard,
+                                        List<String> names);
 }

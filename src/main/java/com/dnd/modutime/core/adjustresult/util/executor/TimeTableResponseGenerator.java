@@ -13,11 +13,11 @@ import com.dnd.modutime.core.room.util.CandidateDateTimeConvertorFactory;
 import com.dnd.modutime.core.timetable.domain.TimeTable;
 import com.dnd.modutime.core.timetable.repository.TimeTableRepository;
 import com.dnd.modutime.exception.NotFoundException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -43,6 +43,21 @@ public class TimeTableResponseGenerator implements AdjustmentResultResponseGener
                         .limit(5)
                         .collect(Collectors.toList()),
                 new Participants(participants)
+        );
+    }
+
+    @Override
+    public AdjustmentResultResponse v1generate(String roomUuid,
+                                               CandidateDateTimeSortStandard candidateDateTimeSortStandard,
+                                               List<String> names) {
+        var timeTable = getTimeTableByRoomUuid(roomUuid);
+        var dateTimeInfosDto = timeTable.getDateTimeInfosDtoByParticipantNames(names);
+        var candidateDateTimeConvertor = candidateDateTimeConvertorFactory.getInstance(roomUuid);
+        var candidateDateTimes = candidateDateTimeConvertor.convert(dateTimeInfosDto);
+        var candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(candidateDateTimeSortStandard);
+        candidateDateTimesSorter.sort(candidateDateTimes);
+        var participants = participantQueryService.getByRoomUuid(roomUuid);
+        return AdjustmentResultResponse.from(new ArrayList<>(candidateDateTimes), new Participants(participants)
         );
     }
 

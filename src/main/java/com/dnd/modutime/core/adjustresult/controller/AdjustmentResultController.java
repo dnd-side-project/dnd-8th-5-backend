@@ -7,23 +7,31 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/room/{roomUuid}")
 @RequiredArgsConstructor
 public class AdjustmentResultController {
 
     private final AdjustmentResultService adjustmentResultService;
 
-    @GetMapping("/adjustment-result")
+    @GetMapping("/api/room/{roomUuid}/adjustment-result")
     public ResponseEntity<AdjustmentResultResponse> getAdjustmentResult(@PathVariable String roomUuid,
                                                                         @RequestParam(defaultValue = "fast") String sorted,
                                                                         @RequestParam(value = "name", defaultValue = "") List<String> names) {
         AdjustmentResultResponse adjustmentResultResponse = adjustmentResultService.getByRoomUuidAndSortedAndNames(
                 roomUuid, sorted, names
+        );
+        return ResponseEntity.ok(adjustmentResultResponse);
+    }
+
+    @GetMapping("/api/v1/room/{roomUuid}/adjustment-results")
+    public ResponseEntity<AdjustmentResultResponse> v1getAdjustmentResult(@PathVariable String roomUuid,
+                                                                          @RequestParam(defaultValue = "fast") String sorted,
+                                                                          @RequestParam(value = "name", defaultValue = "") List<String> participantNames) {
+        var adjustmentResultResponse = adjustmentResultService.v1getByRoomUuidAndSortedAndNames(
+                roomUuid, sorted, participantNames
         );
         return ResponseEntity.ok(adjustmentResultResponse);
     }
