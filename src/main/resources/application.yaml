@@ -3,6 +3,7 @@ spring:
     active: local
     include:
       - db
+      - logging
 logging:
   level:
     org:
@@ -11,17 +12,3 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: INFO
