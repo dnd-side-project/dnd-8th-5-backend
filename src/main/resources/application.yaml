@@ -11,3 +11,17 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: INFO
