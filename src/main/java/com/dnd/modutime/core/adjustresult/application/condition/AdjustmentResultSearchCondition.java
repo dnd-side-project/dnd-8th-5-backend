@@ -11,17 +11,13 @@ import lombok.NoArgsConstructor;
 public class AdjustmentResultSearchCondition {
     private String roomUuid;
     private List<String> participantNames;
-    private String sortedStandard;
+    private CandidateDateTimeSortStandard sortedStandard;
 
-    public static AdjustmentResultSearchCondition of(String roomUuid, List<String> participantNames, String sortedStandard) {
+    public static AdjustmentResultSearchCondition of(String roomUuid, List<String> participantNames, CandidateDateTimeSortStandard sortedStandard) {
         var condition = new AdjustmentResultSearchCondition();
         condition.roomUuid = roomUuid;
         condition.participantNames = participantNames;
         condition.sortedStandard = sortedStandard;
         return condition;
-    }
-
-    public CandidateDateTimeSortStandard getCandidateDateTimeSortStandard() {
-        return CandidateDateTimeSortStandard.getByValue(this.sortedStandard);
     }
 }

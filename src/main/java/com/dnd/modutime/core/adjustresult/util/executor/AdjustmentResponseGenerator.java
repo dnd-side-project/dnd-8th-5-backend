@@ -53,7 +53,7 @@ public class AdjustmentResponseGenerator implements AdjustmentResultResponseGene
                                                         final Pageable pageable) {
         var adjustmentResult = getAdjustmentResultByRoomUuid(condition.getRoomUuid());
         var candidateDateTimes = adjustmentResult.getCandidateDateTimes();
-        var candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(condition.getCandidateDateTimeSortStandard());
+        var candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(condition.getSortedStandard());
         candidateDateTimesSorter.sort(candidateDateTimes);
         var participants = participantQueryService.getByRoomUuid(condition.getRoomUuid());
         final List<CandidateDateTime> pagingCandidateDateTimes = candidateDateTimes.stream()

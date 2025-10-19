@@ -60,7 +60,7 @@ public class TimeTableResponseGenerator implements AdjustmentResultResponseGener
         var candidateDateTimeConvertor = candidateDateTimeConvertorFactory.getInstance(condition.getRoomUuid());
         var candidateDateTimes = candidateDateTimeConvertor.convert(dateTimeInfosDto);
         var candidateDateTimesSorter = candidateDateTimesSorterFactory.getInstance(
-                condition.getCandidateDateTimeSortStandard());
+                condition.getSortedStandard());
         candidateDateTimesSorter.sort(candidateDateTimes);
         var participants = participantQueryService.getByRoomUuid(condition.getRoomUuid());
         final List<CandidateDateTime> pagingCandidateDateTimes = candidateDateTimes.stream()
