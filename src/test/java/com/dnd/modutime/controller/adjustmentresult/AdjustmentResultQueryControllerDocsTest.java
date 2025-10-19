@@ -2,10 +2,11 @@ package com.dnd.modutime.controller.adjustmentresult;
 
 import static com.dnd.modutime.TestConstant.LOCALHOST;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -14,18 +15,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dnd.modutime.annotation.ApiDocsTest;
 import com.dnd.modutime.core.adjustresult.application.AdjustmentResultService;
-import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponseV1;
+import com.dnd.modutime.core.adjustresult.application.response.CandidateDateTimeResponseV1;
 import com.dnd.modutime.core.adjustresult.controller.AdjustmentResultController;
 import com.dnd.modutime.documentation.DocumentUtils;
 import com.dnd.modutime.documentation.MockMvcFactory;
 import com.dnd.modutime.documentation.TestJsonUtils;
+import com.dnd.modutime.infrastructure.PageResponse;
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceDocumentation;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
@@ -53,25 +57,51 @@ public class AdjustmentResultQueryControllerDocsTest {
         };
 
         var queryParameters = new ParameterDescriptor[]{
+                RequestDocumentation.parameterWithName("page").description("페이지"),
+                RequestDocumentation.parameterWithName("size").description("페이당 조회크기"),
                 RequestDocumentation.parameterWithName("sorted").description("정렬 조건").optional(),
                 RequestDocumentation.parameterWithName("participantNames").description("참여자 이름 목록").optional(),
         };
 
         var responseFields = new FieldDescriptor[]{
-                fieldWithPath("candidateTimes").type(ARRAY).description("후보 목록"),
-                fieldWithPath("candidateTimes[].id").type(NUMBER).description("후보 목록 요소: id"),
-                fieldWithPath("candidateTimes[].date").type(STRING).description("후보 목록 요소: 날짜"),
-                fieldWithPath("candidateTimes[].dayOfWeek").type(STRING).description("후보 목록 요소: 요일"),
-                fieldWithPath("candidateTimes[].startTime").type(STRING).description("후보 목록 요소: 시작 일시"),
-                fieldWithPath("candidateTimes[].endTime").type(STRING).description("후보 목록 요소: 종료 일시"),
-                fieldWithPath("candidateTimes[].availableParticipantNames").type(ARRAY).description("후보 목록 요소: 가능한 참여자 이름 목록"),
-                fieldWithPath("candidateTimes[].unavailableParticipantNames").type(ARRAY).description("후보 목록 요소: 불가능한 참여자 이름 목록"),
+                fieldWithPath("pageRequest").type(OBJECT).description("페이징 요청정보"),
+                fieldWithPath("pageRequest.page").type(NUMBER).description("페이징 요청 페이지번호"),
+                fieldWithPath("pageRequest.size").type(NUMBER).description("페이징 요청 페이징크기(=limit)"),
+                fieldWithPath("pageRequest.offset").type(NUMBER).description("페이징 요청 오프셋"),
+                fieldWithPath("total").type(NUMBER).description("전체 데이터 수"),
+                fieldWithPath("isFirst").type(BOOLEAN).description("첫 번째 페이지 여부"),
+                fieldWithPath("isLast").type(BOOLEAN).description("마지막 페이지 여부"),
+                fieldWithPath("hasContent").type(BOOLEAN).description("페이징 응답 - 컨텐츠 존재여부"),
+                fieldWithPath("hasNext").type(BOOLEAN).description("페이징 응답 - 다음페이지 존재여부"),
+                fieldWithPath("hasPrevious").type(BOOLEAN).description("페이징 응답 - 이전페이지 존재여부"),
+                fieldWithPath("totalPages").type(NUMBER).description("전체 페이지 수"),
+
+                fieldWithPath("content").type(ARRAY).description("후보 목록"),
+                fieldWithPath("content[].id").type(NUMBER).description("후보 목록 요소: id"),
+                fieldWithPath("content[].date").type(STRING).description("후보 목록 요소: 날짜"),
+                fieldWithPath("content[].dayOfWeek").type(STRING).description("후보 목록 요소: 요일"),
+                fieldWithPath("content[].startTime").type(STRING).description("후보 목록 요소: 시작 일시"),
+                fieldWithPath("content[].endTime").type(STRING).description("후보 목록 요소: 종료 일시"),
+                fieldWithPath("content[].availableParticipantNames").type(ARRAY).description("후보 목록 요소: 가능한 참여자 이름 목록"),
+                fieldWithPath("content[].unavailableParticipantNames").type(ARRAY).description("후보 목록 요소: 불가능한 참여자 이름 목록"),
         };
 
         //language=JSON
         var responseLiteral = """
                 {
-                  "candidateTimes": [
+                  "pageRequest": {
+                    "page": 1,
+                    "size": 5,
+                    "offset": 0
+                  },
+                  "total": 1,
+                  "hasNext": false,
+                  "hasPrevious": false,
+                  "totalPages": 1,
+                  "hasContent": true,
+                  "isFirst": true,
+                  "isLast": true,
+                  "content": [
                     {
                       "id": 0,
                       "date": "2025-09-30",
@@ -79,23 +109,30 @@ public class AdjustmentResultQueryControllerDocsTest {
                       "startTime": "15:45",
                       "endTime": "15:45",
                       "availableParticipantNames": [
-                        "동호", "채민", "주현"
+                        "동호",
+                        "채민",
+                        "주현"
                       ],
                       "unavailableParticipantNames": [
-                        "수진", "현"
+                        "수진",
+                        "현"
                       ]
                     }
                   ]
                 }
                 """;
-        var response = TestJsonUtils.readValue(responseLiteral, AdjustmentResultResponseV1.class);
-        when(adjustmentResultService.v1getByRoomUuidAndSortedAndNames(any(), any(), any())).thenReturn(response);
+
+        Mockito.when(adjustmentResultService.search(any(), any()))
+                .thenReturn(TestJsonUtils.readValue(responseLiteral, new TypeReference<PageResponse<CandidateDateTimeResponseV1>>() {
+                }));
 
         MockMvcFactory.getRestDocsMockMvc(contextProvider, LOCALHOST, controller)
                 .perform(
                         get("/api/v1/room/{roomUuid}/adjustment-results", "test-room-uuid")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .queryParam("participantNames", "채민", "동호")
+                                .param("page", "1")
+                                .param("size", "5")
+                                .param("participantNames", "채민", "동호")
                 )
                 .andExpect(status().isOk())
                 .andDo(print())

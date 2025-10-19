@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponse;
-import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponseV1;
 import com.dnd.modutime.core.adjustresult.application.response.CandidateDateTimeResponse;
+import com.dnd.modutime.core.adjustresult.application.response.CandidateDateTimeResponseV1;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -137,8 +137,9 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
         세명의_날짜와_시간을_등록한다(roomUuid);
 
         var response = get("/api/v1/room/" + roomUuid + "/adjustment-results");
-        var adjustmentResultResponse = response.body().as(AdjustmentResultResponseV1.class);
-        var candidateDateTimeResponses = adjustmentResultResponse.getCandidateDateTimeResponse();
+        var candidateDateTimeResponses = response.body()
+                .jsonPath()
+                .getList("content", CandidateDateTimeResponseV1.class);
         var candidateDateTimeResponse = candidateDateTimeResponses.get(0);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(candidateDateTimeResponses).hasSizeLessThanOrEqualTo(13);
@@ -160,9 +161,10 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
         var roomUuid = roomCreationResponse.getUuid();
         세명의_날짜와_시간을_등록한다(roomUuid);
 
-        var response = get("/api/v1/room/" + roomUuid + "/adjustment-results?name=김동호,이수진");
-        var adjustmentResultResponse = response.body().as(AdjustmentResultResponseV1.class);
-        var candidateDateTimeResponses = adjustmentResultResponse.getCandidateDateTimeResponse();
+        var response = get("/api/v1/room/" + roomUuid + "/adjustment-results?participantNames=김동호,이수진&page=1&size=5");
+        var candidateDateTimeResponses = response.body()
+                .jsonPath()
+                .getList("content", CandidateDateTimeResponseV1.class);
         var candidateDateTimeResponse = candidateDateTimeResponses.get(0);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(candidateDateTimeResponses).hasSizeLessThanOrEqualTo(5);
@@ -188,8 +190,9 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
         두명의_날짜를_등록한다(roomUuid);
 
         var response = get("/api/v1/room/" + roomUuid + "/adjustment-results");
-        var adjustmentResultResponse = response.body().as(AdjustmentResultResponseV1.class);
-        var candidateDateTimeResponses = adjustmentResultResponse.getCandidateDateTimeResponse();
+        var candidateDateTimeResponses = response.body()
+                .jsonPath()
+                .getList("content", CandidateDateTimeResponseV1.class);
         var candidateDateTimeResponse = candidateDateTimeResponses.get(0);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(candidateDateTimeResponses).hasSizeLessThanOrEqualTo(5);
@@ -212,9 +215,10 @@ public class AdjustmentResultAcceptanceTest extends AcceptanceSupporter {
         var roomUuid = roomCreationResponse.getUuid();
         두명의_날짜를_등록한다(roomUuid);
 
-        var response = get("/api/v1/room/" + roomUuid + "/adjustment-results?name=김동호");
-        var adjustmentResultResponse = response.body().as(AdjustmentResultResponseV1.class);
-        var candidateDateTimeResponses = adjustmentResultResponse.getCandidateDateTimeResponse();
+        var response = get("/api/v1/room/" + roomUuid + "/adjustment-results?participantNames=김동호");
+        var candidateDateTimeResponses = response.body()
+                .jsonPath()
+                .getList("content", CandidateDateTimeResponseV1.class);
         var candidateDateTimeResponse = candidateDateTimeResponses.get(0);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(candidateDateTimeResponses).hasSizeLessThanOrEqualTo(5);

@@ -1,6 +1,7 @@
 package com.dnd.modutime.core.adjustresult.domain;
 
 import com.dnd.modutime.core.entity.Auditable;
+import com.dnd.modutime.core.participant.domain.Participant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -119,5 +120,24 @@ public class CandidateDateTime implements Auditable {
     @Override
     public void setModifiedAt(LocalDateTime modifiedAt) {
         this.modifiedAt = modifiedAt;
+    }
+
+    // TODO: test
+    public boolean containsExactly(final List<Participant> participants) {
+        if (this.participantNames.size() != participants.size()) {
+            return false;
+        }
+
+        var participantNames = this.participantNames.stream()
+                .map(CandidateDateTimeParticipantName::getName)
+                .sorted()
+                .toList();
+
+        var inputParticipantNames = participants.stream()
+                .map(Participant::getName)
+                .sorted()
+                .toList();
+
+        return participantNames.equals(inputParticipantNames);
     }
 }

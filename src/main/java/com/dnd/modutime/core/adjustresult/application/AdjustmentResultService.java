@@ -1,11 +1,14 @@
 package com.dnd.modutime.core.adjustresult.application;
 
+import com.dnd.modutime.core.Page;
+import com.dnd.modutime.core.adjustresult.application.condition.AdjustmentResultSearchCondition;
 import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponse;
-import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultResponseV1;
+import com.dnd.modutime.core.adjustresult.application.response.CandidateDateTimeResponseV1;
 import com.dnd.modutime.core.adjustresult.domain.AdjustmentResult;
 import com.dnd.modutime.core.adjustresult.repository.AdjustmentResultRepository;
 import com.dnd.modutime.core.adjustresult.util.executor.AdjustmentResultExecutorFactory;
 import com.dnd.modutime.core.adjustresult.util.executor.AdjustmentResultResponseGenerator;
+import com.dnd.modutime.infrastructure.PageRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,11 +31,9 @@ public class AdjustmentResultService {
     }
 
     @Transactional(readOnly = true)
-    public AdjustmentResultResponseV1 v1getByRoomUuidAndSortedAndNames(String roomUuid,
-                                                                       String sorted,
-                                                                       List<String> names) {
-        var adjustmentResultResponseGenerator = this.adjustmentResultExecutorFactory.getInstance(roomUuid, names);
-        return adjustmentResultResponseGenerator.v1generate(roomUuid, CandidateDateTimeSortStandard.getByValue(sorted), names);
+    public Page<CandidateDateTimeResponseV1> search(AdjustmentResultSearchCondition condition, PageRequest pageRequest) {
+        var adjustmentResultResponseGenerator = this.adjustmentResultExecutorFactory.getInstance(condition.getRoomUuid(), condition.getParticipantNames());
+        return adjustmentResultResponseGenerator.v1generate(condition, pageRequest);
     }
 
     public void create(String roomUuid) {
