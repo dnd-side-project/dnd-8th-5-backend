@@ -122,7 +122,6 @@ public class CandidateDateTime implements Auditable {
         this.modifiedAt = modifiedAt;
     }
 
-    // TODO: test
     public boolean containsExactly(final List<Participant> participants) {
         if (this.participantNames.size() != participants.size()) {
             return false;
