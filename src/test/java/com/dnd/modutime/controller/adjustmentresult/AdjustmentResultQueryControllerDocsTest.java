@@ -50,7 +50,7 @@ public class AdjustmentResultQueryControllerDocsTest {
     @DisplayName("조율 결과 우선 순위 목록 조회 API")
     @Test
     void test01(RestDocumentationContextProvider contextProvider) throws Exception {
-        var operationIdentifier = "get-api-v1/room-room-uuid-adjustment-result";
+        var operationIdentifier = "get-api-v1-room-room-uuid-adjustment-result";
 
         var pathParameters = new ParameterDescriptor[]{
                 parameterWithName("roomUuid").description("방 UUID"),
