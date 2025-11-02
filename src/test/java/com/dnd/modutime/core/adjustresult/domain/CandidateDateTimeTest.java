@@ -3,7 +3,6 @@ package com.dnd.modutime.core.adjustresult.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.dnd.modutime.core.participant.domain.Participant;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -28,9 +27,9 @@ class CandidateDateTimeTest {
         );
 
         var participants = List.of(
-                new Participant("room-1", "carol", "1234"),
-                new Participant("room-1", "alice", "1234"),
-                new Participant("room-1", "bob", "1234")
+                "carol",
+                "alice",
+                "bob"
         );
 
         // when
@@ -56,10 +55,7 @@ class CandidateDateTimeTest {
                 )
         );
 
-        var participants = List.of(
-                new Participant("room-1", "carol", "1234"),
-                new Participant("room-1", "alice", "1234")
-        );
+        var participants = List.of("carol", "alice");
 
         // when
         boolean result = candidate.containsExactly(participants);
