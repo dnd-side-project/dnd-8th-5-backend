@@ -10,9 +10,13 @@ public class FastFirstSorter implements CandidateDateTimesSorter{
 
     @Override
     public void sort(List<CandidateDateTime> candidateDateTimes) {
-        Comparator<CandidateDateTime> compare = Comparator
+        candidateDateTimes.sort(getComparator());
+    }
+
+    @Override
+    public Comparator<CandidateDateTime> getComparator() {
+        return Comparator
                 .comparing(CandidateDateTime::getParticipantSize, Comparator.reverseOrder())
                 .thenComparing(CandidateDateTime::getStartDateTime);
-        candidateDateTimes.sort(compare);
     }
 }

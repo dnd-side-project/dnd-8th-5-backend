@@ -1,0 +1,8 @@
+### 우선순위 조회
+@roomUuid = 0N9SSTSH9G8KY
+
+GET https://{{host}}/api/v1/room/{{roomUuid}}/adjustment-results
+    ?participantNames=동호,동호1
+    &page=2
+    &size=5
+Content-Type: application/json

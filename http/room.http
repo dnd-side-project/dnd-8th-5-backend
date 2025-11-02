@@ -1,0 +1,13 @@
+### 약속 방 만들기
+POST https://{{host}}/api/room
+Content-Type: application/json
+
+{
+  "title": "title_e1864bc11f21",
+  "headCount": 5,
+  "dates": [
+    "2025-10-20"
+  ],
+  "startTime": "14:30:00",
+  "endTime": "15:30:00"
+}

@@ -2,6 +2,7 @@ package com.dnd.modutime.core.adjustresult.util.executor;
 
 import com.dnd.modutime.core.participant.application.ParticipantQueryService;
 import com.dnd.modutime.core.participant.domain.Participants;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,10 @@ public class AdjustmentResultExecutorFactory {
         if (!participants.containsAll(names)) {
             throw new IllegalArgumentException("방에 존재하지 않는 이름이 있습니다.");
         }
-        if (participants.isSameAllNames(names) || names.isEmpty()) {
+        if (Objects.isNull(names) || names.isEmpty()) {
+            return executors.get("adjustmentResponseGenerator");
+        }
+        if (participants.isSameAllNames(names)) {
             return executors.get("adjustmentResponseGenerator");
         }
         return executors.get("timeTableResponseGenerator");

@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum CandidateDateTimeSortStandard {
-    FAST("fast"), LONG("long");
+    FAST("fast"),
+    LONG("long")
+    ;
 
     private final String value;
 

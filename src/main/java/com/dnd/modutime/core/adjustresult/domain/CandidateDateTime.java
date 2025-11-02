@@ -1,8 +1,10 @@
 package com.dnd.modutime.core.adjustresult.domain;
 
 import com.dnd.modutime.core.entity.Auditable;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,9 +18,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import static java.util.stream.Collectors.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -119,5 +124,18 @@ public class CandidateDateTime implements Auditable {
     @Override
     public void setModifiedAt(LocalDateTime modifiedAt) {
         this.modifiedAt = modifiedAt;
+    }
+
+
+    public boolean containsExactly(final List<String> participants) {
+        if (this.participantNames.size() != participants.size()) {
+            return false;
+        }
+
+        var participantNameSet = this.participantNames.stream()
+                .map(CandidateDateTimeParticipantName::getName)
+                .collect(toSet());
+
+        return participantNameSet.equals(new HashSet<>(participants));
     }
 }

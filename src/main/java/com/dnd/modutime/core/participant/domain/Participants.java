@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.participant.domain;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +23,15 @@ public class Participants {
     public boolean isSameAllNames(List<String> names) {
         validateNamesNull(names);
         List<String> participantNames = getParticipantNames();
-        return names.containsAll(participantNames);
+        return new HashSet<>(names).containsAll(participantNames);
     }
 
     public boolean containsAll(List<String> names) {
-        validateNamesNull(names);
-        List<String> participantNames = getParticipantNames();
-        return participantNames.containsAll(names);
+        if (names == null || names.isEmpty()) {
+            return true;
+        }
+        var participantNames = getParticipantNames();
+        return new HashSet<>(participantNames).containsAll(names);
     }
 
     private List<String> getParticipantNames() {
