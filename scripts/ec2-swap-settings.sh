@@ -1,3 +1,4 @@
+# swap 1기가 설정
 sudo fallocate -l 1G /swapfile
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
