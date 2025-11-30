@@ -1,4 +1,4 @@
-version: '3'
+version: '2.4'
 services:
 
   web:
@@ -12,7 +12,15 @@ services:
       DB_URL: ${DB_URL}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
-  
+    mem_limit: 512m
+    mem_reservation: 256m
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   nginx:
     container_name: nginx
     image: ssssujini99/modutime-nginx
@@ -20,3 +28,10 @@ services:
       - "80:80"
     depends_on:
       - web
+    mem_limit: 64m
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
