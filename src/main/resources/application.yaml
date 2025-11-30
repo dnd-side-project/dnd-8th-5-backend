@@ -4,3 +4,13 @@ spring:
     include:
       - db
       - logging
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /
+  endpoint:
+    health:
+      show-details: never
