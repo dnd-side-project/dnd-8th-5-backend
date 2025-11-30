@@ -3,11 +3,4 @@ spring:
     active: local
     include:
       - db
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+      - logging
