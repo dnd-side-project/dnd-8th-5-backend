@@ -50,17 +50,17 @@ jobs:
           script: |
             # 디렉토리 생성
             mkdir -p /home/ubuntu/srv/ubuntu
-            
+
             # 실행 중인 컨테이너가 있으면 중지
             if [ "$(docker ps -q)" ]; then
             sudo docker stop $(docker ps -q)
             fi
-            
+
             # 모든 컨테이너가 있으면 삭제
             if [ "$(docker ps -qa)" ]; then
             sudo docker rm $(docker ps -qa)
             fi
-            
+
             # 이미지 정리
             sudo docker image prune -a -f
 
@@ -84,6 +84,12 @@ jobs:
           docker build -t ${{ secrets.DOCKER_REPO }}/modutime-web .
           docker push ${{ secrets.DOCKER_REPO }}/modutime-web
 
+      ## Nginx 이미지 빌드 및 도커허브에 push
+      - name: nginx docker build and push
+        run: |
+          docker build -t ${{ secrets.DOCKER_REPO }}/modutime-nginx ./nginx
+          docker push ${{ secrets.DOCKER_REPO }}/modutime-nginx
+
       ## docker compose up
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
@@ -98,7 +104,7 @@ jobs:
             DB_USERNAME=${{secrets.PROD_DB_USERNAME}}
             DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
             EOL
-            
+
             sudo sh install-docker.sh
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/modutime-web
