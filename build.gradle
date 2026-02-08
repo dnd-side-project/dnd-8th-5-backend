@@ -22,7 +22,7 @@ ext {
     springRestDocsApiSpecVersion = "0.16.4"
     snippetsDir = file('build/generated-snippets')
     tsidVersion = "2.1.2"
-    lombokVersion = "1.18.36" // Java 25 지원
+    lombokVersion = "1.18.20" // Java 17 지원
 }
 
 repositories {
