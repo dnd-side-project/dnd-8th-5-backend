@@ -30,3 +30,12 @@ v0.0.1, 2025-07-18
 // 코드
 include::timetable.adoc[]
 include::adjustment-result.adoc[]
+
+== Guest API
+
+include::timetable-guest.adoc[]
+include::adjustment-result-guest.adoc[]
+include::auth-guest.adoc[]
+include::room-guest.adoc[]
+include::participant-guest.adoc[]
+include::timeblock-guest.adoc[]

@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class RoomController {
+public class RoomGuestController {
 
     private final RoomService roomService;
     private final TimeTableService timeTableService;
     private final AdjustmentResultService adjustmentResultService;
 
-    @PostMapping("/api/room")
+    @PostMapping("/guest/api/room")
     public ResponseEntity<RoomCreationResponse> create(@RequestBody RoomRequest roomRequest) {
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
         timeTableService.create(roomCreationResponse.getUuid());
@@ -28,7 +28,7 @@ public class RoomController {
         return ResponseEntity.ok(roomCreationResponse);
     }
 
-    @GetMapping("/api/v2/room/{roomUuid}")
+    @GetMapping("/guest/api/v2/room/{roomUuid}")
     public ResponseEntity<V2RoomInfoResponse> v2getInfo(@PathVariable String roomUuid) {
         var roomInfoResponse = roomService.v2getInfo(roomUuid);
         return ResponseEntity.ok(roomInfoResponse);
