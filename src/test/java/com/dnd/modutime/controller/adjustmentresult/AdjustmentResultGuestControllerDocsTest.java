@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.dnd.modutime.annotation.ApiDocsTest;
 import com.dnd.modutime.core.adjustresult.application.AdjustmentResultService;
 import com.dnd.modutime.core.adjustresult.application.response.CandidateDateTimeResponseV1;
-import com.dnd.modutime.core.adjustresult.controller.AdjustmentResultController;
+import com.dnd.modutime.core.adjustresult.controller.AdjustmentResultGuestController;
 import com.dnd.modutime.documentation.DocumentUtils;
 import com.dnd.modutime.documentation.MockMvcFactory;
 import com.dnd.modutime.documentation.TestJsonUtils;
@@ -39,18 +39,18 @@ import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.request.RequestDocumentation;
 
 @ApiDocsTest
-public class AdjustmentResultQueryControllerDocsTest {
+public class AdjustmentResultGuestControllerDocsTest {
 
     @Mock
     private AdjustmentResultService adjustmentResultService;
 
     @InjectMocks
-    private AdjustmentResultController controller;
+    private AdjustmentResultGuestController controller;
 
-    @DisplayName("조율 결과 우선 순위 목록 조회 API")
+    @DisplayName("Guest 조율 결과 우선 순위 목록 조회 API")
     @Test
     void test01(RestDocumentationContextProvider contextProvider) throws Exception {
-        var operationIdentifier = "get-api-v1-room-room-uuid-adjustment-result";
+        var operationIdentifier = "guest-get-api-v1-room-room-uuid-adjustment-results";
 
         var pathParameters = new ParameterDescriptor[]{
                 parameterWithName("roomUuid").description("방 UUID"),
@@ -128,7 +128,7 @@ public class AdjustmentResultQueryControllerDocsTest {
 
         MockMvcFactory.getRestDocsMockMvc(contextProvider, LOCALHOST, controller)
                 .perform(
-                        get("/api/v1/room/{roomUuid}/adjustment-results", "test-room-uuid")
+                        get("/guest/api/v1/room/{roomUuid}/adjustment-results", "test-room-uuid")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .param("page", "1")
                                 .param("size", "5")
@@ -153,8 +153,8 @@ public class AdjustmentResultQueryControllerDocsTest {
                                 DocumentUtils.getDocumentResponse(),
                                 ResourceDocumentation.resource(
                                         ResourceSnippetParameters.builder()
-                                                .description("조율 결과 우선 순위 목록 조회 API")
-                                                .tag("adjustment-result")
+                                                .description("Guest용 조율 결과 우선 순위 목록 조회 API")
+                                                .tag("AdjustmentResult-Guest")
                                                 .responseFields(responseFields)
                                                 .pathParameters(pathParameters)
                                                 .requestParameters(queryParameters)

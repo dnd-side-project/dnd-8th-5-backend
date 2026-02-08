@@ -1,0 +1,38 @@
+[[Room-Guest]]
+== Guest 방 관리
+
+* Guest용 방 생성 및 조회 관련 API입니다.
+
+=== Guest 방 생성
+
+* Guest용 새로운 방을 생성합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/guest-post-api-room/curl-request.adoc[]
+include::{snippets}/guest-post-api-room/request-fields.adoc[]
+include::{snippets}/guest-post-api-room/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/guest-post-api-room/http-response.adoc[]
+include::{snippets}/guest-post-api-room/response-fields.adoc[]
+
+=== Guest 방 정보 조회 (V2)
+
+* Guest용 방의 상세 정보를 조회합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/guest-get-api-v2-room-room-uuid/path-parameters.adoc[]
+include::{snippets}/guest-get-api-v2-room-room-uuid/curl-request.adoc[]
+include::{snippets}/guest-get-api-v2-room-room-uuid/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/guest-get-api-v2-room-room-uuid/http-response.adoc[]
+include::{snippets}/guest-get-api-v2-room-room-uuid/response-fields.adoc[]

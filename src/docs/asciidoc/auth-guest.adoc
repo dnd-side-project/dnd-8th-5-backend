@@ -1,0 +1,38 @@
+[[Auth-Guest]]
+== Guest 인증
+
+* Guest용 방 참여 및 인증 관련 API입니다.
+
+=== Guest 로그인
+
+* Guest용 방에 참여자로 로그인합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/guest-post-api-room-room-uuid-login/path-parameters.adoc[]
+include::{snippets}/guest-post-api-room-room-uuid-login/curl-request.adoc[]
+include::{snippets}/guest-post-api-room-room-uuid-login/request-fields.adoc[]
+include::{snippets}/guest-post-api-room-room-uuid-login/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/guest-post-api-room-room-uuid-login/http-response.adoc[]
+
+=== Guest 로그인 페이지 정보 조회
+
+* Guest용 로그인 페이지에서 보여줄 방 정보를 조회합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/guest-get-api-room-room-uuid-login/path-parameters.adoc[]
+include::{snippets}/guest-get-api-room-room-uuid-login/curl-request.adoc[]
+include::{snippets}/guest-get-api-room-room-uuid-login/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/guest-get-api-room-room-uuid-login/http-response.adoc[]
+include::{snippets}/guest-get-api-room-room-uuid-login/response-fields.adoc[]

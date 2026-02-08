@@ -6,8 +6,6 @@ import com.dnd.modutime.core.adjustresult.application.response.AdjustmentResultR
 import com.dnd.modutime.core.adjustresult.application.response.CandidateDateTimeResponseV1;
 import com.dnd.modutime.core.adjustresult.controller.dto.AdjustmentResultRequest;
 import com.dnd.modutime.infrastructure.PageRequest;
-import java.util.List;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +13,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-public class AdjustmentResultController {
+public class AdjustmentResultGuestController {
 
     private final AdjustmentResultService adjustmentResultService;
 
-    @GetMapping("/api/v1/room/{roomUuid}/adjustment-results")
+    @GetMapping("/guest/api/v1/room/{roomUuid}/adjustment-results")
     public Page<CandidateDateTimeResponseV1> v1getAdjustmentResult(@PathVariable String roomUuid,
                                                                    @Valid AdjustmentResultRequest request,
                                                                    PageRequest pageRequest) {

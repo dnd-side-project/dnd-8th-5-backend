@@ -1,0 +1,22 @@
+[[TimeBlock-Guest]]
+== Guest 시간 등록
+
+* Guest용 개별 참여자의 시간 등록 정보입니다.
+
+=== Guest 참여자 시간 조회
+
+* Guest용 특정 참여자가 등록한 시간을 조회합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/guest-get-api-room-room-uuid-available-time/path-parameters.adoc[]
+include::{snippets}/guest-get-api-room-room-uuid-available-time/curl-request.adoc[]
+include::{snippets}/guest-get-api-room-room-uuid-available-time/request-parameters.adoc[]
+include::{snippets}/guest-get-api-room-room-uuid-available-time/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/guest-get-api-room-room-uuid-available-time/http-response.adoc[]
+include::{snippets}/guest-get-api-room-room-uuid-available-time/response-fields.adoc[]
