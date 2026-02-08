@@ -21,16 +21,6 @@ public class AdjustmentResultController {
 
     private final AdjustmentResultService adjustmentResultService;
 
-    @GetMapping("/api/room/{roomUuid}/adjustment-result")
-    public ResponseEntity<AdjustmentResultResponse> getAdjustmentResult(@PathVariable String roomUuid,
-                                                                        @RequestParam(defaultValue = "fast") String sorted,
-                                                                        @RequestParam(value = "name", defaultValue = "") List<String> names) {
-        AdjustmentResultResponse adjustmentResultResponse = adjustmentResultService.getByRoomUuidAndSortedAndNames(
-                roomUuid, sorted, names
-        );
-        return ResponseEntity.ok(adjustmentResultResponse);
-    }
-
     @GetMapping("/api/v1/room/{roomUuid}/adjustment-results")
     public Page<CandidateDateTimeResponseV1> v1getAdjustmentResult(@PathVariable String roomUuid,
                                                                    @Valid AdjustmentResultRequest request,

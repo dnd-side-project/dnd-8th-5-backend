@@ -4,7 +4,6 @@ import com.dnd.modutime.core.adjustresult.application.AdjustmentResultService;
 import com.dnd.modutime.core.room.application.RoomService;
 import com.dnd.modutime.core.room.application.request.RoomRequest;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
-import com.dnd.modutime.core.room.application.response.RoomInfoResponse;
 import com.dnd.modutime.core.room.application.response.V2RoomInfoResponse;
 import com.dnd.modutime.core.timetable.application.TimeTableService;
 import lombok.RequiredArgsConstructor;

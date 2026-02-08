@@ -58,7 +58,7 @@ public class AdjustmentResultGuestControllerDocsTest {
 
         var queryParameters = new ParameterDescriptor[]{
                 RequestDocumentation.parameterWithName("page").description("페이지"),
-                RequestDocumentation.parameterWithName("size").description("페이당 조회크기"),
+                RequestDocumentation.parameterWithName("size").description("페이지당 조회크기"),
                 RequestDocumentation.parameterWithName("sorted").description("정렬 조건").optional(),
                 RequestDocumentation.parameterWithName("participantNames").description("참여자 이름 목록").optional(),
         };
