@@ -2,6 +2,7 @@ package com.dnd.modutime.core.room.domain;
 
 import com.dnd.modutime.core.entity.Auditable;
 import com.dnd.modutime.util.TimeProvider;
+import io.hypersistence.tsid.TSID;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.AbstractAggregateRoot;
@@ -11,7 +12,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -73,7 +73,7 @@ public class Room extends AbstractAggregateRoot<Room> implements Auditable {
         this.endTime = endTime;
         this.roomDates = roomDates;
         this.headCount = headCount;
-        this.uuid = UUID.randomUUID().toString();
+        this.uuid = TSID.Factory.getTsid().toString();
         this.deadLine = deadLine;
     }
 

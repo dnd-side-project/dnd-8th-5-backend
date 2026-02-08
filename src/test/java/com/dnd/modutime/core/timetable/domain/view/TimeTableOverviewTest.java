@@ -5,6 +5,7 @@ import com.dnd.modutime.core.timetable.domain.TimeInfo;
 import com.dnd.modutime.core.timetable.domain.TimeTable;
 import com.dnd.modutime.util.JsonUtils;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -82,16 +83,19 @@ class TimeTableOverviewTest {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(timeAndCountPerDates).hasSize(1);
             softly.assertThat(timeAndCountPerDates.get(0).getAvailableDate()).isEqualTo(_2023_02_08);
-            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos()).hasSize(2);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos()).hasSize(3);
             softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_12_00);
             softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(0).getCount()).isEqualTo(1);
-            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(1).getTime()).isEqualTo(_14_00);
-            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(1).getCount()).isEqualTo(1);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(1).getTime()).isEqualTo(_13_00);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(1).getCount()).isEqualTo(0);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(2).getTime()).isEqualTo(_14_00);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(2).getCount()).isEqualTo(1);
         });
     }
 
+    @DisplayName("여러 participantNames가 있으면 해당 참여자들 중 하나라도 포함된 TimeInfo와 아무도 없는 TimeInfo를 모두 포함한 TimeTableOverview를 반환한다")
     @Test
-    void 여러_participantNames가_있으면_해당_참여자들_중_하나라도_포함된_TimeInfo만_포함한_TimeTableOverview를_반환한다() {
+    void test01() {
         // given
         var timeTable = new TimeTable(ROOM_UUID);
         var timeInfo1 = createTimeInfo(_12_00, List.of("김동호", "이수진"));
@@ -107,11 +111,13 @@ class TimeTableOverviewTest {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(overview.getTimeAndCountPerDates()).hasSize(1);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableDate()).isEqualTo(_2023_02_08);
-            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos()).hasSize(2);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos()).hasSize(3);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_12_00);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getCount()).isEqualTo(1);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(1).getTime()).isEqualTo(_13_00);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(1).getCount()).isEqualTo(1);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(2).getTime()).isEqualTo(_14_00);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(2).getCount()).isEqualTo(0);
         });
     }
 
@@ -144,7 +150,7 @@ class TimeTableOverviewTest {
     }
 
     @Test
-    void 해당_participantNames가_포함된_TimeInfo가_없으면_해당_날짜는_제외된다() {
+    void 해당_participantNames가_포함된_TimeInfo가_없으면_해당_날짜는_count0으로_반환한다() {
         // given
         var timeTable = new TimeTable(ROOM_UUID);
         var timeInfo1 = createTimeInfo(_12_00, List.of("김동호"));
@@ -158,11 +164,22 @@ class TimeTableOverviewTest {
 
         // then
         var timeAndCountPerDates = overview.getTimeAndCountPerDates();
-        assertThat(timeAndCountPerDates).isEmpty();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(timeAndCountPerDates).hasSize(2);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableDate()).isEqualTo(_2023_02_08);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos()).hasSize(1);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_12_00);
+            softly.assertThat(timeAndCountPerDates.get(0).getAvailableTimeInfos().get(0).getCount()).isEqualTo(0);
+
+            softly.assertThat(timeAndCountPerDates.get(1).getAvailableDate()).isEqualTo(_2023_02_09);
+            softly.assertThat(timeAndCountPerDates.get(1).getAvailableTimeInfos()).hasSize(1);
+            softly.assertThat(timeAndCountPerDates.get(1).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_13_00);
+            softly.assertThat(timeAndCountPerDates.get(1).getAvailableTimeInfos().get(0).getCount()).isEqualTo(0);
+        });
     }
 
     @Test
-    void TimeInfo가_없는_날짜는_제외된다() {
+    void TimeInfo가_없는_날짜는_제외되지_않는다() {
         // given
         var timeTable = new TimeTable(ROOM_UUID);
         var timeInfo1 = createTimeInfo(_12_00, List.of("김동호"));
@@ -175,11 +192,13 @@ class TimeTableOverviewTest {
 
         // then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(overview.getTimeAndCountPerDates()).hasSize(1);
+            softly.assertThat(overview.getTimeAndCountPerDates()).hasSize(2);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableDate()).isEqualTo(_2023_02_08);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos()).hasSize(1);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getTime()).isEqualTo(_12_00);
             softly.assertThat(overview.getTimeAndCountPerDates().get(0).getAvailableTimeInfos().get(0).getCount()).isEqualTo(1);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(1).getAvailableDate()).isEqualTo(_2023_02_09);
+            softly.assertThat(overview.getTimeAndCountPerDates().get(1).getAvailableTimeInfos()).hasSize(0);
         });
     }
 

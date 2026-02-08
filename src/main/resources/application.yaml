@@ -6,6 +6,7 @@ spring:
       - oauth2
       - host
       - security
+      - logging
 
 logging:
   level:
@@ -15,3 +16,13 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /
+  endpoint:
+    health:
+      show-details: never
