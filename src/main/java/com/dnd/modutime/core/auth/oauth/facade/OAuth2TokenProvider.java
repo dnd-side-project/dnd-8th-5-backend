@@ -5,6 +5,7 @@ import com.dnd.modutime.core.auth.oauth.dto.JwtTokenResponse;
 import com.dnd.modutime.core.auth.oauth.dto.OAuth2JwtSubject;
 import com.dnd.modutime.core.auth.oauth.exception.ExpiredOAuth2TokenException;
 import com.dnd.modutime.core.auth.oauth.exception.InvalidOAuth2TokenException;
+import com.dnd.modutime.core.auth.security.TokenType;
 import com.dnd.modutime.core.common.ErrorCode;
 import com.dnd.modutime.core.user.OAuth2Provider;
 import com.dnd.modutime.core.user.User;
@@ -68,6 +69,7 @@ public class OAuth2TokenProvider {
         return Jwts.builder()
                 .setSubject(provider.getRegistrationId() + ":" + email)
                 // .claim(KEY_ROLE, authorities) TODO :: 권한 정책 추가시 설정 필요
+                .claim("token_type", TokenType.ACCESS.name())
                 .setIssuedAt(new Date())
                 .setExpiration(createAccessTokenExpireTime())
                 .signWith(SignatureAlgorithm.HS512, tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
@@ -78,6 +80,7 @@ public class OAuth2TokenProvider {
     public String createOAuth2RefreshToken(final String email, final OAuth2Provider provider) {
         return Jwts.builder()
                 .setSubject(provider.getRegistrationId() + ":" + email)
+                .claim("token_type", TokenType.REFRESH.name())
                 .setIssuedAt(new Date())
                 .setExpiration(createRefreshTokenExpireTime())
                 .signWith(SignatureAlgorithm.HS512, tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
@@ -87,14 +90,25 @@ public class OAuth2TokenProvider {
 
     public boolean validateOAuth2Token(final String oAuth2AccessToken) {
         try {
-            Jwts.parser()
+            Claims claims = Jwts.parser()
                     .setSigningKey(tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
-                    .parseClaimsJws(oAuth2AccessToken);
+                    .parseClaimsJws(oAuth2AccessToken)
+                    .getBody();
+
+            String tokenType = claims.get("token_type", String.class);
+            // 과도기 허용: null이면 기존 토큰이므로 허용
+            if (tokenType != null && !TokenType.ACCESS.name().equals(tokenType)) {
+                throw new InvalidOAuth2TokenException(
+                        "Access Token이 아닙니다.", ErrorCode.INVALID_TOKEN);
+            }
 
             return true;
         } catch (ExpiredJwtException e) {
             log.info("토큰이 만료되었습니다.");
             throw new ExpiredOAuth2TokenException("토큰이 만료되었습니다.", ErrorCode.ACCESS_TOKEN_EXPIRED);
+        } catch (InvalidOAuth2TokenException e) {
+            log.warn("유효하지 않은 토큰입니다.");
+            throw e;
         } catch (Exception e) {
             log.warn("유효하지 않은 토큰입니다.");
             throw new InvalidOAuth2TokenException("해당 토큰은 유효한 토큰이 아닙니다.", ErrorCode.INVALID_TOKEN);

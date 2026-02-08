@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record TokenConfigurationProperties(
         String accessTokenExpirationTime,
         String refreshTokenExpirationTime,
-        String secret
+        String secret,
+        boolean secureCookie
 ) {
 }

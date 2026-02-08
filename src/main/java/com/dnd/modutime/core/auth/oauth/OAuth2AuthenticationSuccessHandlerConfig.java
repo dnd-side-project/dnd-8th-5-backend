@@ -2,6 +2,7 @@ package com.dnd.modutime.core.auth.oauth;
 
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenProvider;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenService;
+import com.dnd.modutime.core.auth.oauth.facade.TokenConfigurationProperties;
 import com.dnd.modutime.core.common.Constants;
 import com.dnd.modutime.core.common.ModutimeHostConfigurationProperties;
 import lombok.AccessLevel;
@@ -36,11 +37,14 @@ public class OAuth2AuthenticationSuccessHandlerConfig {
 
         private final OAuth2TokenProvider tokenProvider;
         private final OAuth2TokenService tokenService;
+        private final TokenConfigurationProperties tokenConfigurationProperties;
 
         public RefererConfig(final OAuth2TokenProvider tokenProvider,
-                             final OAuth2TokenService tokenService) {
+                             final OAuth2TokenService tokenService,
+                             final TokenConfigurationProperties tokenConfigurationProperties) {
             this.tokenProvider = tokenProvider;
             this.tokenService = tokenService;
+            this.tokenConfigurationProperties = tokenConfigurationProperties;
         }
 
         @Bean
@@ -48,6 +52,7 @@ public class OAuth2AuthenticationSuccessHandlerConfig {
             return new OAuth2AuthenticationSuccessHandler(
                     this.tokenProvider,
                     this.tokenService,
+                    this.tokenConfigurationProperties,
                     REFERER // redirect uri 가 Referer 인 경우 Referer 헤더 사용
             );
         }
@@ -61,13 +66,16 @@ public class OAuth2AuthenticationSuccessHandlerConfig {
         private final ModutimeHostConfigurationProperties properties;
         private final OAuth2TokenProvider tokenProvider;
         private final OAuth2TokenService tokenService;
+        private final TokenConfigurationProperties tokenConfigurationProperties;
 
         public RealConfig(final ModutimeHostConfigurationProperties properties,
                           final OAuth2TokenProvider tokenProvider,
-                          final OAuth2TokenService tokenService) {
+                          final OAuth2TokenService tokenService,
+                          final TokenConfigurationProperties tokenConfigurationProperties) {
             this.properties = properties;
             this.tokenProvider = tokenProvider;
             this.tokenService = tokenService;
+            this.tokenConfigurationProperties = tokenConfigurationProperties;
         }
 
         @Bean
@@ -75,6 +83,7 @@ public class OAuth2AuthenticationSuccessHandlerConfig {
             return new OAuth2AuthenticationSuccessHandler(
                     this.tokenProvider,
                     this.tokenService,
+                    this.tokenConfigurationProperties,
                     this.properties.host().client()
             );
         }

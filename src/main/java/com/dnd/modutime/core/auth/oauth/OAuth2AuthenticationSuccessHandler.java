@@ -3,16 +3,17 @@ package com.dnd.modutime.core.auth.oauth;
 import com.dnd.modutime.core.auth.oauth.dto.JwtTokenResponse;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenProvider;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenService;
+import com.dnd.modutime.core.auth.oauth.facade.TokenConfigurationProperties;
 import com.dnd.modutime.core.user.OAuth2Provider;
 import com.dnd.modutime.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,15 +29,18 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final OAuth2TokenProvider oAuth2TokenProvider;
     private final OAuth2TokenService oAuth2TokenService;
-    private String clientRedirectUri;
+    private final TokenConfigurationProperties tokenConfigurationProperties;
+    private final String clientRedirectUri;
 
     private final static int REFRESH_TOKEN_EXPIRE_TIME = 1209600; // 2주
 
     public OAuth2AuthenticationSuccessHandler(final OAuth2TokenProvider tokenProvider,
                                               final OAuth2TokenService tokenService,
+                                              final TokenConfigurationProperties tokenConfigurationProperties,
                                               final String clientRedirectUri) {
         this.oAuth2TokenProvider = tokenProvider;
         this.oAuth2TokenService = tokenService;
+        this.tokenConfigurationProperties = tokenConfigurationProperties;
         this.clientRedirectUri = clientRedirectUri;
     }
 
@@ -81,10 +85,10 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         );
 
         var stateParts = extractStateParts(request);
-        updateRedirectUriIfNeeded(stateParts);
+        var resolvedRedirectUri = resolveRedirectUri(stateParts);
         var roomUuid = extractRoomUuid(stateParts);
 
-        var baseRedirectUrl = URI.create(clientRedirectUri).resolve(REDIRECT_END_POINT);
+        var baseRedirectUrl = URI.create(resolvedRedirectUri).resolve(REDIRECT_END_POINT);
         log.info("redirectUrl: {}", baseRedirectUrl);
 
         return buildFinalRedirectUrl(baseRedirectUrl, accessToken, accessTokenExpireTime, roomUuid);
@@ -95,10 +99,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         return state.split("\\|");
     }
 
-    private void updateRedirectUriIfNeeded(String[] stateParts) {
+    private String resolveRedirectUri(String[] stateParts) {
         if (HttpHeaders.REFERER.equals(this.clientRedirectUri) && stateParts.length > 1) {
-            clientRedirectUri = stateParts[1];
+            return stateParts[1];
         }
+        return this.clientRedirectUri;
     }
 
     private String extractRoomUuid(String[] stateParts) {
@@ -128,10 +133,13 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     }
 
     private void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);  // XSS 공격 방어
-        cookie.setPath("/");
-        cookie.setMaxAge(maxAge);
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .httpOnly(true)  // XSS 공격 방어
+                .secure(tokenConfigurationProperties.secureCookie())  // 환경별 설정
+                .sameSite("Lax")  // CSRF 공격 방어
+                .path("/")
+                .maxAge(maxAge)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }
