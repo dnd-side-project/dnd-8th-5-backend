@@ -15,5 +15,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .exposedHeaders(HttpHeaders.LOCATION);
+        registry.addMapping("/guest/**")
+                .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
+                .exposedHeaders(HttpHeaders.LOCATION);
     }
 }
