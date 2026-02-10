@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/room/{roomUuid}/login")
 public class AuthController {
 
     private final ParticipantFacade participantFacade;
@@ -19,14 +18,14 @@ public class AuthController {
         this.roomService = roomService;
     }
 
-    @PostMapping
+    @PostMapping("/api/room/{roomUuid}/login")
     public ResponseEntity<Void> login(@PathVariable String roomUuid,
                                       @RequestBody LoginRequest loginRequest) {
         participantFacade.login(loginRequest.toParticipantCreateCommand(roomUuid));
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
+    @GetMapping("/api/room/{roomUuid}/login")
     public ResponseEntity<LoginPageResponse> loginPage(@PathVariable String roomUuid) {
         String roomName = roomService.getTitleByUuid(roomUuid);
         return ResponseEntity.ok(new LoginPageResponse(roomName));

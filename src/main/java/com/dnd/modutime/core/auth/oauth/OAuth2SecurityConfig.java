@@ -119,9 +119,7 @@ public class OAuth2SecurityConfig {
                 new AntPathRequestMatcher("/oauth2/kakao/callback"),
                 new AntPathRequestMatcher("/oauth2/authorization/**"),
                 new AntPathRequestMatcher("/oauth2/reissue-token"),
-                new AntPathRequestMatcher("/api/room"),
-                new AntPathRequestMatcher("/api/room/**", HttpMethod.GET.toString()),
-                new AntPathRequestMatcher("/api/room/*/login", HttpMethod.POST.toString())
+                new AntPathRequestMatcher("/guest/**")
         );
     }
 
