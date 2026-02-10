@@ -106,3 +106,18 @@ jobs:
 
             sudo docker-compose --env-file .env up -d
             sudo docker system prune -af
+
+      - name: 애플리케이션 Health Check
+        run: |
+          echo "애플리케이션 상태 확인 중..."
+          for i in $(seq 1 60); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.PROD_API_URL }}/aws || true)
+            if [ "$STATUS" = "200" ]; then
+              echo "Health check 성공! (시도: ${i}회)"
+              exit 0
+            fi
+            echo "시도 ${i}/60 - 응답 코드: ${STATUS} (3초 후 재시도)"
+            sleep 3
+          done
+          echo "Health check 실패: 3분 내에 애플리케이션이 시작되지 않았습니다."
+          exit 1
