@@ -2,6 +2,7 @@ package com.dnd.modutime.annotations;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
@@ -34,6 +35,7 @@ import java.lang.annotation.*;
         UserDetailsServiceAutoConfiguration.class,
         OAuth2ClientAutoConfiguration.class,
         OAuth2ResourceServerAutoConfiguration.class,
+        ManagementWebSecurityAutoConfiguration.class,
 })
 public @interface SpringBootTestWithoutOAuthConfig {
 
