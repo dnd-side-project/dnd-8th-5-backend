@@ -3,6 +3,7 @@ package com.dnd.modutime.core.timeblock.controller;
 
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
+import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequestV1;
 import com.dnd.modutime.core.timeblock.application.response.TimeBlockResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,25 +11,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 @RestController
-@RequestMapping("/api/room/{roomUuid}/available-time")
 @RequiredArgsConstructor
 public class TimeBlockController {
 
     private final TimeBlockService timeBlockService;
 
-    @PutMapping
+    @PutMapping("/api/room/{roomUuid}/available-time")
     public ResponseEntity<Void> replace(@PathVariable String roomUuid,
                                         @RequestBody TimeReplaceRequest timeReplaceRequest) {
         timeBlockService.replace(roomUuid, timeReplaceRequest);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
+    @PutMapping("/api/v1/room/{roomUuid}/available-time")
+    public ResponseEntity<Void> replaceV1(@PathVariable String roomUuid,
+                                          @RequestBody TimeReplaceRequestV1 request) {
+
+        // TODO: participantName은 JWT 토큰에서 추출하도록 구현 필요
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        String participantName = (String) requestAttributes.getAttribute("participantName", RequestAttributes.SCOPE_REQUEST);
+        timeBlockService.replaceV1(request.toCommand(roomUuid, participantName));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/room/{roomUuid}/available-time")
     public ResponseEntity<TimeBlockResponse> getTimeBlock(@PathVariable String roomUuid,
                                                           @RequestParam String name) {
         TimeBlockResponse timeBlockResponse = timeBlockService.getTimeBlock(roomUuid, name);

@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.timeblock.application.request;
 
+import com.dnd.modutime.core.timeblock.application.command.TimeReplaceCommand;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,15 +15,14 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class TimeReplaceRequest {
+public class TimeReplaceRequestV1 {
 
-    /**
-     * Participant의 name
-     */
-    @NotNull(message = "이름은 필수입니다.")
-    private String name;
     private Boolean hasTime;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private List<LocalDateTime> availableDateTimes;
+
+    public TimeReplaceCommand toCommand(String roomId, String participantName) {
+        return TimeReplaceCommand.of(roomId, participantName, hasTime, availableDateTimes);
+    }
 }
