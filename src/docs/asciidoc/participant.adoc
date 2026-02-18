@@ -1,0 +1,44 @@
+[[Participant]]
+== 인증된 참여자 관리
+
+* 인증된 참여자 관리 관련 API입니다.
+
+=== 참여자 생성
+
+* 인증 정보를 통해 참여자를 생성합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/post-api-room-room-uuid-participants/path-parameters.adoc[]
+include::{snippets}/post-api-room-room-uuid-participants/curl-request.adoc[]
+include::{snippets}/post-api-room-room-uuid-participants/request-fields.adoc[]
+include::{snippets}/post-api-room-room-uuid-participants/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/post-api-room-room-uuid-participants/http-response.adoc[]
+
+
+[[Participant-Guest]]
+== Guest 참여자 관리
+
+* Guest용 참여자 관리 관련 API입니다.
+
+=== Guest 참여자 삭제
+
+* Guest용 방에서 참여자를 삭제합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/guest-delete-api-room-room-uuid/path-parameters.adoc[]
+include::{snippets}/guest-delete-api-room-room-uuid/curl-request.adoc[]
+include::{snippets}/guest-delete-api-room-room-uuid/request-fields.adoc[]
+include::{snippets}/guest-delete-api-room-room-uuid/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/guest-delete-api-room-room-uuid/http-response.adoc[]
