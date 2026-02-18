@@ -15,5 +15,5 @@ public @interface RoomParticipant {
     /**
      * roomUuid를 담고 있는 path variable의 이름.
      */
-    String roomPathVariable();
+    String roomPathVariable() default "roomUuid";
 }

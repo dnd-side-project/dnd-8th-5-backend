@@ -33,7 +33,7 @@ public class TimeBlockController {
     @PutMapping("/api/v1/room/{roomUuid}/available-time")
     public ResponseEntity<Void> replaceV1(@PathVariable String roomUuid,
                                           @RequestBody TimeReplaceRequestV1 request,
-                                          @RoomParticipant(roomPathVariable = "roomUuid") ParticipantInfo participantInfo) {
+                                          @RoomParticipant ParticipantInfo participantInfo) {
         timeBlockService.replaceV1(request.toCommand(roomUuid, participantInfo.participantName()));
         return ResponseEntity.ok().build();
     }
