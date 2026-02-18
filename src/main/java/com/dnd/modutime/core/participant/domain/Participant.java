@@ -35,11 +35,15 @@ public class Participant extends AbstractAggregateRoot<Participant> implements A
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @Embedded
     private Email email;
+
+    @Getter
+    @Column(name = "user_id")
+    private Long userId;
 
     private String createdBy;
     private LocalDateTime createdAt;
@@ -57,10 +61,25 @@ public class Participant extends AbstractAggregateRoot<Participant> implements A
         this.email = null;
     }
 
-    private void validateRoomUuid(String roomUuid) {
+    private static void validateRoomUuid(String roomUuid) {
         if (roomUuid == null) {
             throw new IllegalArgumentException("roomUuid는 null일 수 없습니다");
         }
+    }
+
+    public static Participant of(String roomUuid, String name, Long userId) {
+        validateRoomUuid(roomUuid);
+        validateName(name);
+        if (userId == null) {
+            throw new IllegalArgumentException("userId는 null일 수 없습니다");
+        }
+        var participant = new Participant();
+        participant.roomUuid = roomUuid;
+        participant.name = name;
+        participant.password = null;
+        participant.userId = userId;
+        participant.email = null;
+        return participant;
     }
 
     private static void validateName(String name) {
@@ -98,7 +117,12 @@ public class Participant extends AbstractAggregateRoot<Participant> implements A
     }
 
     public boolean matchPassword(String password) {
+        if (this.password == null) return false;
         return this.password.equals(password);
+    }
+
+    public boolean isRegisteredUser() {
+        return this.userId != null;
     }
 
     public Email getEmailOrNull() {
