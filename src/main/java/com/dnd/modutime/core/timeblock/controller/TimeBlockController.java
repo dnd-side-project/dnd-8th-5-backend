@@ -1,7 +1,8 @@
 package com.dnd.modutime.core.timeblock.controller;
 
 
-import com.dnd.modutime.core.auth.application.GuestParticipant;
+import com.dnd.modutime.core.auth.application.ParticipantInfo;
+import com.dnd.modutime.core.auth.application.RoomParticipant;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequestV1;
@@ -21,6 +22,7 @@ public class TimeBlockController {
 
     private final TimeBlockService timeBlockService;
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @PutMapping("/api/room/{roomUuid}/available-time")
     public ResponseEntity<Void> replace(@PathVariable String roomUuid,
                                         @RequestBody TimeReplaceRequest timeReplaceRequest) {
@@ -31,15 +33,16 @@ public class TimeBlockController {
     @PutMapping("/api/v1/room/{roomUuid}/available-time")
     public ResponseEntity<Void> replaceV1(@PathVariable String roomUuid,
                                           @RequestBody TimeReplaceRequestV1 request,
-                                          @GuestParticipant String participantName) {
-        timeBlockService.replaceV1(request.toCommand(roomUuid, participantName));
+                                          @RoomParticipant(roomPathVariable = "roomUuid") ParticipantInfo participantInfo) {
+        timeBlockService.replaceV1(request.toCommand(roomUuid, participantInfo.participantName()));
         return ResponseEntity.ok().build();
     }
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @GetMapping("/api/room/{roomUuid}/available-time")
     public ResponseEntity<TimeBlockResponse> getTimeBlock(@PathVariable String roomUuid,
                                                           @RequestParam String name) {
-        TimeBlockResponse timeBlockResponse = timeBlockService.getTimeBlock(roomUuid, name);
+        var timeBlockResponse = timeBlockService.getTimeBlock(roomUuid, name);
         return ResponseEntity.ok(timeBlockResponse);
     }
 }
