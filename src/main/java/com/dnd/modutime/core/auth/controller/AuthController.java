@@ -18,6 +18,7 @@ public class AuthController {
         this.roomService = roomService;
     }
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @PostMapping("/api/room/{roomUuid}/login")
     public ResponseEntity<Void> login(@PathVariable String roomUuid,
                                       @RequestBody LoginRequest loginRequest) {
@@ -25,6 +26,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @GetMapping("/api/room/{roomUuid}/login")
     public ResponseEntity<LoginPageResponse> loginPage(@PathVariable String roomUuid) {
         String roomName = roomService.getTitleByUuid(roomUuid);

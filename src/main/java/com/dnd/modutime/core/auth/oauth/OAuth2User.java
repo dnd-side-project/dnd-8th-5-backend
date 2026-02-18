@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Map;
 
 public record OAuth2User(
-
         User user,
         Map<String, Object> attributes,
         String attributeKey

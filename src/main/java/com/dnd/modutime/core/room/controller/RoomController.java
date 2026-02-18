@@ -19,6 +19,7 @@ public class RoomController {
     private final TimeTableService timeTableService;
     private final AdjustmentResultService adjustmentResultService;
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @PostMapping("/api/room")
     public ResponseEntity<RoomCreationResponse> create(@RequestBody RoomRequest roomRequest) {
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
@@ -28,6 +29,7 @@ public class RoomController {
         return ResponseEntity.ok(roomCreationResponse);
     }
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @GetMapping("/api/v2/room/{roomUuid}")
     public ResponseEntity<V2RoomInfoResponse> v2getInfo(@PathVariable String roomUuid) {
         var roomInfoResponse = roomService.v2getInfo(roomUuid);

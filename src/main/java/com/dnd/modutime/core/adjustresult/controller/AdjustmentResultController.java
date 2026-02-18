@@ -21,6 +21,7 @@ public class AdjustmentResultController {
 
     private final AdjustmentResultService adjustmentResultService;
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @GetMapping("/api/v1/room/{roomUuid}/adjustment-results")
     public Page<CandidateDateTimeResponseV1> v1getAdjustmentResult(@PathVariable String roomUuid,
                                                                    @Valid AdjustmentResultRequest request,

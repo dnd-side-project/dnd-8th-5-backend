@@ -24,6 +24,7 @@ public class AuthGuestController {
         this.guestAuthFacade = guestAuthFacade;
     }
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @PostMapping("/guest/api/room/{roomUuid}/login")
     public ResponseEntity<Void> login(@PathVariable String roomUuid,
                                       @RequestBody LoginRequest loginRequest) {
