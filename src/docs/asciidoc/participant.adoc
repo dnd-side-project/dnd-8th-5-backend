@@ -20,6 +20,23 @@ include::{snippets}/post-api-room-room-uuid-participants/http-request.adoc[]
 
 include::{snippets}/post-api-room-room-uuid-participants/http-response.adoc[]
 
+=== 내 참여 정보 조회
+
+* 인증 정보를 통해 내 참여자 정보를 조회합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/path-parameters.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/curl-request.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/http-response.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/response-fields.adoc[]
+
 
 [[Participant-Guest]]
 == Guest 참여자 관리
