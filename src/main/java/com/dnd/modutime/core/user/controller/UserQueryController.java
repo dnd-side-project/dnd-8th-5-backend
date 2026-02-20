@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserQueryController {
 
-    @GetMapping("/api/user/me")
+    @GetMapping("/api/v1/users/me")
     public FindUserInfoResponse findUserInfo(@AuthenticationPrincipal OAuth2User user) {
         return new FindUserInfoResponse(user.user());
     }
