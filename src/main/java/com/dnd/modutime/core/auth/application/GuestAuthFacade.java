@@ -22,7 +22,7 @@ public class GuestAuthFacade {
 
     public GuestLoginResponse login(ParticipantCreateCommand command) {
         participantFacade.login(command);
-        var accessToken = guestTokenProvider.createAccessToken(command.getRoomUuid(), command.getName());
+        var accessToken = guestTokenProvider.createAccessToken(command.getName(), command.getPassword());
         var expireTime = guestTokenProvider.createAccessTokenExpireTime();
         var accessTokenExpireTime = expireTime.toInstant()
                 .atZone(ZoneId.systemDefault())

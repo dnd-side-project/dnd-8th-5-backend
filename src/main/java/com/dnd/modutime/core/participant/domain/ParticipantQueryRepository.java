@@ -10,6 +10,8 @@ public interface ParticipantQueryRepository {
 
     boolean existsByRoomUuidAndUserId(String roomUuid, Long userId);
 
+    Optional<Participant> findByRoomUuidAndUserId(String roomUuid, Long userId);
+
     List<Participant> findByRoomUuid(String roomUuid);
 
     List<Participant> findByRoomUuidAndNameIn(String roomUuid, List<String> participantNames);

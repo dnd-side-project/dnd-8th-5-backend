@@ -20,10 +20,12 @@ public class GuestTokenProvider {
         this.tokenConfigurationProperties = tokenConfigurationProperties;
     }
 
-    public String createAccessToken(final String roomUuid, final String participantName) {
+    public String createAccessToken(final String participantName, final String password) {
         return Jwts.builder()
-                .setSubject("guest:" + roomUuid + ":" + participantName)
+                .setSubject(participantName)
                 .claim("token_type", TokenType.ACCESS.name())
+                .claim("user_type", "guest")
+                .claim("password", password)
                 .setIssuedAt(new Date())
                 .setExpiration(createAccessTokenExpireTime())
                 .signWith(SignatureAlgorithm.HS512, tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))

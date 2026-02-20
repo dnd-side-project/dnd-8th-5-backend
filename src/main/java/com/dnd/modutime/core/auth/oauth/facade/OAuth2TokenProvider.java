@@ -70,6 +70,7 @@ public class OAuth2TokenProvider {
                 .setSubject(provider.getRegistrationId() + ":" + email)
                 // .claim(KEY_ROLE, authorities) TODO :: 권한 정책 추가시 설정 필요
                 .claim("token_type", TokenType.ACCESS.name())
+                .claim("user_type", "oauth")
                 .setIssuedAt(new Date())
                 .setExpiration(createAccessTokenExpireTime())
                 .signWith(SignatureAlgorithm.HS512, tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
@@ -81,6 +82,7 @@ public class OAuth2TokenProvider {
         return Jwts.builder()
                 .setSubject(provider.getRegistrationId() + ":" + email)
                 .claim("token_type", TokenType.REFRESH.name())
+                .claim("user_type", "oauth")
                 .setIssuedAt(new Date())
                 .setExpiration(createRefreshTokenExpireTime())
                 .signWith(SignatureAlgorithm.HS512, tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))

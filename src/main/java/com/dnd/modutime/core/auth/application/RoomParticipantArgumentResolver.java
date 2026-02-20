@@ -2,11 +2,13 @@ package com.dnd.modutime.core.auth.application;
 
 import com.dnd.modutime.core.auth.oauth.OAuth2User;
 import com.dnd.modutime.core.auth.oauth.facade.TokenConfigurationProperties;
+import com.dnd.modutime.core.participant.application.ParticipantQueryService;
+import com.dnd.modutime.core.user.UserRepository;
+import com.dnd.modutime.exception.InvalidPasswordException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.MethodParameter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -25,17 +27,22 @@ import static com.dnd.modutime.core.common.Constants.TOKEN_PREFIX_SEPARATOR;
 /**
  * {@link RoomParticipant} 어노테이션이 붙은 파라미터에 {@link ParticipantInfo}를 주입합니다.
  * SecurityContext에 OAuth2User가 있으면 OAuth로, 없으면 JWT에서 Guest 정보를 추출합니다.
+ * 두 경우 모두 DB 조회를 통해 해당 방의 참여자인지 검증합니다.
  */
 @Component
 @EnableConfigurationProperties({TokenConfigurationProperties.class})
 public class RoomParticipantArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String GUEST_SUBJECT_PREFIX = "guest:";
-
     private final TokenConfigurationProperties tokenConfigurationProperties;
+    private final ParticipantQueryService participantQueryService;
+    private final UserRepository userRepository;
 
-    public RoomParticipantArgumentResolver(TokenConfigurationProperties tokenConfigurationProperties) {
+    public RoomParticipantArgumentResolver(TokenConfigurationProperties tokenConfigurationProperties,
+                                           ParticipantQueryService participantQueryService,
+                                           UserRepository userRepository) {
         this.tokenConfigurationProperties = tokenConfigurationProperties;
+        this.participantQueryService = participantQueryService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -49,29 +56,59 @@ public class RoomParticipantArgumentResolver implements HandlerMethodArgumentRes
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) {
         var request = (HttpServletRequest) webRequest.getNativeRequest();
+        var annotation = parameter.getParameterAnnotation(RoomParticipant.class);
+        if (annotation == null) {
+            throw new IllegalStateException("@RoomParticipant 어노테이션을 찾을 수 없습니다.");
+        }
+        var roomUuid = extractRoomUuid(request, annotation.roomPathVariable());
 
         // 1. SecurityContext에서 OAuth2User 확인
         var oAuth2User = resolveOAuth2User();
         if (oAuth2User != null) {
-            return new ParticipantInfo(
-                    ParticipantType.OAUTH,
-                    null,
-                    oAuth2User.user().getName(),
-                    oAuth2User.user().getId()
-            );
+            return resolveOAuthParticipant(oAuth2User, roomUuid);
         }
 
-        // 2. Guest JWT 토큰 파싱
+        // 2. Guest JWT 토큰 파싱 및 DB 검증
+        return resolveGuestParticipant(request, roomUuid);
+    }
+
+    private ParticipantInfo resolveOAuthParticipant(OAuth2User oAuth2User, String roomUuid) {
+        var email = oAuth2User.user().getEmail();
+        var provider = oAuth2User.getProvider();
+        var user = userRepository.findByEmailAndProvider(email, provider)
+                .orElseThrow(() -> new IllegalArgumentException("해당 OAuth 사용자를 찾을 수 없습니다."));
+
+        var participant = participantQueryService.findByRoomUuidAndUserId(roomUuid, user.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 방에 참여하지 않은 사용자입니다."));
+
+        return new ParticipantInfo(ParticipantType.OAUTH, roomUuid, participant.getName(), user.getId());
+    }
+
+    private ParticipantInfo resolveGuestParticipant(HttpServletRequest request, String roomUuid) {
         var token = resolveToken(request);
-        var participantInfo = extractGuestParticipantInfo(token);
+        var claims = parseGuestClaims(token);
 
-        // 3. Guest인 경우 roomUuid path variable 일치 검증
-        var roomUuidPathVariable = parameter.getParameterAnnotation(RoomParticipant.class).roomPathVariable();
-        if (!roomUuidPathVariable.isEmpty()) {
-            validateRoomUuid(request, participantInfo, roomUuidPathVariable);
+        var name = claims.getSubject();
+        var password = claims.get("password", String.class);
+
+        var participant = participantQueryService.getByRoomUuidAndName(roomUuid, name)
+                .orElseThrow(InvalidPasswordException::new);
+
+        if (!participant.matchPassword(password)) {
+            throw new InvalidPasswordException();
         }
 
-        return participantInfo;
+        return new ParticipantInfo(ParticipantType.GUEST, roomUuid, name, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String extractRoomUuid(HttpServletRequest request, String roomUuidPathVariable) {
+        var pathVariables = (Map<String, String>) request.getAttribute(
+                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        if (pathVariables == null || !pathVariables.containsKey(roomUuidPathVariable)) {
+            throw new IllegalArgumentException("roomUuid path variable을 찾을 수 없습니다.");
+        }
+        return pathVariables.get(roomUuidPathVariable);
     }
 
     private OAuth2User resolveOAuth2User() {
@@ -94,35 +131,10 @@ public class RoomParticipantArgumentResolver implements HandlerMethodArgumentRes
         return authorizationHeader.split(TOKEN_PREFIX_SEPARATOR)[1];
     }
 
-    private ParticipantInfo extractGuestParticipantInfo(String token) {
-        Claims claims = Jwts.parser()
+    private Claims parseGuestClaims(String token) {
+        return Jwts.parser()
                 .setSigningKey(tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
                 .parseClaimsJws(token)
                 .getBody();
-
-        var subject = claims.getSubject();
-        if (subject == null || !subject.startsWith(GUEST_SUBJECT_PREFIX)) {
-            throw new IllegalArgumentException("유효하지 않은 Guest 토큰입니다.");
-        }
-
-        // subject 형식: "guest:{roomUuid}:{participantName}"
-        var parts = subject.split(":", 3);
-        if (parts.length < 3) {
-            throw new IllegalArgumentException("Guest 토큰의 subject 형식이 올바르지 않습니다.");
-        }
-        return new ParticipantInfo(ParticipantType.GUEST, parts[1], parts[2], null);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void validateRoomUuid(HttpServletRequest request, ParticipantInfo participantInfo, String roomUuidPathVariable) {
-        var pathVariables = (Map<String, String>) request.getAttribute(
-                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        if (pathVariables == null) {
-            return;
-        }
-        var pathRoomUuid = pathVariables.get(roomUuidPathVariable);
-        if (pathRoomUuid != null && !pathRoomUuid.equals(participantInfo.roomUuid())) {
-            throw new IllegalArgumentException("토큰의 roomUuid와 요청 경로의 roomUuid가 일치하지 않습니다.");
-        }
     }
 }
