@@ -209,7 +209,10 @@ public class OAuth2SecurityConfig {
 
         // TODO: 리팩터링 대상
         if (List.of(environment.getActiveProfiles()).contains("prod")) {
-            configuration.setAllowedOriginPatterns(List.of(hostProperties.host().client()));
+            configuration.setAllowedOriginPatterns(List.of(
+                    hostProperties.host().client(),
+                    "https://modutime.site"
+            ));
         } else {
             configuration.setAllowedOriginPatterns(List.of("*"));
         }
