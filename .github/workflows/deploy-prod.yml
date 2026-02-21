@@ -84,6 +84,12 @@ jobs:
           docker build -t ${{ secrets.DOCKER_REPO }}/modutime-web .
           docker push ${{ secrets.DOCKER_REPO }}/modutime-web
 
+      ## nginx 이미지 빌드 및 도커허브에 push
+      - name: nginx docker build and push
+        run: |
+          docker build -t ${{ secrets.DOCKER_REPO }}/modutime-nginx ./nginx
+          docker push ${{ secrets.DOCKER_REPO }}/modutime-nginx
+
       ## docker compose up
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master

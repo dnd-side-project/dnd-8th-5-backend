@@ -14,7 +14,7 @@ spring:
     activate:
       on-profile: prod
 token:
-  secret: { JWT_SECRET }
+  secret: ${JWT_SECRET}
   access-token-expiration-time: 900000 # 15 minutes
   refresh-token-expiration-time: 1209600000 # 2 weeks
   secure-cookie: true # prod environment - HTTPS required
