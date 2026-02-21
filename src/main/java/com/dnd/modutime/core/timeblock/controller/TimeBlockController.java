@@ -30,7 +30,7 @@ public class TimeBlockController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/api/v1/room/{roomUuid}/available-time")
+    @PutMapping("/api/v1/rooms/{roomUuid}/time-blocks/available-time")
     public ResponseEntity<Void> replaceV1(@PathVariable String roomUuid,
                                           @RequestBody TimeReplaceRequestV1 request,
                                           @RoomParticipant ParticipantInfo participantInfo) {

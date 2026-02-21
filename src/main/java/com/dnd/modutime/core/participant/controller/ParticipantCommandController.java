@@ -1,5 +1,7 @@
 package com.dnd.modutime.core.participant.controller;
 
+import com.dnd.modutime.core.auth.application.ParticipantInfo;
+import com.dnd.modutime.core.auth.application.RoomParticipant;
 import com.dnd.modutime.core.auth.oauth.OAuth2User;
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
 import com.dnd.modutime.core.participant.application.command.ParticipantJoinCommand;
@@ -31,9 +33,18 @@ public class ParticipantCommandController {
         return ResponseEntity.ok().build();
     }
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @DeleteMapping("/api/room/{roomUuid}")
     public ResponseEntity<Void> deleteParticipants(@PathVariable String roomUuid,
                                                    @RequestBody @Valid ParticipantsDeleteRequest request) {
+        participantFacade.delete(request.toCommand(roomUuid));
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/api/v1/rooms/{roomUuid}/participants")
+    public ResponseEntity<Void> deleteParticipantsV1(@PathVariable String roomUuid,
+                                                     @RequestBody @Valid ParticipantsDeleteRequest request,
+                                                     @RoomParticipant ParticipantInfo participantInfo) {
         participantFacade.delete(request.toCommand(roomUuid));
         return ResponseEntity.ok().build();
     }

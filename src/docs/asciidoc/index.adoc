@@ -43,6 +43,5 @@ include::timeblock-guest.adoc[]
 include::auth-oauth2.adoc[]
 
 // 코드
-include::timetable.adoc[]
-include::adjustment-result.adoc[]
+include::timeblock.adoc[]
 include::participant.adoc[]

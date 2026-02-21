@@ -1,6 +1,9 @@
 package com.dnd.modutime.controller.participant;
 
 import com.dnd.modutime.annotation.ApiDocsTest;
+import com.dnd.modutime.core.auth.application.ParticipantInfo;
+import com.dnd.modutime.core.auth.application.ParticipantType;
+import com.dnd.modutime.core.auth.application.RoomParticipant;
 import com.dnd.modutime.core.auth.oauth.OAuth2User;
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
 import com.dnd.modutime.core.participant.controller.ParticipantCommandController;
@@ -17,6 +20,8 @@ import org.mockito.Mock;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.headers.HeaderDescriptor;
+import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.PayloadDocumentation;
@@ -33,10 +38,14 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import java.util.Collections;
 
 import static com.dnd.modutime.TestConstant.LOCALHOST;
+import static com.dnd.modutime.documentation.MockMvcFactory.HEADER_AUTHORIZATION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -120,6 +129,88 @@ public class ParticipantCommandControllerDocsTest {
                                         ResourceSnippetParameters.builder()
                                                 .description("등록 유저 방 참여 API")
                                                 .tag("Participant")
+                                                .requestFields(requestFields)
+                                                .pathParameters(pathParameters)
+                                                .build())
+                        )
+                );
+    }
+
+    @DisplayName("참여자 삭제 API")
+    @Test
+    void 참여자_삭제(RestDocumentationContextProvider contextProvider) throws Exception {
+        var operationIdentifier = "delete-api-v1-rooms-room-uuid-participants";
+
+        var pathParameters = new ParameterDescriptor[]{
+                parameterWithName("roomUuid").description("방 UUID")
+        };
+
+        var requestHeaders = new HeaderDescriptor[]{
+                headerWithName("Authorization").description("인증 토큰 (Bearer {JWT-TOKEN})")
+        };
+
+        var requestFields = new FieldDescriptor[]{
+                fieldWithPath("participantIds").type(ARRAY).description("삭제할 참여자 ID 목록")
+        };
+
+        //language=JSON
+        var requestLiteral = """
+                {
+                  "participantIds": [1, 2, 3]
+                }
+                """;
+
+        doNothing().when(participantFacade).delete(any());
+
+        var documentationConfigurer = documentationConfiguration(contextProvider);
+        documentationConfigurer.uris().withScheme("https").withHost(LOCALHOST).withPort(443);
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setCustomArgumentResolvers(new HandlerMethodArgumentResolver() {
+                    @Override
+                    public boolean supportsParameter(MethodParameter parameter) {
+                        return parameter.hasParameterAnnotation(RoomParticipant.class);
+                    }
+
+                    @Override
+                    public Object resolveArgument(MethodParameter parameter,
+                                                  ModelAndViewContainer mavContainer,
+                                                  NativeWebRequest webRequest,
+                                                  WebDataBinderFactory binderFactory) {
+                        return new ParticipantInfo(ParticipantType.GUEST, "test-room-uuid", "동호", null);
+                    }
+                })
+                .apply(documentationConfigurer)
+                .build();
+
+        mockMvc.perform(
+                        delete("/api/v1/rooms/{roomUuid}/participants", "test-room-uuid")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", HEADER_AUTHORIZATION)
+                                .content(requestLiteral)
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        MockMvcRestDocumentation.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                HeaderDocumentation.requestHeaders(requestHeaders),
+                                RequestDocumentation.pathParameters(pathParameters),
+                                PayloadDocumentation.requestFields(requestFields)
+                        )
+                )
+                .andDo(
+                        MockMvcRestDocumentationWrapper.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                ResourceDocumentation.resource(
+                                        ResourceSnippetParameters.builder()
+                                                .description("참여자 삭제 API")
+                                                .tag("Participant")
+                                                .requestHeaders(requestHeaders)
                                                 .requestFields(requestFields)
                                                 .pathParameters(pathParameters)
                                                 .build())
