@@ -1,6 +1,7 @@
 [[Participant]]
+== 약속 방 참여자 관련 API
 
-=== 참여자 생성
+=== OAuth 유저의 약속 방 참여자 생성
 
 * 인증 정보를 통해 참여자를 생성합니다.
 
@@ -33,3 +34,19 @@ include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/http-request.adoc
 
 include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/http-response.adoc[]
 include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/response-fields.adoc[]
+
+[discrete]
+==== 예외
+
+[cols="1,1,2", options="header"]
+|===
+| 조건 | 상태 코드 | 설명
+
+| 토큰이 없는 경우
+| 401
+| 인증 토큰이 누락된 경우 예외 발생
+
+| 방 참여 상태가 아닌 경우
+| 400
+| 해당 방에 참여하지 않은 사용자가 조회 시 예외 발생
+|===
