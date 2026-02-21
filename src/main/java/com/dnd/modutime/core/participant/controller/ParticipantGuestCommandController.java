@@ -19,6 +19,7 @@ public class ParticipantGuestCommandController {
         this.participantFacade = participantFacade;
     }
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @DeleteMapping("/guest/api/room/{roomUuid}")
     public ResponseEntity<Void> deleteParticipants(@PathVariable String roomUuid,
                                                    @RequestBody @Valid ParticipantsDeleteRequest request) {

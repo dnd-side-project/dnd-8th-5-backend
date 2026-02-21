@@ -17,6 +17,15 @@ spring:
         format_sql: true
     generate-ddl: true
 
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
 ---
 spring:
   config:

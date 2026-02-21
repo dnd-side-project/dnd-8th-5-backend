@@ -43,4 +43,12 @@ public class ParticipantQueryService {
     public Optional<Participant> getByRoomUuidAndName(String roomUuid, String name) {
         return queryRepository.findByRoomUuidAndName(roomUuid, name);
     }
+
+    public boolean existsByRoomUuidAndUserId(String roomUuid, Long userId) {
+        return queryRepository.existsByRoomUuidAndUserId(roomUuid, userId);
+    }
+
+    public Optional<Participant> findByRoomUuidAndUserId(String roomUuid, Long userId) {
+        return queryRepository.findByRoomUuidAndUserId(roomUuid, userId);
+    }
 }

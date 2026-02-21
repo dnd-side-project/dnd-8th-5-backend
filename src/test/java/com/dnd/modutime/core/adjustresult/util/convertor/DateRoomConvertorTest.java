@@ -3,9 +3,8 @@ package com.dnd.modutime.core.adjustresult.util.convertor;
 import com.dnd.modutime.core.adjustresult.application.DateTimeInfoDto;
 import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
 import com.dnd.modutime.core.adjustresult.domain.CandidateDateTimeParticipantName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,13 +12,16 @@ import java.util.stream.Collectors;
 
 import static com.dnd.modutime.fixture.TimeFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
 class DateRoomConvertorTest {
 
-    @Autowired
     private DateRoomConvertor dateRoomConvertor;
+
+    @BeforeEach
+    void setUp() {
+        dateRoomConvertor = new DateRoomConvertor();
+    }
 
     @Test
     void 날짜만있는_방의_dateInfosDto를_candidateDateTime으로_변환한다() {

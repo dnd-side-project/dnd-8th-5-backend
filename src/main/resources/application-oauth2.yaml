@@ -1,0 +1,50 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            redirect-uri: http://localhost:8080/oauth2/kakao/callback
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, profile_image, account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+clients.oauth2:
+  client-mode: stub
+  authorization-request-base-uri: /oauth2/authorization
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            redirect-uri: https://api.modutime.site/oauth2/kakao/callback
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, profile_image, account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+clients.oauth2:
+  client-mode: oauth2
+  authorization-request-base-uri: /oauth2/authorization

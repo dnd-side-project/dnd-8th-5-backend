@@ -1,7 +1,4 @@
 [[TimeTable-Guest]]
-== Guest 시간 등록 현황
-
-* Guest용 방에 참여한 인원들이 등록한 시간이 합쳐져 있는 테이블입니다.
 
 === Guest 참여 현황 조회
 

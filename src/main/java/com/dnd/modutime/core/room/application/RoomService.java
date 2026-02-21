@@ -61,7 +61,9 @@ public class RoomService {
     }
 
     private boolean checkAllValueZero(TimerRequest timerRequest) {
-        return timerRequest.getDay() == 0 && timerRequest.getHour() == 0 && timerRequest.getMinute() == 0;
+        return timerRequest.getDay() == 0
+               && timerRequest.getHour() == 0
+               && timerRequest.getMinute() == 0;
     }
 
     public String getTitleByUuid(String roomUuid) {

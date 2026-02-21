@@ -1,6 +1,8 @@
 package com.dnd.modutime.core.timeblock.application;
 
+import com.dnd.modutime.core.timeblock.application.command.TimeReplaceCommand;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
+import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequestV1;
 import com.dnd.modutime.core.timeblock.application.response.TimeBlockResponse;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.core.timeblock.repository.AvailableDateTimeRepository;
@@ -36,6 +38,20 @@ public class TimeBlockService {
         var availableDateTimes = dateTimeToAvailableDateTimeConvertor.convert(timeBlock, timeReplaceRequest.getAvailableDateTimes());
 
         timeReplaceValidator.validate(roomUuid, availableDateTimes);
+        availableDateTimeRepository.deleteAllByTimeBlockId(timeBlock.getId());
+        availableDateTimeRepository.saveAll(availableDateTimes);
+        timeBlock.replace(availableDateTimes);
+        timeBlockRepository.save(timeBlock);
+    }
+
+    public void replaceV1(TimeReplaceCommand command) {
+        var timeBlock = getTimeBlockByRoomUuidAndParticipantName(command.getRoomUuid(), command.getParticipantName());
+
+        var dateTimeToAvailableDateTimeConvertor = dateTimeToAvailableDateTimeConvertorFactory
+                .getInstance(command.getHasTime());
+        var availableDateTimes = dateTimeToAvailableDateTimeConvertor.convert(timeBlock, command.getAvailableDateTimes());
+
+        timeReplaceValidator.validate(command.getRoomUuid(), availableDateTimes);
         availableDateTimeRepository.deleteAllByTimeBlockId(timeBlock.getId());
         availableDateTimeRepository.saveAll(availableDateTimes);
         timeBlock.replace(availableDateTimes);

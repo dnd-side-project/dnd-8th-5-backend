@@ -1,0 +1,20 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+token:
+  secret: A2D26455E4FB631C353E3ED6D1872 # TODO :: 배포 시 환경변수 하드코딩 제거
+  access-token-expiration-time: 900000 # 15 minutes
+  refresh-token-expiration-time: 1209600000 # 2 weeks
+  secure-cookie: false # local environment - allow non-HTTPS
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+token:
+  secret: { JWT_SECRET }
+  access-token-expiration-time: 900000 # 15 minutes
+  refresh-token-expiration-time: 1209600000 # 2 weeks
+  secure-cookie: true # prod environment - HTTPS required

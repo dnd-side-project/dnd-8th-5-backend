@@ -5,19 +5,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.participant.application.ParticipantQueryService;
 import com.dnd.modutime.core.participant.domain.Participant;
+import com.dnd.modutime.util.IntegrationSupporter;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-@SpringBootTest
-public class AdjustmentResultExecutorFactoryTest {
+@SpringBootTestWithoutOAuthConfig
+public class AdjustmentResultExecutorFactoryTest extends IntegrationSupporter {
 
     @Autowired
     private AdjustmentResultExecutorFactory adjustmentResultExecutorFactory;
@@ -30,6 +32,14 @@ public class AdjustmentResultExecutorFactoryTest {
         given(participantQueryService.getByRoomUuid(ROOM_UUID)).willReturn(
                 List.of(new Participant(ROOM_UUID, "김동호", "1234"),
                         new Participant(ROOM_UUID, "이수진", "1234"))
+        );
+
+        var adjustmentResponseGenerator = new AdjustmentResponseGenerator(null, null, null);
+        var timeTableResponseGenerator = new TimeTableResponseGenerator(null, null, null, null);
+        adjustmentResultExecutorFactory = new AdjustmentResultExecutorFactory(
+                Map.of("adjustmentResponseGenerator", adjustmentResponseGenerator,
+                        "timeTableResponseGenerator", timeTableResponseGenerator),
+                participantQueryService
         );
     }
 

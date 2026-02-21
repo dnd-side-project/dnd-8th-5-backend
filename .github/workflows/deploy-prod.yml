@@ -97,6 +97,8 @@ jobs:
             DB_URL=${{secrets.PROD_DB_URL}}
             DB_USERNAME=${{secrets.PROD_DB_USERNAME}}
             DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
+            KAKAO_CLIENT_ID=${{secrets.KAKAO_CLIENT_ID}}
+            JWT_SECRET=${{secrets.JWT_SECRET}}
             EOL
             
             sudo sh install-docker.sh

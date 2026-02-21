@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.adjustresult.integration;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.adjustresult.application.AdjustmentResultReplaceService;
 import com.dnd.modutime.core.adjustresult.application.command.AdjustmentResultReplaceCommand;
 import com.dnd.modutime.core.adjustresult.domain.AdjustmentResult;
@@ -9,10 +10,10 @@ import com.dnd.modutime.core.adjustresult.repository.AdjustmentResultRepository;
 import com.dnd.modutime.core.adjustresult.repository.CandidateDateTimeRepository;
 import com.dnd.modutime.core.timetable.domain.TimeInfo;
 import com.dnd.modutime.core.timetable.domain.TimeInfoParticipantName;
+import com.dnd.modutime.util.IntegrationSupporter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
-@SpringBootTest
+@SpringBootTestWithoutOAuthConfig
 @Transactional
-public class AdjustmentResultReplaceServiceTest {
+public class AdjustmentResultReplaceServiceTest extends IntegrationSupporter {
 
     @SpyBean
     private AdjustmentResultRepository adjustmentResultRepository;

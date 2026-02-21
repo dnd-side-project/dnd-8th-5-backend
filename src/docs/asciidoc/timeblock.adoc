@@ -1,0 +1,20 @@
+[[TimeBlock]]
+== 시간 블록
+
+=== 참여자 시간 등록
+
+* 참여자가 자신의 시간을 등록합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/put-api-v1-rooms-room-uuid-time-blocks-available-time/request-headers.adoc[]
+include::{snippets}/put-api-v1-rooms-room-uuid-time-blocks-available-time/path-parameters.adoc[]
+include::{snippets}/put-api-v1-rooms-room-uuid-time-blocks-available-time/curl-request.adoc[]
+include::{snippets}/put-api-v1-rooms-room-uuid-time-blocks-available-time/request-fields.adoc[]
+include::{snippets}/put-api-v1-rooms-room-uuid-time-blocks-available-time/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/put-api-v1-rooms-room-uuid-time-blocks-available-time/http-response.adoc[]

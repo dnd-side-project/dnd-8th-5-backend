@@ -1,6 +1,7 @@
 package com.dnd.modutime.core.participant.application;
 
 import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
+import com.dnd.modutime.core.participant.application.command.ParticipantJoinCommand;
 import com.dnd.modutime.core.participant.application.command.ParticipantsDeleteCommand;
 import com.dnd.modutime.core.participant.domain.Participant;
 import com.dnd.modutime.core.participant.domain.ParticipantRepository;
@@ -25,6 +26,11 @@ public class ParticipantCommandHandler {
 
     @Transactional
     public Participant handle(ParticipantCreateCommand command) {
+        return participantRepository.save(command.execute());
+    }
+
+    @Transactional
+    public Participant handle(ParticipantJoinCommand command) {
         return participantRepository.save(command.execute());
     }
 }

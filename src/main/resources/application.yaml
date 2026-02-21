@@ -3,7 +3,19 @@ spring:
     active: local
     include:
       - db
+      - oauth2
+      - host
+      - security
       - logging
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
 
 management:
   endpoints:

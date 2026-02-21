@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.timeblock.integration;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.application.TimeReplaceValidator;
 import com.dnd.modutime.core.timeblock.application.request.TimeReplaceRequest;
@@ -9,10 +10,10 @@ import com.dnd.modutime.core.timeblock.domain.AvailableTime;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.core.timeblock.repository.AvailableDateTimeRepository;
 import com.dnd.modutime.core.timeblock.repository.TimeBlockRepository;
+import com.dnd.modutime.util.IntegrationSupporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +34,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
 @Transactional
-@SpringBootTest
-class TimeBlockIntegrationTest {
+@SpringBootTestWithoutOAuthConfig
+class TimeBlockIntegrationTest extends IntegrationSupporter {
 
     @Autowired
     private TimeBlockService timeBlockService;

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class TimeReplaceRequest {
     /**
      * Participant의 name
      */
+    @NotNull(message = "이름은 필수입니다.")
     private String name;
     private Boolean hasTime;
 

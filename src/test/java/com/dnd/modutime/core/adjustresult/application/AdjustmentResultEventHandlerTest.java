@@ -1,15 +1,16 @@
 package com.dnd.modutime.core.adjustresult.application;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.adjustresult.application.command.AdjustmentResultReplaceCommand;
 import com.dnd.modutime.core.timetable.application.TimeTableService;
 import com.dnd.modutime.core.timetable.application.command.TimeTableUpdateCommand;
 import com.dnd.modutime.core.timetable.domain.TimeTable;
 import com.dnd.modutime.core.timetable.repository.TimeTableRepository;
+import com.dnd.modutime.util.IntegrationSupporter;
 import com.dnd.modutime.util.JsonUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
@@ -19,8 +20,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
-class AdjustmentResultEventHandlerTest {
+@SpringBootTestWithoutOAuthConfig
+class AdjustmentResultEventHandlerTest extends IntegrationSupporter {
 
     @Autowired
     private TimeTableService timeTableService;

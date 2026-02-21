@@ -21,6 +21,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -77,6 +78,18 @@ public class MockMvcFactory {
         var documentationConfigurer = documentationConfiguration(restDocumentationContextProvider);
         documentationConfigurer.uris().withScheme("https").withHost(host).withPort(443);
         return getMockMvcBuilder(controllers).apply(documentationConfigurer).build();
+    }
+
+    public static MockMvc getRestDocsMockMvc(RestDocumentationContextProvider restDocumentationContextProvider,
+                                             String host,
+                                             HandlerMethodArgumentResolver[] argumentResolvers,
+                                             Object... controllers) {
+        var documentationConfigurer = documentationConfiguration(restDocumentationContextProvider);
+        documentationConfigurer.uris().withScheme("https").withHost(host).withPort(443);
+        return getMockMvcBuilder(controllers)
+                .setCustomArgumentResolvers(argumentResolvers)
+                .apply(documentationConfigurer)
+                .build();
     }
 
     private static StandaloneMockMvcBuilder getMockMvcBuilder(Object... controllers) {

@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.timetable.integration;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.domain.AvailableDateTime;
 import com.dnd.modutime.core.timeblock.domain.AvailableTime;
@@ -12,10 +13,10 @@ import com.dnd.modutime.core.timetable.domain.TimeInfo;
 import com.dnd.modutime.core.timetable.domain.TimeInfoParticipantName;
 import com.dnd.modutime.core.timetable.domain.TimeTableReplaceEvent;
 import com.dnd.modutime.core.timetable.repository.TimeTableRepository;
+import com.dnd.modutime.util.IntegrationSupporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
@@ -32,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
-@SpringBootTest
+@SpringBootTestWithoutOAuthConfig
 @Transactional
 @RecordApplicationEvents
-public class TimeTableIntegrationTest {
+public class TimeTableIntegrationTest extends IntegrationSupporter {
 
     @Autowired
     private TimeTableService timeTableService;

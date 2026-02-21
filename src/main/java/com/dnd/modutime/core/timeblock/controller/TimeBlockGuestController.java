@@ -12,6 +12,7 @@ public class TimeBlockGuestController {
 
     private final TimeBlockService timeBlockService;
 
+    @Deprecated(since = "카카오 로그인 배포 이후")
     @GetMapping("/guest/api/room/{roomUuid}/available-time")
     public ResponseEntity<TimeBlockResponse> getTimeBlock(@PathVariable String roomUuid,
                                                           @RequestParam String name) {

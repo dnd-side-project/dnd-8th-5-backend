@@ -1,0 +1,70 @@
+[[Participant]]
+== 약속 방 참여자 관련 API
+
+=== OAuth 유저의 약속 방 참여자 생성
+
+* 인증 정보를 통해 참여자를 생성합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/post-api-room-room-uuid-participants/path-parameters.adoc[]
+include::{snippets}/post-api-room-room-uuid-participants/curl-request.adoc[]
+include::{snippets}/post-api-room-room-uuid-participants/request-fields.adoc[]
+include::{snippets}/post-api-room-room-uuid-participants/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/post-api-room-room-uuid-participants/http-response.adoc[]
+
+=== 내 참여 정보 조회
+
+* 인증 정보를 통해 내 참여자 정보를 조회합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/path-parameters.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/curl-request.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/http-response.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-participants-me/response-fields.adoc[]
+
+[discrete]
+==== 예외
+
+[cols="1,1,2", options="header"]
+|===
+| 조건 | 상태 코드 | 설명
+
+| 토큰이 없는 경우
+| 401
+| 인증 토큰이 누락된 경우 예외 발생
+
+| 방 참여 상태가 아닌 경우
+| 400
+| 해당 방에 참여하지 않은 사용자가 조회 시 예외 발생
+|===
+
+=== 참여자 삭제
+
+* 약속 방의 참여자를 삭제합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/delete-api-v1-rooms-room-uuid-participants/request-headers.adoc[]
+include::{snippets}/delete-api-v1-rooms-room-uuid-participants/path-parameters.adoc[]
+include::{snippets}/delete-api-v1-rooms-room-uuid-participants/curl-request.adoc[]
+include::{snippets}/delete-api-v1-rooms-room-uuid-participants/request-fields.adoc[]
+include::{snippets}/delete-api-v1-rooms-room-uuid-participants/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/delete-api-v1-rooms-room-uuid-participants/http-response.adoc[]

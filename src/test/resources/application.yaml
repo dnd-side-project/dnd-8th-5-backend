@@ -14,6 +14,34 @@ spring:
     console:
       enabled:
         true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: test
+            client-secret: test
+            redirect-uri: "{baseUrl}/oauth2/kakao/callback"
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            client-name: Kakao
+            scope:
+              - profile_nickname
+              - account_email
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: test
+
 logging:
   level:
     org:
@@ -22,3 +50,14 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+
+
+modutime:
+  host:
+    client: "http://localhost:3000"
+    server: "http://localhost:8080"
+
+token:
+  secret: secret
+  access-token-expiration-time: 900000 # 15 minutes
+  refresh-token-expiration-time: 1209600000 # 2 weeks

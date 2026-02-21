@@ -1,18 +1,19 @@
 package com.dnd.modutime.core.participant.application;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
 import com.dnd.modutime.core.room.application.RoomService;
 import com.dnd.modutime.exception.InvalidPasswordException;
+import com.dnd.modutime.util.IntegrationSupporter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.dnd.modutime.fixture.RoomRequestFixture.getRoomRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-class ParticipantFacadeTest {
+@SpringBootTestWithoutOAuthConfig
+class ParticipantFacadeTest extends IntegrationSupporter {
 
     @Autowired
     private RoomService roomService;

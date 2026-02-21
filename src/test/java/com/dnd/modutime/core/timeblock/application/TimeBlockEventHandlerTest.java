@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.timeblock.application;
 
+import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.core.participant.application.ParticipantCommandHandler;
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
 import com.dnd.modutime.core.participant.application.command.ParticipantCreateCommand;
@@ -8,10 +9,10 @@ import com.dnd.modutime.core.participant.domain.ParticipantRemovedEvent;
 import com.dnd.modutime.core.timeblock.domain.TimeBlock;
 import com.dnd.modutime.core.timeblock.domain.TimeBlockRemovedEvent;
 import com.dnd.modutime.core.timeblock.repository.TimeBlockRepository;
+import com.dnd.modutime.util.IntegrationSupporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
@@ -24,9 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
+@SpringBootTestWithoutOAuthConfig
 @RecordApplicationEvents
-class TimeBlockEventHandlerTest {
+class TimeBlockEventHandlerTest extends IntegrationSupporter {
 
     @Autowired
     private ParticipantCommandHandler participantCommandHandler;

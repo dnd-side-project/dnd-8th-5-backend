@@ -1,0 +1,38 @@
+[[Auth-OAuth2]]
+=== OAuth2 로그인
+
+* OAuth2 Provider를 이용한 로그인 API입니다.
+* 현재 지원하는 Provider: `kakao`
+* 이 엔드포인트에 GET 요청을 보내면 해당 OAuth2 Provider의 로그인 페이지로 리다이렉트됩니다.
+* 인증 완료 후 아래와 같은 토큰 정보가 반환됩니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/oauth2-get-authorization-registration-id/curl-request.adoc[]
+include::{snippets}/oauth2-get-authorization-registration-id/http-request.adoc[]
+include::{snippets}/oauth2-get-authorization-registration-id/path-parameters.adoc[]
+include::{snippets}/oauth2-get-authorization-registration-id/request-parameters.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/oauth2-get-authorization-registration-id/http-response.adoc[]
+include::{snippets}/oauth2-get-authorization-registration-id/response-fields.adoc[]
+
+=== 토큰 재발급
+
+* refreshToken 쿠키를 이용하여 새로운 accessToken을 발급합니다.
+* 요청 시 `Cookie: refreshToken={리프레시 토큰}` 헤더를 포함해야 합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/oauth2-post-reissue-token/curl-request.adoc[]
+include::{snippets}/oauth2-post-reissue-token/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/oauth2-post-reissue-token/http-response.adoc[]
+include::{snippets}/oauth2-post-reissue-token/response-fields.adoc[]

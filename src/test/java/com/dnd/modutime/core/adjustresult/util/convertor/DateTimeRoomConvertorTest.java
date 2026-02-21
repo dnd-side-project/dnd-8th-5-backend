@@ -1,30 +1,27 @@
 package com.dnd.modutime.core.adjustresult.util.convertor;
 
-import static com.dnd.modutime.fixture.TimeFixture._12_00;
-import static com.dnd.modutime.fixture.TimeFixture._12_30;
-import static com.dnd.modutime.fixture.TimeFixture._13_00;
-import static com.dnd.modutime.fixture.TimeFixture._13_30;
-import static com.dnd.modutime.fixture.TimeFixture._14_00;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_09;
-import static com.dnd.modutime.fixture.TimeFixture._2023_02_10;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import com.dnd.modutime.core.adjustresult.application.DateTimeInfoDto;
 import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
 import com.dnd.modutime.core.adjustresult.domain.CandidateDateTimeParticipantName;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 public class DateTimeRoomConvertorTest {
 
-    @Autowired
     private DateTimeRoomConvertor dateTimeRoomConvertor;
+
+    @BeforeEach
+    void setUp() {
+        dateTimeRoomConvertor = new DateTimeRoomConvertor();
+    }
 
     @Test
     void dateInfosDto를_candidateDateTime으로_변환한다() {

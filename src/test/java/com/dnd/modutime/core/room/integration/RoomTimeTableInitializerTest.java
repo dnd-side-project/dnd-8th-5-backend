@@ -1,37 +1,39 @@
 package com.dnd.modutime.core.room.integration;
 
-import static com.dnd.modutime.fixture.RoomFixture.*;
-import static com.dnd.modutime.fixture.TimeFixture.*;
-import static org.assertj.core.api.Assertions.*;
-
-import java.time.LocalTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.dnd.modutime.core.room.application.RoomTimeTableInitializer;
 import com.dnd.modutime.core.room.domain.Room;
 import com.dnd.modutime.core.room.repository.RoomRepository;
 import com.dnd.modutime.core.timetable.domain.TimeInfo;
 import com.dnd.modutime.core.timetable.domain.TimeTable;
 import com.dnd.modutime.core.timetable.repository.TimeTableRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@Transactional
-@SpringBootTest
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.dnd.modutime.fixture.RoomFixture.getRoom;
+import static com.dnd.modutime.fixture.TimeFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DataJpaTest
 public class RoomTimeTableInitializerTest {
 
     @Autowired
     private RoomRepository roomRepository;
 
     @Autowired
+    private TimeTableRepository timeTableRepository;
+
     private RoomTimeTableInitializer roomTimeTableInitializer;
 
-    @Autowired
-    private TimeTableRepository timeTableRepository;
+    @BeforeEach
+    void setUp() {
+        roomTimeTableInitializer = new RoomTimeTableInitializer(roomRepository);
+    }
 
     @Test
     void 방의_날짜와_시작_끝시간에_해당하는_인원수를_0으로_초기화한다() {
@@ -81,12 +83,12 @@ public class RoomTimeTableInitializerTest {
 
         // when
         List<LocalTime> times = timeTable.getDateInfos().get(0).getTimeInfos().stream()
-            .map(TimeInfo::getTime)
-            .collect(Collectors.toList());
+                .map(TimeInfo::getTime)
+                .collect(Collectors.toList());
 
         // then
         assertThat(times)
-            .containsExactly(_11_00, _11_30, _12_00, _12_30);
+                .containsExactly(_11_00, _11_30, _12_00, _12_30);
     }
 
     @Test
@@ -99,8 +101,8 @@ public class RoomTimeTableInitializerTest {
 
         // when
         List<LocalTime> times = timeTable.getDateInfos().get(0).getTimeInfos().stream()
-            .map(TimeInfo::getTime)
-            .collect(Collectors.toList());
+                .map(TimeInfo::getTime)
+                .collect(Collectors.toList());
 
         // then
         assertThat(times)
@@ -117,11 +119,11 @@ public class RoomTimeTableInitializerTest {
 
         // when
         List<LocalTime> times = timeTable.getDateInfos().get(0).getTimeInfos().stream()
-            .map(TimeInfo::getTime)
-            .collect(Collectors.toList());
+                .map(TimeInfo::getTime)
+                .collect(Collectors.toList());
 
         // then
         assertThat(times)
-            .containsExactly(_22_00, _22_30, _23_00, _23_30);
+                .containsExactly(_22_00, _22_30, _23_00, _23_30);
     }
 }

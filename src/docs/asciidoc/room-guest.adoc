@@ -1,7 +1,4 @@
 [[Room-Guest]]
-== Guest 방 관리
-
-* Guest용 방 생성 및 조회 관련 API입니다.
 
 === Guest 방 생성
 

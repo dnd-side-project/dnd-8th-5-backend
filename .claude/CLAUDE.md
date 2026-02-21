@@ -55,6 +55,10 @@ chmod +x ./install-docker.sh
 
 ## Code Architecture
 
+### language
+- Java 17
+- use val or var where possible
+
 ### Domain Structure
 
 The codebase follows **vertical slice architecture** with domains organized under `src/main/java/com/dnd/modutime/core/`:

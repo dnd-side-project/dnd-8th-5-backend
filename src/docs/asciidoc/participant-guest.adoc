@@ -1,7 +1,4 @@
 [[Participant-Guest]]
-== Guest 참여자 관리
-
-* Guest용 참여자 관리 관련 API입니다.
 
 === Guest 참여자 삭제
 
