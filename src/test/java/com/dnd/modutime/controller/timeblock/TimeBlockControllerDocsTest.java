@@ -1,12 +1,11 @@
 package com.dnd.modutime.controller.timeblock;
 
 import com.dnd.modutime.annotation.ApiDocsTest;
-import com.dnd.modutime.core.auth.application.ParticipantInfo;
-import com.dnd.modutime.core.auth.application.ParticipantType;
-import com.dnd.modutime.core.auth.application.RoomParticipant;
+import com.dnd.modutime.annotation.WithMockRoomParticipant;
 import com.dnd.modutime.core.timeblock.application.TimeBlockService;
 import com.dnd.modutime.core.timeblock.controller.TimeBlockController;
 import com.dnd.modutime.documentation.DocumentUtils;
+import com.dnd.modutime.documentation.MockMvcFactory;
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceDocumentation;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.headers.HeaderDescriptor;
@@ -25,18 +23,13 @@ import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.support.WebDataBinderFactory;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.method.support.ModelAndViewContainer;
 
 import static com.dnd.modutime.TestConstant.LOCALHOST;
 import static com.dnd.modutime.documentation.MockMvcFactory.HEADER_AUTHORIZATION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
@@ -55,8 +48,10 @@ public class TimeBlockControllerDocsTest {
     private TimeBlockController controller;
 
     @DisplayName("참여자 시간 등록 API")
+    @WithMockRoomParticipant
     @Test
-    void 참여자_시간_등록(RestDocumentationContextProvider contextProvider) throws Exception {
+    void 참여자_시간_등록(RestDocumentationContextProvider contextProvider,
+                   HandlerMethodArgumentResolver roomParticipantResolver) throws Exception {
         var operationIdentifier = "put-api-v1-rooms-room-uuid-time-blocks-available-time";
 
         var pathParameters = new ParameterDescriptor[]{
@@ -86,26 +81,10 @@ public class TimeBlockControllerDocsTest {
 
         doNothing().when(timeBlockService).replaceV1(any());
 
-        var documentationConfigurer = documentationConfiguration(contextProvider);
-        documentationConfigurer.uris().withScheme("https").withHost(LOCALHOST).withPort(443);
-
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setCustomArgumentResolvers(new HandlerMethodArgumentResolver() {
-                    @Override
-                    public boolean supportsParameter(MethodParameter parameter) {
-                        return parameter.hasParameterAnnotation(RoomParticipant.class);
-                    }
-
-                    @Override
-                    public Object resolveArgument(MethodParameter parameter,
-                                                  ModelAndViewContainer mavContainer,
-                                                  NativeWebRequest webRequest,
-                                                  WebDataBinderFactory binderFactory) {
-                        return new ParticipantInfo(ParticipantType.GUEST, "test-room-uuid", "동호", null);
-                    }
-                })
-                .apply(documentationConfigurer)
-                .build();
+        var mockMvc = MockMvcFactory.getRestDocsMockMvc(
+                contextProvider, LOCALHOST,
+                new HandlerMethodArgumentResolver[]{roomParticipantResolver},
+                controller);
 
         mockMvc.perform(
                         put("/api/v1/rooms/{roomUuid}/time-blocks/available-time", "test-room-uuid")

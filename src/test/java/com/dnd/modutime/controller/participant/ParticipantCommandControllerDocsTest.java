@@ -1,15 +1,14 @@
 package com.dnd.modutime.controller.participant;
 
 import com.dnd.modutime.annotation.ApiDocsTest;
-import com.dnd.modutime.core.auth.application.ParticipantInfo;
-import com.dnd.modutime.core.auth.application.ParticipantType;
-import com.dnd.modutime.core.auth.application.RoomParticipant;
+import com.dnd.modutime.annotation.WithMockRoomParticipant;
 import com.dnd.modutime.core.auth.oauth.OAuth2User;
 import com.dnd.modutime.core.participant.application.ParticipantFacade;
 import com.dnd.modutime.core.participant.controller.ParticipantCommandController;
 import com.dnd.modutime.core.user.OAuth2Provider;
 import com.dnd.modutime.core.user.User;
 import com.dnd.modutime.documentation.DocumentUtils;
+import com.dnd.modutime.documentation.MockMvcFactory;
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceDocumentation;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
@@ -137,8 +136,10 @@ public class ParticipantCommandControllerDocsTest {
     }
 
     @DisplayName("참여자 삭제 API")
+    @WithMockRoomParticipant
     @Test
-    void 참여자_삭제(RestDocumentationContextProvider contextProvider) throws Exception {
+    void 참여자_삭제(RestDocumentationContextProvider contextProvider,
+                 HandlerMethodArgumentResolver roomParticipantResolver) throws Exception {
         var operationIdentifier = "delete-api-v1-rooms-room-uuid-participants";
 
         var pathParameters = new ParameterDescriptor[]{
@@ -162,26 +163,10 @@ public class ParticipantCommandControllerDocsTest {
 
         doNothing().when(participantFacade).delete(any());
 
-        var documentationConfigurer = documentationConfiguration(contextProvider);
-        documentationConfigurer.uris().withScheme("https").withHost(LOCALHOST).withPort(443);
-
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setCustomArgumentResolvers(new HandlerMethodArgumentResolver() {
-                    @Override
-                    public boolean supportsParameter(MethodParameter parameter) {
-                        return parameter.hasParameterAnnotation(RoomParticipant.class);
-                    }
-
-                    @Override
-                    public Object resolveArgument(MethodParameter parameter,
-                                                  ModelAndViewContainer mavContainer,
-                                                  NativeWebRequest webRequest,
-                                                  WebDataBinderFactory binderFactory) {
-                        return new ParticipantInfo(ParticipantType.GUEST, "test-room-uuid", "동호", null);
-                    }
-                })
-                .apply(documentationConfigurer)
-                .build();
+        var mockMvc = MockMvcFactory.getRestDocsMockMvc(
+                contextProvider, LOCALHOST,
+                new HandlerMethodArgumentResolver[]{roomParticipantResolver},
+                controller);
 
         mockMvc.perform(
                         delete("/api/v1/rooms/{roomUuid}/participants", "test-room-uuid")
