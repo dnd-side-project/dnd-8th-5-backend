@@ -31,6 +31,10 @@ v0.0.1, 2025-07-18
 include::timetable.adoc[]
 include::adjustment-result.adoc[]
 
+== OAuth2 API
+
+include::auth-oauth2.adoc[]
+
 == Guest API
 
 include::timetable-guest.adoc[]

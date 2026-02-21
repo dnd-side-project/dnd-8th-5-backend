@@ -1,0 +1,21 @@
+[[Auth-OAuth2]]
+== OAuth2 인증
+
+* OAuth2 인증 관련 API입니다.
+
+=== 토큰 재발급
+
+* refreshToken 쿠키를 이용하여 새로운 accessToken을 발급합니다.
+* 요청 시 `Cookie: refreshToken={리프레시 토큰}` 헤더를 포함해야 합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/oauth2-post-reissue-token/curl-request.adoc[]
+include::{snippets}/oauth2-post-reissue-token/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/oauth2-post-reissue-token/http-response.adoc[]
+include::{snippets}/oauth2-post-reissue-token/response-fields.adoc[]
