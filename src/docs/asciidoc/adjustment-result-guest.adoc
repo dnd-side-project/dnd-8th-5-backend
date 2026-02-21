@@ -1,7 +1,4 @@
 [[Adjustment-Result-Guest]]
-== Guest 우선순위 결과
-
-* Guest용 언제 만날지 우선순위를 계산한 결과입니다.
 
 === Guest 우선순위 결과 조회
 

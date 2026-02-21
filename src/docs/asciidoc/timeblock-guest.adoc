@@ -1,7 +1,4 @@
 [[TimeBlock-Guest]]
-== Guest 시간 등록
-
-* Guest용 개별 참여자의 시간 등록 정보입니다.
 
 === Guest 참여자 시간 조회
 

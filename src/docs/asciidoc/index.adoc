@@ -27,19 +27,22 @@ v0.0.1, 2025-07-18
 |개발 |김동호 |mailto:dongho1088@gmail.com[] |
 |====
 
-// 코드
-include::timetable.adoc[]
-include::adjustment-result.adoc[]
-
-== OAuth2 API
-
-include::auth-oauth2.adoc[]
-
 == Guest API
+* Guest API는 토큰 없이 누구나 호출 가능한 API 입니다.
 
 include::timetable-guest.adoc[]
 include::adjustment-result-guest.adoc[]
 include::auth-guest.adoc[]
 include::room-guest.adoc[]
-include::participant.adoc[]
+include::participant-guest.adoc[]
 include::timeblock-guest.adoc[]
+
+== OAuth2 API
+* OAuth2 인증 관련 API입니다.
+
+include::auth-oauth2.adoc[]
+
+// 코드
+include::timetable.adoc[]
+include::adjustment-result.adoc[]
+include::participant.adoc[]

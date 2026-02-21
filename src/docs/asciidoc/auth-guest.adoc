@@ -1,7 +1,4 @@
 [[Auth-Guest]]
-== Guest 인증
-
-* Guest용 방 참여 및 인증 관련 API입니다.
 
 === Guest 로그인
 
