@@ -9,6 +9,7 @@
 5. [커스텀 Argument Resolver (@AuthenticationPrincipal)](#5-커스텀-argument-resolver)
 6. [DELETE with Request Body](#6-delete-with-request-body)
 7. [PageResponse 공통 필드](#7-pageresponse-공통-필드)
+8. [Authorization 헤더 문서화](#8-authorization-헤더-문서화)
 
 ---
 
@@ -242,3 +243,61 @@ Mockito.when(service.search(any(), any()))
         .thenReturn(TestJsonUtils.readValue(responseLiteral,
                 new TypeReference<PageResponse<SomeResponseDto>>() {}));
 ```
+
+## 8. Authorization 헤더 문서화
+
+`@RoomParticipant` 등 Bearer 토큰 인증이 필요한 엔드포인트에서 `Authorization` 헤더를 REST Docs + OpenAPI에 문서화하는 패턴.
+
+```java
+import org.springframework.restdocs.headers.HeaderDescriptor;
+import org.springframework.restdocs.headers.HeaderDocumentation;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static com.dnd.modutime.documentation.MockMvcFactory.HEADER_AUTHORIZATION;
+
+// 1. 헤더 디스크립터 선언
+var requestHeaders = new HeaderDescriptor[]{
+        headerWithName("Authorization").description("인증 토큰 (Bearer {JWT-TOKEN})")
+};
+
+// 2. perform()에 헤더 추가
+mockMvc.perform(
+                put("/api/v1/rooms/{roomUuid}/time-blocks/available-time", "test-room-uuid")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", HEADER_AUTHORIZATION)
+                        .content(requestLiteral)
+        )
+        // 3. Spring REST Docs에 requestHeaders 스니펫 추가
+        .andDo(MockMvcRestDocumentation.document(operationIdentifier,
+                DocumentUtils.getDocumentRequest(),
+                DocumentUtils.getDocumentResponse(),
+                HeaderDocumentation.requestHeaders(requestHeaders),
+                RequestDocumentation.pathParameters(pathParameters),
+                PayloadDocumentation.requestFields(requestFields)
+        ))
+        // 4. OpenAPI ResourceSnippetParameters에 requestHeaders 추가
+        .andDo(MockMvcRestDocumentationWrapper.document(operationIdentifier,
+                DocumentUtils.getDocumentRequest(),
+                DocumentUtils.getDocumentResponse(),
+                ResourceDocumentation.resource(
+                        ResourceSnippetParameters.builder()
+                                .description("참여자 시간 등록 API")
+                                .tag("TimeBlock")
+                                .requestHeaders(requestHeaders)
+                                .requestFields(requestFields)
+                                .pathParameters(pathParameters)
+                                .build())
+        ))
+;
+```
+
+adoc에서는 요청 섹션에 `request-headers.adoc` 스니펫을 include:
+
+```asciidoc
+[discrete]
+==== 요청
+
+include::{snippets}/{operation-id}/request-headers.adoc[]
+include::{snippets}/{operation-id}/path-parameters.adoc[]
+```
+
+**참고:** `HeaderDescriptor`는 Spring REST Docs와 epages `ResourceSnippetParameters` 양쪽에서 동일하게 사용 가능. 별도 변환 불필요.

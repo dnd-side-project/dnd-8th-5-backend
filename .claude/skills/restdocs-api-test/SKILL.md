@@ -142,7 +142,7 @@ include::{snippets}/{operation-id}/http-response.adoc[]
 include::{snippets}/{operation-id}/response-fields.adoc[]
 ```
 
-요청 본문 → `request-fields.adoc` 추가, path parameter → `path-parameters.adoc` 추가, query parameter → `request-parameters.adoc` 추가.
+요청 본문 → `request-fields.adoc` 추가, path parameter → `path-parameters.adoc` 추가, query parameter → `request-parameters.adoc` 추가, Authorization 헤더 → `request-headers.adoc` 추가.
 
 ## 필드 타입 매핑
 
@@ -159,6 +159,7 @@ optional 필드는 반드시 `.optional()` 체이닝.
 ## 주의사항
 
 - `@AuthenticationPrincipal` 컨트롤러는 `setCustomArgumentResolvers()`로 MockMvc 직접 구성 → [references/patterns.md](references/patterns.md) 참조
+- `@RoomParticipant` 등 Bearer 토큰 인증이 필요한 엔드포인트는 `Authorization` 헤더를 문서화 → [references/patterns.md](references/patterns.md) 8번 참조
 - `@CookieValue`는 `.cookie(new Cookie(...))` 사용, REST Docs `requestHeaders("Cookie")` 미작동 → adoc에 텍스트 설명
 - `TestJsonUtils.readValue()`로 JSON literal → 응답 객체 변환 가능
 - 한글 테스트 메서드명 가능 (예: `void 등록_유저_방_참여(...)`)
