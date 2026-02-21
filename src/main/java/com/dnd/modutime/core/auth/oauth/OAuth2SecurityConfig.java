@@ -116,6 +116,7 @@ public class OAuth2SecurityConfig {
     @Bean
     public RequestMatcher permitAllMatchers() {
         return new OrRequestMatcher(
+                new AntPathRequestMatcher("/aws"),
                 new AntPathRequestMatcher("/oauth2/kakao/callback"),
                 new AntPathRequestMatcher("/oauth2/authorization/**"),
                 new AntPathRequestMatcher("/oauth2/reissue-token"),
