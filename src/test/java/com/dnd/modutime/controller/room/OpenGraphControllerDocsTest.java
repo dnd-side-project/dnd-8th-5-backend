@@ -1,10 +1,12 @@
 package com.dnd.modutime.controller.room;
 
 import com.dnd.modutime.annotation.ApiDocsTest;
+import com.dnd.modutime.core.adjustresult.domain.AdjustmentResult;
+import com.dnd.modutime.core.adjustresult.domain.CandidateDateTime;
+import com.dnd.modutime.core.adjustresult.repository.AdjustmentResultRepository;
 import com.dnd.modutime.core.common.ModutimeHostConfigurationProperties;
 import com.dnd.modutime.core.room.controller.OpenGraphController;
 import com.dnd.modutime.core.room.domain.Room;
-import com.dnd.modutime.core.room.domain.RoomDate;
 import com.dnd.modutime.core.room.repository.RoomRepository;
 import com.dnd.modutime.documentation.MockMvcFactory;
 import com.dnd.modutime.documentation.DocumentUtils;
@@ -19,8 +21,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.request.RequestDocumentation;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,14 +38,17 @@ public class OpenGraphControllerDocsTest {
     @Mock
     private RoomRepository roomRepository;
 
+    @Mock
+    private AdjustmentResultRepository adjustmentResultRepository;
+
     private OpenGraphController createController() {
         var hostProperties = new ModutimeHostConfigurationProperties(
                 new ModutimeHostConfigurationProperties.Host("https://modutime.site", "https://api.modutime.site")
         );
-        return new OpenGraphController(roomRepository, hostProperties);
+        return new OpenGraphController(roomRepository, adjustmentResultRepository, hostProperties);
     }
 
-    @DisplayName("Open Graph 미리보기 HTML 조회 - 날짜+시간 모드")
+    @DisplayName("Open Graph 미리보기 HTML 조회 - 조율 결과 있음")
     @Test
     void test01(RestDocumentationContextProvider contextProvider) throws Exception {
         var operationIdentifier = "og-invite-room-uuid";
@@ -54,15 +58,20 @@ public class OpenGraphControllerDocsTest {
                 parameterWithName("roomUuid").description("방 UUID")
         };
 
-        // Mock Room with date+time
+        // Mock Room
         var room = Mockito.mock(Room.class);
         when(room.getTitle()).thenReturn("팀 회의");
-        when(room.getRoomDates()).thenReturn(List.of(new RoomDate(LocalDate.of(2025, 7, 16))));
-        when(room.hasStartAndEndTime()).thenReturn(true);
-        when(room.getStartTimeOrNull()).thenReturn(LocalTime.of(13, 0));
-        when(room.getEndTimeOrNull()).thenReturn(LocalTime.of(15, 0));
 
         when(roomRepository.findByUuid("test-room-uuid")).thenReturn(Optional.of(room));
+
+        // Mock AdjustmentResult with CandidateDateTime
+        var candidateDateTime = Mockito.mock(CandidateDateTime.class);
+        when(candidateDateTime.getStartDateTime()).thenReturn(LocalDateTime.of(2025, 7, 16, 13, 0));
+
+        var adjustmentResult = Mockito.mock(AdjustmentResult.class);
+        when(adjustmentResult.getCandidateDateTimes()).thenReturn(List.of(candidateDateTime));
+
+        when(adjustmentResultRepository.findByRoomUuid("test-room-uuid")).thenReturn(Optional.of(adjustmentResult));
 
         MockMvcFactory.getRestDocsMockMvc(contextProvider, LOCALHOST, controller)
                 .perform(get("/og/invite/{roomUuid}", "test-room-uuid"))
