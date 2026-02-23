@@ -36,6 +36,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("*")
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .exposedHeaders(HttpHeaders.LOCATION); // OAuth2 인증
+        registry.addMapping("/og/**")
+                .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
+                .exposedHeaders(HttpHeaders.LOCATION);
     }
 
     @Override
