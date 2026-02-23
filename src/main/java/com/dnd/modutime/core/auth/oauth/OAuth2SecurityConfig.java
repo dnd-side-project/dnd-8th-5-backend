@@ -125,7 +125,8 @@ public class OAuth2SecurityConfig {
                  * TODO: 카카오 배포후 PUT /api/v1/room/{roomUuid}/available-time 로 변경후 제거
                  */
                 new AntPathRequestMatcher("/api/room/{roomUuid}/available-time"),
-                new AntPathRequestMatcher("/guest/**")
+                new AntPathRequestMatcher("/guest/**"),
+                new AntPathRequestMatcher("/og/**")
         );
     }
 
