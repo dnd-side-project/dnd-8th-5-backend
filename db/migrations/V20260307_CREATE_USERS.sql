@@ -9,11 +9,9 @@ CREATE TABLE users
     oauth_provider        varchar(50)  NOT NULL,
     refresh_token         varchar(512) NULL,
     token_expiration_time datetime(6)  NULL,
-    created_time          datetime(6)  NULL,
-    last_modified_time    datetime(6)  NULL,
-    created_by            varchar(50)  NULL COMMENT '생성자',
+    created_by            varchar(255) NULL COMMENT '생성자',
     created_at            datetime(6)  NULL COMMENT '생성일시',
-    modified_by           varchar(50)  NULL COMMENT '수정자',
+    modified_by           varchar(255) NULL COMMENT '수정자',
     modified_at           datetime(6)  NULL COMMENT '수정일시',
     CONSTRAINT uniqueEmailAndProvider UNIQUE (email, oauth_provider)
 );
