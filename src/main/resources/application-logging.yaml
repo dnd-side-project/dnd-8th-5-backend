@@ -10,6 +10,9 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+      springframework:
+        security: DEBUG
+        oauth2: TRACE
 
 ---
 spring:

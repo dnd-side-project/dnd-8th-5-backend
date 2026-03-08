@@ -74,7 +74,7 @@ public class User extends AbstractAggregateRoot<User> implements Auditable {
     @Column(name = "oauth_provider")
     private OAuth2Provider provider;
 
-    @Column(name = "refresh_token")
+    @Column(name = "refresh_token", length = 512)
     private String refreshToken;
 
     @Column(name = "token_expiration_time")
