@@ -10,9 +10,18 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+      springframework:
+        security: DEBUG
+        oauth2: TRACE
 
 ---
 spring:
   config:
     activate:
       on-profile: prod
+logging:
+  level:
+    org:
+      springframework:
+        security: INFO
+        oauth2: INFO
