@@ -80,12 +80,6 @@ public class User extends AbstractAggregateRoot<User> implements Auditable {
     @Column(name = "token_expiration_time")
     private LocalDateTime tokenExpirationTime;
 
-    @Column(name = "created_time")
-    private LocalDateTime createdTime;
-
-    @Column(name = "last_modified_time")
-    private LocalDateTime lastModifiedTime;
-
     public User(final String name,
                 final String email,
                 final String profileImage,
@@ -97,8 +91,6 @@ public class User extends AbstractAggregateRoot<User> implements Auditable {
         this.profileImage = Objects.requireNonNull(profileImage);
         this.thumbnailImage = Objects.requireNonNull(thumbnailImage);
         this.provider = Objects.requireNonNull(provider);
-        this.createdTime = DateTimeUtils.currentUTC();
-        this.lastModifiedTime = DateTimeUtils.currentUTC();
         audit();
         registerEvent(new UserCreatedEvent(this.id, DateTimeUtils.currentUTC()));
     }
