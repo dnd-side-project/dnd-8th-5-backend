@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +62,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         deviceTokenRepository.save(new DeviceToken("receiver-fcm-token", 2L));
 
         // when
-        notificationService.가용시간_등록_알림(room.getUuid(), "김철수");
+        notificationService.sendReplaceMessage(room.getUuid(), "김철수");
 
         // then
         verify(notificationSender).send(anyList(), anyString(), anyString(), any());
@@ -80,7 +79,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         deviceTokenRepository.save(new DeviceToken("receiver-fcm-token", 2L));
 
         // when
-        notificationService.가용시간_등록_알림(room.getUuid(), "김철수");
+        notificationService.sendReplaceMessage(room.getUuid(), "김철수");
 
         // then
         var notifications = notificationQueryRepository
@@ -100,7 +99,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         participantRepository.save(guestParticipant);
 
         // when
-        notificationService.가용시간_등록_알림(room.getUuid(), "김철수");
+        notificationService.sendReplaceMessage(room.getUuid(), "김철수");
 
         // then
         verify(notificationSender, never()).send(anyList(), anyString(), anyString(), any());
@@ -115,7 +114,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         deviceTokenRepository.save(new DeviceToken("sender-fcm-token", 1L));
 
         // when
-        notificationService.가용시간_등록_알림(room.getUuid(), "김철수");
+        notificationService.sendReplaceMessage(room.getUuid(), "김철수");
 
         // then
         verify(notificationSender, never()).send(anyList(), anyString(), anyString(), any());
@@ -132,7 +131,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         // 디바이스 토큰 등록 안 함
 
         // when
-        notificationService.가용시간_등록_알림(room.getUuid(), "김철수");
+        notificationService.sendReplaceMessage(room.getUuid(), "김철수");
 
         // then
         verify(notificationSender, never()).send(anyList(), anyString(), anyString(), any());

@@ -3,7 +3,6 @@ package com.dnd.modutime.core.notification.application;
 import com.dnd.modutime.core.notification.domain.DeviceToken;
 import com.dnd.modutime.core.notification.domain.DeviceTokenQueryRepository;
 import com.dnd.modutime.core.notification.domain.Notification;
-import com.dnd.modutime.core.notification.domain.NotificationQueryRepository;
 import com.dnd.modutime.core.notification.domain.NotificationRepository;
 import com.dnd.modutime.core.notification.domain.NotificationSender;
 import com.dnd.modutime.core.notification.domain.NotificationType;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -42,7 +40,7 @@ public class NotificationService {
     }
 
     @Transactional
-    public void 가용시간_등록_알림(String roomUuid, String participantName) {
+    public void sendReplaceMessage(String roomUuid, String participantName) {
         var participants = participantQueryRepository.findByRoomUuid(roomUuid);
 
         var targetUserIds = participants.stream()

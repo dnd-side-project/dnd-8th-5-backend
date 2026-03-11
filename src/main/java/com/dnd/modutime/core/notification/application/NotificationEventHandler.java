@@ -21,7 +21,7 @@ public class NotificationEventHandler {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(TimeBlockReplaceEvent event) {
         try {
-            notificationService.가용시간_등록_알림(
+            notificationService.sendReplaceMessage(
                     event.getRoomUuid(),
                     event.getParticipantName()
             );
