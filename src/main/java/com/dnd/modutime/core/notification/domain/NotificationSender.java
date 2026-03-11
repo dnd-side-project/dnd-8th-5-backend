@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface NotificationSender {
-    void send(List<String> tokens, String title, String body, Map<String, String> data);
+    NotificationSendResult send(List<String> tokens, String title, String body, Map<String, String> data);
 }

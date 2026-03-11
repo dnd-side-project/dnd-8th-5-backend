@@ -1,6 +1,7 @@
 package com.dnd.modutime.infrastructure.fcm;
 
 import com.dnd.modutime.core.notification.domain.DeviceTokenRepository;
+import com.dnd.modutime.core.notification.domain.NotificationSendResult;
 import com.dnd.modutime.core.notification.domain.NotificationSender;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,9 @@ public class FcmNotificationSender implements NotificationSender {
     }
 
     @Override
-    public void send(List<String> tokens, String title, String body, Map<String, String> data) {
+    public NotificationSendResult send(List<String> tokens, String title, String body, Map<String, String> data) {
         if (tokens.isEmpty()) {
-            return;
+            return NotificationSendResult.empty();
         }
 
         var message = MulticastMessage.builder()
@@ -34,21 +35,31 @@ public class FcmNotificationSender implements NotificationSender {
 
         try {
             var response = firebaseMessaging.sendEachForMulticast(message);
-            handleFailures(tokens, response);
+            var failedTokens = handleFailures(tokens, response);
+            var successCount = response.getSuccessCount();
+            var failureCount = response.getFailureCount();
+
+            if (failureCount > 0) {
+                return NotificationSendResult.failure(successCount, failureCount, failedTokens);
+            }
+            return NotificationSendResult.success(successCount);
         } catch (FirebaseMessagingException e) {
             log.warn("FCM 메시지 발송 실패: {}", e.getMessage());
+            return NotificationSendResult.failure(0, tokens.size(), tokens);
         }
     }
 
-    private void handleFailures(List<String> tokens, BatchResponse response) {
+    private List<String> handleFailures(List<String> tokens, BatchResponse response) {
+        var failedTokens = new ArrayList<String>();
         if (response.getFailureCount() == 0) {
-            return;
+            return failedTokens;
         }
 
         var invalidTokens = new ArrayList<String>();
         var responses = response.getResponses();
         for (int i = 0; i < responses.size(); i++) {
             if (!responses.get(i).isSuccessful()) {
+                failedTokens.add(tokens.get(i));
                 var exception = responses.get(i).getException();
                 if (exception != null) {
                     var errorCode = exception.getMessagingErrorCode();
@@ -69,5 +80,7 @@ public class FcmNotificationSender implements NotificationSender {
                 log.warn("만료된 FCM 토큰 삭제 실패 [{}]: {}", invalidToken, e.getMessage());
             }
         }
+
+        return failedTokens;
     }
 }
