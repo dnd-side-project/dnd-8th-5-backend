@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -35,9 +36,9 @@ public class DeviceTokenController {
 
     @DeleteMapping("/api/v1/device-tokens")
     public ResponseEntity<Void> unregister(
-            @RequestBody @Valid DeviceTokenRequest request,
+            @RequestParam String token,
             @AuthenticationPrincipal OAuth2User oAuth2User) {
-        deviceTokenService.unregister(request.token(), oAuth2User.user().getId());
+        deviceTokenService.unregister(token, oAuth2User.user().getId());
         return ResponseEntity.noContent().build();
     }
 }

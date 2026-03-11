@@ -20,6 +20,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.PayloadDocumentation;
+import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -103,21 +104,11 @@ public class DeviceTokenControllerDocsTest {
     void 디바이스_토큰_해제(RestDocumentationContextProvider contextProvider) throws Exception {
         var operationIdentifier = "delete-api-v1-device-tokens";
 
-        var requestFields = new FieldDescriptor[]{
-                fieldWithPath("token").type(STRING).description("FCM 등록 토큰")
-        };
-
-        //language=JSON
-        var requestLiteral = """
-                { "token": "fcm-registration-token-string" }
-                """;
-
         var mockMvc = createMockMvc(contextProvider);
 
         mockMvc.perform(
                         delete("/api/v1/device-tokens")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(requestLiteral)
+                                .param("token", "fcm-registration-token-string")
                 )
                 .andExpect(status().isNoContent())
                 .andDo(print())
@@ -126,7 +117,9 @@ public class DeviceTokenControllerDocsTest {
                                 operationIdentifier,
                                 DocumentUtils.getDocumentRequest(),
                                 DocumentUtils.getDocumentResponse(),
-                                PayloadDocumentation.requestFields(requestFields)
+                                RequestDocumentation.requestParameters(
+                                        RequestDocumentation.parameterWithName("token").description("FCM 등록 토큰")
+                                )
                         )
                 )
                 .andDo(
@@ -138,7 +131,9 @@ public class DeviceTokenControllerDocsTest {
                                         ResourceSnippetParameters.builder()
                                                 .description("디바이스 토큰 해제 API")
                                                 .tag("DeviceToken")
-                                                .requestFields(requestFields)
+                                                .requestParameters(
+                                                        ResourceDocumentation.parameterWithName("token").description("FCM 등록 토큰")
+                                                )
                                                 .build())
                         )
                 );
