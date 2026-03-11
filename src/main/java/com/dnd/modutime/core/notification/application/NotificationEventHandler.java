@@ -17,17 +17,18 @@ public class NotificationEventHandler {
         this.notificationService = notificationService;
     }
 
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handle(TimeBlockReplaceEvent event) {
-        try {
-            notificationService.sendReplaceMessage(
-                    event.getRoomUuid(),
-                    event.getParticipantName()
-            );
-        } catch (Exception e) {
-            log.warn("알림 발송 실패 - room: {}, participant: {}, error: {}",
-                    event.getRoomUuid(), event.getParticipantName(), e.getMessage());
-        }
-    }
+    // TODO: 알림 기능 임시 비활성화
+//    @Async
+//    @TransactionalEventListener
+//    public void handle(TimeBlockReplaceEvent event) {
+//        try {
+//            notificationService.sendReplaceMessage(
+//                    event.getRoomUuid(),
+//                    event.getParticipantName()
+//            );
+//        } catch (Exception e) {
+//            log.warn("알림 발송 실패 - room: {}, participant: {}, error: {}",
+//                    event.getRoomUuid(), event.getParticipantName(), e.getMessage());
+//        }
+//    }
 }
