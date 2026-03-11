@@ -45,7 +45,7 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 
     // fcm
-    implementation 'com.google.firebase:firebase-admin:9.2.0'
+    implementation 'com.google.firebase:firebase-admin:9.8.0'
 
     // jwt
     implementation 'io.jsonwebtoken:jjwt:0.9.1'

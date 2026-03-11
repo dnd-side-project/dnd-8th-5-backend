@@ -72,7 +72,7 @@ public class NotificationControllerDocsTest {
 
         var notificationResponse = new NotificationResponse(
                 1L,
-                NotificationType.가용시간_등록,
+                NotificationType.AVAILABILITY_REGISTERED,
                 "가용시간 등록",
                 "김철수님이 가용시간을 등록했습니다.",
                 Map.of("roomUuid", "room-uuid-123", "participantName", "김철수"),
@@ -117,6 +117,7 @@ public class NotificationControllerDocsTest {
 
         mockMvc.perform(
                         get("/api/v1/notifications")
+                                .accept(org.springframework.http.MediaType.APPLICATION_JSON)
                                 .param("page", "0")
                                 .param("size", "20")
                 )
@@ -160,7 +161,8 @@ public class NotificationControllerDocsTest {
 
         var mockMvc = createMockMvc(contextProvider);
 
-        mockMvc.perform(get("/api/v1/notifications/unread-count"))
+        mockMvc.perform(get("/api/v1/notifications/unread-count")
+                                .accept(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
