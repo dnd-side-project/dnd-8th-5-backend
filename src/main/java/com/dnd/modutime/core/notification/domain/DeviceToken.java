@@ -47,6 +47,9 @@ public class DeviceToken implements Auditable {
         if (token == null || token.isBlank()) {
             throw new IllegalArgumentException("토큰은 빈 값일 수 없습니다.");
         }
+        if (token.length() > 512) {
+            throw new IllegalArgumentException("토큰은 512자 이하여야 합니다.");
+        }
         if (userId == null) {
             throw new IllegalArgumentException("userId는 null일 수 없습니다.");
         }
