@@ -38,19 +38,32 @@ public class NotificationProcessor {
                 .map(userId -> Notification.of(type, title, message, userId, data))
                 .collect(Collectors.toList());
 
-        // 2. 대상 유저의 디바이스 토큰 조회
+        // 2. 대상 유저의 디바이스 토큰 조회 (userId별 그룹핑)
         var deviceTokens = deviceTokenQueryRepository.findByUserIdIn(targetUserIds);
+        var tokensByUserId = deviceTokens.stream()
+                .collect(Collectors.groupingBy(
+                        DeviceToken::getUserId,
+                        Collectors.mapping(DeviceToken::getToken, Collectors.toList())
+                ));
         var tokens = deviceTokens.stream()
                 .map(DeviceToken::getToken)
                 .collect(Collectors.toList());
 
-        // 3. 토큰이 있으면 FCM 발송 후 결과 반영
+        // 3. 토큰이 있으면 FCM 발송 후 수신자별로 결과 반영
         if (!tokens.isEmpty()) {
             var result = notificationSender.send(tokens, title, message, data);
-            if (result.hasSuccess()) {
-                var now = timeProvider.getCurrentLocalDateTime();
-                notifications.forEach(n -> n.markAsSent(now));
-            }
+            var failedTokens = result.getFailedTokens();
+            var now = timeProvider.getCurrentLocalDateTime();
+            notifications.forEach(n -> {
+                var userTokens = tokensByUserId.get(n.getRecipientId());
+                if (userTokens == null || userTokens.isEmpty()) {
+                    return;
+                }
+                boolean allSucceeded = userTokens.stream().noneMatch(failedTokens::contains);
+                if (allSucceeded) {
+                    n.markAsSent(now);
+                }
+            });
         }
 
         // 4. 이력 저장 (발송 결과가 반영된 상태로)
