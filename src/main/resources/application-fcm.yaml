@@ -1,0 +1,3 @@
+fcm:
+  enabled: ${FCM_ENABLED:false}
+  service-account-path: ${FCM_SERVICE_ACCOUNT_PATH:}
