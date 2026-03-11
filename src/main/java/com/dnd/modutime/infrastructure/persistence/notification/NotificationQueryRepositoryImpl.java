@@ -40,6 +40,11 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
     }
 
     @Override
+    public Optional<Notification> findByIdAndRecipientId(Long id, Long recipientId) {
+        return jpaQueryRepository.findByIdAndRecipientId(id, recipientId);
+    }
+
+    @Override
     @Transactional
     public void markAllAsReadByRecipientId(Long recipientId) {
         jpaQueryRepository.markAllAsReadByRecipientId(recipientId);

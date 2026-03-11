@@ -78,7 +78,7 @@ public class NotificationQueryServiceTest extends IntegrationSupporter {
         // when & then
         assertThatThrownBy(() -> notificationQueryService.markAsRead(notification.getId(), otherId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("본인의 알림만");
+                .hasMessageContaining("존재하지 않는 알림입니다");
     }
 
     @Test
@@ -98,7 +98,7 @@ public class NotificationQueryServiceTest extends IntegrationSupporter {
 
     private Notification createNotification(Long recipientId, String message) {
         return Notification.of(
-                NotificationType.가용시간_등록,
+                NotificationType.AVAILABILITY_REGISTERED,
                 "가용시간 등록",
                 message,
                 recipientId,

@@ -43,11 +43,8 @@ public class NotificationQueryService {
 
     @Transactional
     public void markAsRead(Long notificationId, Long userId) {
-        var notification = notificationQueryRepository.findById(notificationId)
+        var notification = notificationQueryRepository.findByIdAndRecipientId(notificationId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 알림입니다."));
-        if (!notification.getRecipientId().equals(userId)) {
-            throw new IllegalArgumentException("본인의 알림만 읽음 처리할 수 있습니다.");
-        }
         notification.markAsRead(timeProvider.getCurrentLocalDateTime());
     }
 

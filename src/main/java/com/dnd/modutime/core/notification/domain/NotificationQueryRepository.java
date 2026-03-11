@@ -12,5 +12,7 @@ public interface NotificationQueryRepository {
 
     Optional<Notification> findById(Long id);
 
+    Optional<Notification> findByIdAndRecipientId(Long id, Long recipientId);
+
     void markAllAsReadByRecipientId(Long recipientId);
 }

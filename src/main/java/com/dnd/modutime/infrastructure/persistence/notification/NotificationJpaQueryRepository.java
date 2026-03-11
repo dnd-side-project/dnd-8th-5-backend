@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface NotificationJpaQueryRepository extends JpaRepository<Notification, Long> {
 
@@ -17,7 +18,9 @@ public interface NotificationJpaQueryRepository extends JpaRepository<Notificati
 
     long countByRecipientIdAndReadFalse(Long recipientId);
 
-    @Modifying
+    Optional<Notification> findByIdAndRecipientId(Long id, Long recipientId);
+
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE Notification n SET n.read = true, n.readAt = CURRENT_TIMESTAMP WHERE n.recipientId = :recipientId AND n.read = false")
     void markAllAsReadByRecipientId(@Param("recipientId") Long recipientId);
 }
