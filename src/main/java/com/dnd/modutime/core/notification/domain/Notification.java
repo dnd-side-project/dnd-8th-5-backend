@@ -51,16 +51,31 @@ public class Notification {
     @Column(name = "read_at")
     private LocalDateTime readAt;
 
+    @Column(name = "sent", nullable = false)
+    private boolean sent;
+
+    @Column(name = "sent_at")
+    private LocalDateTime sentAt;
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public Notification(NotificationType type,
-                        String title,
-                        String message,
-                        String roomUuid,
-                        Long recipientId,
-                        String senderName) {
+    public static Notification of(NotificationType type,
+                                   String title,
+                                   String message,
+                                   String roomUuid,
+                                   Long recipientId,
+                                   String senderName) {
+        return new Notification(type, title, message, roomUuid, recipientId, senderName);
+    }
+
+    private Notification(NotificationType type,
+                         String title,
+                         String message,
+                         String roomUuid,
+                         Long recipientId,
+                         String senderName) {
         this.type = type;
         this.title = title;
         this.message = message;
@@ -68,6 +83,12 @@ public class Notification {
         this.recipientId = recipientId;
         this.senderName = senderName;
         this.read = false;
+        this.sent = false;
+    }
+
+    public void markAsSent(LocalDateTime now) {
+        this.sent = true;
+        this.sentAt = now;
     }
 
     public void markAsRead(LocalDateTime now) {

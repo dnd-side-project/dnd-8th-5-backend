@@ -104,6 +104,12 @@ Event handlers use `@Transactional(propagation = Propagation.REQUIRES_NEW)` for 
 
 ### Key Design Patterns
 
+**Static Factory Method:**
+- 엔티티/도메인 객체 생성 시 생성자 대신 정적 팩터리 메서드를 사용한다
+- `from()` - 파라미터가 1개일 때
+- `of()` - 파라미터가 여러 개일 때
+- 생성자는 `private`으로 선언한다
+
 **Strategy Pattern with Factories:**
 - `AdjustmentResultExecutorFactory` - Chooses between cached results vs on-the-fly computation
 - `CandidateDateTimesSorterFactory` - Provides sorting strategies (FastFirst, LongFirst)

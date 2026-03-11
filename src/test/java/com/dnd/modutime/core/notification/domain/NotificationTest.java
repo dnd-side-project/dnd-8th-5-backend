@@ -10,7 +10,7 @@ class NotificationTest {
 
     @Test
     void 알림을_생성한다() {
-        var notification = new Notification(
+        var notification = Notification.of(
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "김철수님이 가용시간을 등록했습니다.",
@@ -31,7 +31,7 @@ class NotificationTest {
 
     @Test
     void 알림을_읽음_처리한다() {
-        var notification = new Notification(
+        var notification = Notification.of(
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "테스트 메시지",
@@ -48,8 +48,41 @@ class NotificationTest {
     }
 
     @Test
+    void 알림을_발송_완료_처리한다() {
+        var notification = Notification.of(
+                NotificationType.가용시간_등록,
+                "가용시간 등록",
+                "테스트 메시지",
+                "room-uuid",
+                1L,
+                "김철수"
+        );
+        var now = LocalDateTime.of(2026, 3, 11, 14, 30, 0);
+
+        notification.markAsSent(now);
+
+        assertThat(notification.isSent()).isTrue();
+        assertThat(notification.getSentAt()).isEqualTo(now);
+    }
+
+    @Test
+    void 알림_생성시_sent는_false이다() {
+        var notification = Notification.of(
+                NotificationType.가용시간_등록,
+                "가용시간 등록",
+                "테스트 메시지",
+                "room-uuid",
+                1L,
+                "김철수"
+        );
+
+        assertThat(notification.isSent()).isFalse();
+        assertThat(notification.getSentAt()).isNull();
+    }
+
+    @Test
     void 이미_읽은_알림을_다시_읽음_처리하면_변경되지_않는다() {
-        var notification = new Notification(
+        var notification = Notification.of(
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "테스트 메시지",

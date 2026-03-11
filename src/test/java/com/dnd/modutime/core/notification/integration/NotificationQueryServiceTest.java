@@ -95,7 +95,7 @@ public class NotificationQueryServiceTest extends IntegrationSupporter {
     }
 
     private Notification createNotification(Long recipientId, String message) {
-        return new Notification(
+        return Notification.of(
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 message,
