@@ -21,11 +21,16 @@ public class DeviceTokenService {
 
     @Transactional
     public boolean register(DeviceTokenRegisterCommand command) {
-        if (deviceTokenQueryRepository.existsByToken(command.token())) {
+        var existing = deviceTokenQueryRepository.findByToken(command.token());
+        if (existing.isPresent()) {
+            var deviceToken = existing.get();
+            if (!deviceToken.getUserId().equals(command.userId())) {
+                deviceTokenRepository.deleteByToken(command.token());
+                deviceTokenRepository.save(DeviceToken.of(command.token(), command.userId()));
+            }
             return false;
         }
-        var deviceToken = new DeviceToken(command.token(), command.userId());
-        deviceTokenRepository.save(deviceToken);
+        deviceTokenRepository.save(DeviceToken.of(command.token(), command.userId()));
         return true;
     }
 
