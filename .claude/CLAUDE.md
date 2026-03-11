@@ -104,6 +104,12 @@ Event handlers use `@Transactional(propagation = Propagation.REQUIRES_NEW)` for 
 
 ### Key Design Patterns
 
+**Static Factory Method:**
+- 엔티티/도메인 객체 생성 시 생성자 대신 정적 팩터리 메서드를 사용한다
+- `from()` - 파라미터가 1개일 때
+- `of()` - 파라미터가 여러 개일 때
+- 생성자는 `private`으로 선언한다
+
 **Strategy Pattern with Factories:**
 - `AdjustmentResultExecutorFactory` - Chooses between cached results vs on-the-fly computation
 - `CandidateDateTimesSorterFactory` - Provides sorting strategies (FastFirst, LongFirst)
@@ -233,6 +239,21 @@ The convertor factory selects appropriate strategy based on room configuration.
 - `build.gradle` - Build configuration with REST Docs setup
 - `.junie/guidelines.md` - Additional coding guidelines
 - `architecture-decision-records/` - Architecture decisions
+
+## Database Migration
+
+프로덕션 환경은 `ddl-auto: none`이므로 JPA 엔티티 변경만으로는 테이블이 생성/변경되지 않는다. **DB 스키마 변경이 필요한 작업에는 반드시 SQL 마이그레이션 파일을 함께 작성**해야 한다.
+
+- 마이그레이션 파일 위치: `db/migrations/`
+- 파일명 규칙: `V{YYYYMMDD}_{설명}.sql` (예: `V20260311_CREATE_NOTIFICATION.sql`)
+- 한글 주석으로 변경 목적 설명 포함
+- CREATE TABLE 시 FK 제약조건, 인덱스를 함께 정의
+
+**DB 변경이 필요한 작업 예시:**
+- 새 엔티티/테이블 추가
+- 컬럼 추가/변경/삭제
+- 인덱스 추가/삭제
+- FK 제약조건 변경
 
 ## Development Notes
 
