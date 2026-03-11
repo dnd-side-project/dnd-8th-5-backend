@@ -1,10 +1,5 @@
 package com.dnd.modutime.core.notification.application;
 
-import com.dnd.modutime.core.notification.domain.DeviceToken;
-import com.dnd.modutime.core.notification.domain.DeviceTokenQueryRepository;
-import com.dnd.modutime.core.notification.domain.Notification;
-import com.dnd.modutime.core.notification.domain.NotificationRepository;
-import com.dnd.modutime.core.notification.domain.NotificationSender;
 import com.dnd.modutime.core.notification.domain.NotificationType;
 import com.dnd.modutime.core.participant.domain.Participant;
 import com.dnd.modutime.core.participant.domain.ParticipantQueryRepository;
@@ -14,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,21 +16,15 @@ import java.util.stream.Collectors;
 public class NotificationService {
 
     private final ParticipantQueryRepository participantQueryRepository;
-    private final DeviceTokenQueryRepository deviceTokenQueryRepository;
-    private final NotificationRepository notificationRepository;
-    private final NotificationSender notificationSender;
     private final RoomRepository roomRepository;
+    private final NotificationProcessor notificationProcessor;
 
     public NotificationService(ParticipantQueryRepository participantQueryRepository,
-                               DeviceTokenQueryRepository deviceTokenQueryRepository,
-                               NotificationRepository notificationRepository,
-                               NotificationSender notificationSender,
-                               RoomRepository roomRepository) {
+                               RoomRepository roomRepository,
+                               NotificationProcessor notificationProcessor) {
         this.participantQueryRepository = participantQueryRepository;
-        this.deviceTokenQueryRepository = deviceTokenQueryRepository;
-        this.notificationRepository = notificationRepository;
-        this.notificationSender = notificationSender;
         this.roomRepository = roomRepository;
+        this.notificationProcessor = notificationProcessor;
     }
 
     @Transactional
@@ -58,36 +46,21 @@ public class NotificationService {
         var title = "가용시간 등록";
         var message = participantName + "님이 가용시간을 등록했습니다.";
 
-        // 알림 이력 저장
-        var notifications = targetUserIds.stream()
-                .map(userId -> new Notification(
-                        NotificationType.가용시간_등록,
-                        title,
-                        message,
-                        roomUuid,
-                        userId,
-                        participantName
-                ))
-                .collect(Collectors.toList());
-        notificationRepository.saveAll(notifications);
-
-        // FCM 푸시 발송
-        var deviceTokens = deviceTokenQueryRepository.findByUserIdIn(targetUserIds);
-        var tokens = deviceTokens.stream()
-                .map(DeviceToken::getToken)
-                .collect(Collectors.toList());
-
-        if (tokens.isEmpty()) {
-            return;
-        }
-
-        Map<String, String> data = new HashMap<>();
+        var data = new HashMap<String, String>();
         data.put("type", "AVAILABILITY_SUBMITTED");
         data.put("roomUuid", roomUuid);
         data.put("roomTitle", roomTitle);
         data.put("participantName", participantName);
         data.put("message", message);
 
-        notificationSender.send(tokens, title, message, data);
+        notificationProcessor.process(
+                targetUserIds,
+                NotificationType.가용시간_등록,
+                title,
+                message,
+                roomUuid,
+                participantName,
+                data
+        );
     }
 }
