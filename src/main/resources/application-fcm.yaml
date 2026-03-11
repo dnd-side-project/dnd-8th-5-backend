@@ -1,3 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: local
 fcm:
-  enabled: ${FCM_ENABLED:false}
+  enabled: false
+  service-account-path:
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+fcm:
+  enabled: false
   service-account-path: ${FCM_SERVICE_ACCOUNT_PATH:}
