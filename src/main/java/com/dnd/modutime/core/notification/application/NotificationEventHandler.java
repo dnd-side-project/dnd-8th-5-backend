@@ -18,7 +18,7 @@ public class NotificationEventHandler {
     }
 
     // TODO: 알림 기능 임시 비활성화
-//    @Async
+//    @Async("notificationExecutor")
 //    @TransactionalEventListener
 //    public void handle(TimeBlockReplaceEvent event) {
 //        try {
@@ -27,8 +27,7 @@ public class NotificationEventHandler {
 //                    event.getParticipantName()
 //            );
 //        } catch (Exception e) {
-//            log.warn("알림 발송 실패 - room: {}, participant: {}, error: {}",
-//                    event.getRoomUuid(), event.getParticipantName(), e.getMessage());
+//            log.warn("알림 발송 실패 - room: {}", event.getRoomUuid(), e);
 //        }
 //    }
 }

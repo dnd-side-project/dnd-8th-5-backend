@@ -28,7 +28,13 @@ public class FcmNotificationSender implements NotificationSender {
             return NotificationSendResult.empty();
         }
 
+        var notification = com.google.firebase.messaging.Notification.builder()
+                .setTitle(title)
+                .setBody(body)
+                .build();
+
         var message = MulticastMessage.builder()
+                .setNotification(notification)
                 .putAllData(data)
                 .addAllTokens(tokens)
                 .build();
@@ -68,7 +74,7 @@ public class FcmNotificationSender implements NotificationSender {
                         invalidTokens.add(tokens.get(i));
                     }
                     log.warn("FCM 토큰 발송 실패 [{}]: {} ({})",
-                            tokens.get(i), exception.getMessage(), errorCode);
+                            maskToken(tokens.get(i)), exception.getMessage(), errorCode);
                 }
             }
         }
@@ -77,10 +83,17 @@ public class FcmNotificationSender implements NotificationSender {
             try {
                 deviceTokenRepository.deleteByToken(invalidToken);
             } catch (Exception e) {
-                log.warn("만료된 FCM 토큰 삭제 실패 [{}]: {}", invalidToken, e.getMessage());
+                log.warn("만료된 FCM 토큰 삭제 실패 [{}]: {}", maskToken(invalidToken), e.getMessage());
             }
         }
 
         return failedTokens;
+    }
+
+    private String maskToken(String token) {
+        if (token == null || token.length() <= 8) {
+            return "****";
+        }
+        return token.substring(0, 4) + "..." + token.substring(token.length() - 4);
     }
 }

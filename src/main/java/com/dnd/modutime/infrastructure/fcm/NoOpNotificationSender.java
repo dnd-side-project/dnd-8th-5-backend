@@ -12,7 +12,7 @@ public class NoOpNotificationSender implements NotificationSender {
 
     @Override
     public NotificationSendResult send(List<String> tokens, String title, String body, Map<String, String> data) {
-        log.debug("NoOp 알림 발송 - tokens: {}, title: {}, body: {}", tokens.size(), title, body);
+        log.debug("NoOp 알림 발송 - tokens: {}", tokens.size());
         return NotificationSendResult.success(tokens.size());
     }
 }

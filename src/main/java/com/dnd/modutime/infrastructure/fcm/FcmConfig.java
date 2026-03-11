@@ -22,10 +22,12 @@ public class FcmConfig {
     public NotificationSender fcmNotificationSender(
             @Value("${fcm.service-account-path}") String serviceAccountPath,
             DeviceTokenRepository deviceTokenRepository) throws IOException {
-        var serviceAccount = new FileInputStream(serviceAccountPath);
-        var options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build();
+        FirebaseOptions options;
+        try (var serviceAccount = new FileInputStream(serviceAccountPath)) {
+            options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+        }
 
         if (FirebaseApp.getApps().isEmpty()) {
             FirebaseApp.initializeApp(options);
