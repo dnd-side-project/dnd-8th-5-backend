@@ -28,6 +28,8 @@ CREATE TABLE notification
     sender_name  varchar(50)  NULL COMMENT '발송 트리거 참여자 이름',
     is_read      tinyint(1)   NOT NULL DEFAULT 0 COMMENT '읽음 여부',
     read_at      datetime(6)  NULL COMMENT '읽은 시각',
+    sent         tinyint(1)   NOT NULL DEFAULT 0 COMMENT '발송 여부',
+    sent_at      datetime     NULL COMMENT '발송 시각',
     created_at   datetime(6)  NULL COMMENT '생성일시',
     CONSTRAINT fk_notification_recipient_id_ref_users_id
         FOREIGN KEY (recipient_id) REFERENCES users (id)
