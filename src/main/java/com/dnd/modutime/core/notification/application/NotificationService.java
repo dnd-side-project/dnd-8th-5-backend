@@ -41,8 +41,9 @@ public class NotificationService {
             return;
         }
 
-        var room = roomRepository.findByUuid(roomUuid).orElse(null);
-        var roomTitle = room != null ? room.getTitle() : "";
+        var room = roomRepository.findByUuid(roomUuid)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다: " + roomUuid));
+        var roomTitle = room.getTitle();
         var title = "가용시간 등록";
         var message = participantName + "님이 가용시간을 등록했습니다.";
 
@@ -55,7 +56,7 @@ public class NotificationService {
 
         notificationProcessor.process(
                 targetUserIds,
-                NotificationType.가용시간_등록,
+                NotificationType.AVAILABILITY_REGISTERED,
                 title,
                 message,
                 data

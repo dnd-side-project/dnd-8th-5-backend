@@ -16,14 +16,14 @@ class NotificationTest {
                 "participantName", "김철수"
         );
         var notification = Notification.of(
-                NotificationType.가용시간_등록,
+                NotificationType.AVAILABILITY_REGISTERED,
                 "가용시간 등록",
                 "김철수님이 가용시간을 등록했습니다.",
                 1L,
                 data
         );
 
-        assertThat(notification.getType()).isEqualTo(NotificationType.가용시간_등록);
+        assertThat(notification.getType()).isEqualTo(NotificationType.AVAILABILITY_REGISTERED);
         assertThat(notification.getTitle()).isEqualTo("가용시간 등록");
         assertThat(notification.getMessage()).isEqualTo("김철수님이 가용시간을 등록했습니다.");
         assertThat(notification.getRecipientId()).isEqualTo(1L);
@@ -36,7 +36,7 @@ class NotificationTest {
     @Test
     void 알림을_읽음_처리한다() {
         var notification = Notification.of(
-                NotificationType.가용시간_등록,
+                NotificationType.AVAILABILITY_REGISTERED,
                 "가용시간 등록",
                 "테스트 메시지",
                 1L,
@@ -53,7 +53,7 @@ class NotificationTest {
     @Test
     void 알림을_발송_완료_처리한다() {
         var notification = Notification.of(
-                NotificationType.가용시간_등록,
+                NotificationType.AVAILABILITY_REGISTERED,
                 "가용시간 등록",
                 "테스트 메시지",
                 1L,
@@ -70,7 +70,7 @@ class NotificationTest {
     @Test
     void 알림_생성시_sent는_false이다() {
         var notification = Notification.of(
-                NotificationType.가용시간_등록,
+                NotificationType.AVAILABILITY_REGISTERED,
                 "가용시간 등록",
                 "테스트 메시지",
                 1L,
@@ -84,7 +84,7 @@ class NotificationTest {
     @Test
     void 이미_읽은_알림을_다시_읽음_처리하면_변경되지_않는다() {
         var notification = Notification.of(
-                NotificationType.가용시간_등록,
+                NotificationType.AVAILABILITY_REGISTERED,
                 "가용시간 등록",
                 "테스트 메시지",
                 1L,

@@ -83,8 +83,10 @@ public class Notification {
     }
 
     public void markAsSent(LocalDateTime now) {
-        this.sent = true;
-        this.sentAt = now;
+        if (!this.sent) {
+            this.sent = true;
+            this.sentAt = now;
+        }
     }
 
     public void markAsRead(LocalDateTime now) {

@@ -57,7 +57,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         var receiver = Participant.of(room.getUuid(), "이영희", 2L);
         participantRepository.save(sender);
         participantRepository.save(receiver);
-        deviceTokenRepository.save(new DeviceToken("receiver-fcm-token", 2L));
+        deviceTokenRepository.save(DeviceToken.of("receiver-fcm-token", 2L));
         when(notificationSender.send(anyList(), anyString(), anyString(), any()))
                 .thenReturn(NotificationSendResult.success(1));
 
@@ -76,7 +76,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         var receiver = Participant.of(room.getUuid(), "이영희", 2L);
         participantRepository.save(sender);
         participantRepository.save(receiver);
-        deviceTokenRepository.save(new DeviceToken("receiver-fcm-token", 2L));
+        deviceTokenRepository.save(DeviceToken.of("receiver-fcm-token", 2L));
         when(notificationSender.send(anyList(), anyString(), anyString(), any()))
                 .thenReturn(NotificationSendResult.success(1));
 
@@ -99,7 +99,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         var receiver = Participant.of(room.getUuid(), "이영희", 2L);
         participantRepository.save(sender);
         participantRepository.save(receiver);
-        deviceTokenRepository.save(new DeviceToken("receiver-fcm-token", 2L));
+        deviceTokenRepository.save(DeviceToken.of("receiver-fcm-token", 2L));
         when(notificationSender.send(anyList(), anyString(), anyString(), any()))
                 .thenReturn(NotificationSendResult.success(1));
 
@@ -136,7 +136,7 @@ public class NotificationServiceTest extends IntegrationSupporter {
         var room = createRoom("팀 회의");
         var sender = Participant.of(room.getUuid(), "김철수", 1L);
         participantRepository.save(sender);
-        deviceTokenRepository.save(new DeviceToken("sender-fcm-token", 1L));
+        deviceTokenRepository.save(DeviceToken.of("sender-fcm-token", 1L));
 
         // when
         notificationService.sendReplaceMessage(room.getUuid(), "김철수");

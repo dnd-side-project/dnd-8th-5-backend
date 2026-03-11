@@ -39,7 +39,11 @@ public class DeviceToken implements Auditable {
     private String modifiedBy;
     private LocalDateTime modifiedAt;
 
-    public DeviceToken(String token, Long userId) {
+    public static DeviceToken of(String token, Long userId) {
+        return new DeviceToken(token, userId);
+    }
+
+    private DeviceToken(String token, Long userId) {
         if (token == null || token.isBlank()) {
             throw new IllegalArgumentException("토큰은 빈 값일 수 없습니다.");
         }

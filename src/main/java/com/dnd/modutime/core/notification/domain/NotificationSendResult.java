@@ -12,7 +12,7 @@ public class NotificationSendResult {
     private NotificationSendResult(int successCount, int failureCount, List<String> failedTokens) {
         this.successCount = successCount;
         this.failureCount = failureCount;
-        this.failedTokens = failedTokens;
+        this.failedTokens = List.copyOf(failedTokens);
     }
 
     public static NotificationSendResult success(int count) {
