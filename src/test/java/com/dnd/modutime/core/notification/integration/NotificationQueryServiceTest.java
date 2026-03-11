@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -99,9 +101,8 @@ public class NotificationQueryServiceTest extends IntegrationSupporter {
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 message,
-                "room-uuid",
                 recipientId,
-                "김철수"
+                Map.of("roomUuid", "room-uuid", "participantName", "김철수")
         );
     }
 }

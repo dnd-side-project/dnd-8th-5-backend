@@ -35,6 +35,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.dnd.modutime.TestConstant.LOCALHOST;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,6 +47,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -73,8 +75,7 @@ public class NotificationControllerDocsTest {
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "김철수님이 가용시간을 등록했습니다.",
-                "room-uuid-123",
-                "김철수",
+                Map.of("roomUuid", "room-uuid-123", "participantName", "김철수"),
                 false,
                 LocalDateTime.of(2026, 3, 10, 14, 30, 0)
         );
@@ -90,8 +91,9 @@ public class NotificationControllerDocsTest {
                 fieldWithPath("content[].type").type(STRING).description("알림 유형"),
                 fieldWithPath("content[].title").type(STRING).description("알림 제목"),
                 fieldWithPath("content[].message").type(STRING).description("알림 본문"),
-                fieldWithPath("content[].roomUuid").type(STRING).description("방 UUID"),
-                fieldWithPath("content[].senderName").type(STRING).description("발신자 이름"),
+                fieldWithPath("content[].data").type(OBJECT).description("알림 컨텍스트 데이터"),
+                fieldWithPath("content[].data.roomUuid").type(STRING).description("방 UUID").optional(),
+                fieldWithPath("content[].data.participantName").type(STRING).description("참여자 이름").optional(),
                 fieldWithPath("content[].isRead").type(BOOLEAN).description("읽음 여부"),
                 fieldWithPath("content[].createdAt").type(ARRAY).description("생성 시각"),
                 fieldWithPath("pageRequest.page").type(NUMBER).description("페이지 번호"),

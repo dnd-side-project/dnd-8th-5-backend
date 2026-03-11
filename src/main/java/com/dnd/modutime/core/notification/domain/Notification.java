@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -36,14 +37,12 @@ public class Notification {
     @Column(nullable = false, length = 500)
     private String message;
 
-    @Column(name = "room_uuid", length = 50)
-    private String roomUuid;
-
     @Column(name = "recipient_id", nullable = false)
     private Long recipientId;
 
-    @Column(name = "sender_name", length = 50)
-    private String senderName;
+    @Convert(converter = MapToJsonConverter.class)
+    @Column(name = "data", columnDefinition = "TEXT")
+    private Map<String, String> data;
 
     @Column(name = "is_read", nullable = false)
     private boolean read;
@@ -64,24 +63,21 @@ public class Notification {
     public static Notification of(NotificationType type,
                                    String title,
                                    String message,
-                                   String roomUuid,
                                    Long recipientId,
-                                   String senderName) {
-        return new Notification(type, title, message, roomUuid, recipientId, senderName);
+                                   Map<String, String> data) {
+        return new Notification(type, title, message, recipientId, data);
     }
 
     private Notification(NotificationType type,
                          String title,
                          String message,
-                         String roomUuid,
                          Long recipientId,
-                         String senderName) {
+                         Map<String, String> data) {
         this.type = type;
         this.title = title;
         this.message = message;
-        this.roomUuid = roomUuid;
         this.recipientId = recipientId;
-        this.senderName = senderName;
+        this.data = data;
         this.read = false;
         this.sent = false;
     }

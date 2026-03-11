@@ -58,8 +58,6 @@ public class NotificationService {
                 NotificationType.가용시간_등록,
                 title,
                 message,
-                roomUuid,
-                participantName,
                 data
         );
     }

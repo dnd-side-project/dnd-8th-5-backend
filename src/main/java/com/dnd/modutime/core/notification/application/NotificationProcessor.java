@@ -32,12 +32,10 @@ public class NotificationProcessor {
                         NotificationType type,
                         String title,
                         String message,
-                        String roomUuid,
-                        String senderName,
                         Map<String, String> data) {
         // 1. 알림 엔티티 생성
         var notifications = targetUserIds.stream()
-                .map(userId -> Notification.of(type, title, message, roomUuid, userId, senderName))
+                .map(userId -> Notification.of(type, title, message, userId, data))
                 .collect(Collectors.toList());
 
         // 2. 대상 유저의 디바이스 토큰 조회

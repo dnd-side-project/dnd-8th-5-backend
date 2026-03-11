@@ -3,6 +3,7 @@ package com.dnd.modutime.core.notification.domain;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,21 +11,24 @@ class NotificationTest {
 
     @Test
     void 알림을_생성한다() {
+        var data = Map.of(
+                "roomUuid", "room-uuid-123",
+                "participantName", "김철수"
+        );
         var notification = Notification.of(
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "김철수님이 가용시간을 등록했습니다.",
-                "room-uuid-123",
                 1L,
-                "김철수"
+                data
         );
 
         assertThat(notification.getType()).isEqualTo(NotificationType.가용시간_등록);
         assertThat(notification.getTitle()).isEqualTo("가용시간 등록");
         assertThat(notification.getMessage()).isEqualTo("김철수님이 가용시간을 등록했습니다.");
-        assertThat(notification.getRoomUuid()).isEqualTo("room-uuid-123");
         assertThat(notification.getRecipientId()).isEqualTo(1L);
-        assertThat(notification.getSenderName()).isEqualTo("김철수");
+        assertThat(notification.getData()).containsEntry("roomUuid", "room-uuid-123");
+        assertThat(notification.getData()).containsEntry("participantName", "김철수");
         assertThat(notification.isRead()).isFalse();
         assertThat(notification.getReadAt()).isNull();
     }
@@ -35,9 +39,8 @@ class NotificationTest {
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "테스트 메시지",
-                "room-uuid",
                 1L,
-                "김철수"
+                Map.of()
         );
         var now = LocalDateTime.of(2026, 3, 11, 14, 30, 0);
 
@@ -53,9 +56,8 @@ class NotificationTest {
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "테스트 메시지",
-                "room-uuid",
                 1L,
-                "김철수"
+                Map.of()
         );
         var now = LocalDateTime.of(2026, 3, 11, 14, 30, 0);
 
@@ -71,9 +73,8 @@ class NotificationTest {
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "테스트 메시지",
-                "room-uuid",
                 1L,
-                "김철수"
+                Map.of()
         );
 
         assertThat(notification.isSent()).isFalse();
@@ -86,9 +87,8 @@ class NotificationTest {
                 NotificationType.가용시간_등록,
                 "가용시간 등록",
                 "테스트 메시지",
-                "room-uuid",
                 1L,
-                "김철수"
+                Map.of()
         );
         var firstReadTime = LocalDateTime.of(2026, 3, 11, 14, 0, 0);
         var secondReadTime = LocalDateTime.of(2026, 3, 11, 15, 0, 0);

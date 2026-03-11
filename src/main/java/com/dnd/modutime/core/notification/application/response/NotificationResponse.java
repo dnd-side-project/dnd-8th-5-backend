@@ -5,14 +5,14 @@ import com.dnd.modutime.core.notification.domain.NotificationType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public record NotificationResponse(
         Long id,
         NotificationType type,
         String title,
         String message,
-        String roomUuid,
-        String senderName,
+        Map<String, String> data,
         @JsonProperty("isRead") boolean read,
         LocalDateTime createdAt
 ) {
@@ -22,8 +22,7 @@ public record NotificationResponse(
                 notification.getType(),
                 notification.getTitle(),
                 notification.getMessage(),
-                notification.getRoomUuid(),
-                notification.getSenderName(),
+                notification.getData(),
                 notification.isRead(),
                 notification.getCreatedAt()
         );
