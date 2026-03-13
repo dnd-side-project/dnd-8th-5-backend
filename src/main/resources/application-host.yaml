@@ -16,4 +16,4 @@ spring:
 modutime:
   host:
     client: "https://www.modutime.site"
-    server: "https://api.modutime.site"
+    server: "https://api2.modutime.site"

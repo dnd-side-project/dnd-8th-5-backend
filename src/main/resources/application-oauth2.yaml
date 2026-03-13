@@ -35,7 +35,7 @@ spring:
         registration:
           kakao:
             client-id: ${KAKAO_CLIENT_ID}
-            redirect-uri: https://api.modutime.site/oauth2/kakao/callback
+            redirect-uri: https://api2.modutime.site/oauth2/kakao/callback
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
         provider:
