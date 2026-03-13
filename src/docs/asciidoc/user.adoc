@@ -1,0 +1,19 @@
+[[User]]
+== 사용자 관련 API
+
+=== 내 정보 조회
+
+* 인증 정보를 통해 OAuth2 사용자 정보를 조회합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/get-api-v1-users-me/request-headers.adoc[]
+include::{snippets}/get-api-v1-users-me/curl-request.adoc[]
+include::{snippets}/get-api-v1-users-me/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/get-api-v1-users-me/http-response.adoc[]
+include::{snippets}/get-api-v1-users-me/response-fields.adoc[]

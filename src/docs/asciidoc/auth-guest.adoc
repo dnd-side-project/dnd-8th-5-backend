@@ -7,15 +7,15 @@
 [discrete]
 ==== 요청
 
-include::{snippets}/guest-post-api-room-room-uuid-login/path-parameters.adoc[]
-include::{snippets}/guest-post-api-room-room-uuid-login/curl-request.adoc[]
-include::{snippets}/guest-post-api-room-room-uuid-login/request-fields.adoc[]
-include::{snippets}/guest-post-api-room-room-uuid-login/http-request.adoc[]
+include::{snippets}/guest-post-api-v1-room-room-uuid-login/path-parameters.adoc[]
+include::{snippets}/guest-post-api-v1-room-room-uuid-login/curl-request.adoc[]
+include::{snippets}/guest-post-api-v1-room-room-uuid-login/request-fields.adoc[]
+include::{snippets}/guest-post-api-v1-room-room-uuid-login/http-request.adoc[]
 
 [discrete]
 ==== 응답
 
-include::{snippets}/guest-post-api-room-room-uuid-login/http-response.adoc[]
+include::{snippets}/guest-post-api-v1-room-room-uuid-login/http-response.adoc[]
 
 === Guest 로그인 페이지 정보 조회
 
