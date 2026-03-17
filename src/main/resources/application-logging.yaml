@@ -20,10 +20,3 @@ spring:
   config:
     activate:
       on-profile: prod
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
-        oauth2: TRACE
-        security.oauth2.client.web: TRACE
