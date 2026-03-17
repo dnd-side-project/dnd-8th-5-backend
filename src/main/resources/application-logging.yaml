@@ -13,6 +13,7 @@ logging:
       springframework:
         security: DEBUG
         oauth2: TRACE
+        security.oauth2.client.web: TRACE
 
 ---
 spring:
@@ -25,3 +26,4 @@ logging:
       springframework:
         security: DEBUG
         oauth2: TRACE
+        security.oauth2.client.web: TRACE
