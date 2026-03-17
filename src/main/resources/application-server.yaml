@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+server:
+  forward-headers-strategy: native
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  forward-headers-strategy: native
