@@ -49,7 +49,8 @@ public class TimeBlockAcceptanceTest extends AcceptanceSupporter {
         로그인_참여자_1234(roomCreationResponse.getUuid(), participantName);
         시간을_등록한다(roomCreationResponse.getUuid(), participantName, true, List.of(LocalDateTime.of(_2023_02_10, _12_00), LocalDateTime.of(_2023_02_10, _13_00)));
 
-        ExtractableResponse<Response> response = get("/api/room/" + roomCreationResponse.getUuid() + "/available-time?name=" + participantName);
+        String token = 게스트_로그인_토큰_발급(roomCreationResponse.getUuid(), participantName);
+        ExtractableResponse<Response> response = getWithToken("/api/v1/rooms/" + roomCreationResponse.getUuid() + "/available-time", token);
         TimeBlockResponse timeBlockResponse = response.body().as(TimeBlockResponse.class);
 
         assertAll(
@@ -67,7 +68,8 @@ public class TimeBlockAcceptanceTest extends AcceptanceSupporter {
         로그인_참여자_1234(roomCreationResponse.getUuid(), participantName);
         시간을_등록한다(roomCreationResponse.getUuid(), participantName, false, LocalDateTime.of(_2023_02_10, LocalTime.of(0,0)));
 
-        ExtractableResponse<Response> response = get("/api/room/" + roomCreationResponse.getUuid() + "/available-time?name=" + participantName);
+        String token = 게스트_로그인_토큰_발급(roomCreationResponse.getUuid(), participantName);
+        ExtractableResponse<Response> response = getWithToken("/api/v1/rooms/" + roomCreationResponse.getUuid() + "/available-time", token);
         TimeBlockResponse timeBlockResponse = response.body().as(TimeBlockResponse.class);
 
         assertAll(
