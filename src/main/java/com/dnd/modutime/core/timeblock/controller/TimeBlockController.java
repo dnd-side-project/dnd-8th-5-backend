@@ -38,11 +38,10 @@ public class TimeBlockController {
         return ResponseEntity.ok().build();
     }
 
-    @Deprecated(since = "카카오 로그인 배포 이후")
-    @GetMapping("/api/room/{roomUuid}/available-time")
+    @GetMapping("/api/v1/rooms/{roomUuid}/available-time")
     public ResponseEntity<TimeBlockResponse> getTimeBlock(@PathVariable String roomUuid,
-                                                          @RequestParam String name) {
-        var timeBlockResponse = timeBlockService.getTimeBlock(roomUuid, name);
+                                                          @RoomParticipant ParticipantInfo participantInfo) {
+        var timeBlockResponse = timeBlockService.getTimeBlock(roomUuid, participantInfo.participantName());
         return ResponseEntity.ok(timeBlockResponse);
     }
 }
