@@ -25,14 +25,20 @@ import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 
+import com.dnd.modutime.core.timeblock.application.response.TimeBlockResponse;
+import com.dnd.modutime.documentation.TestJsonUtils;
+
 import static com.dnd.modutime.TestConstant.LOCALHOST;
 import static com.dnd.modutime.documentation.MockMvcFactory.HEADER_AUTHORIZATION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -115,6 +121,79 @@ public class TimeBlockControllerDocsTest {
                                                 .tag("TimeBlock")
                                                 .requestHeaders(requestHeaders)
                                                 .requestFields(requestFields)
+                                                .pathParameters(pathParameters)
+                                                .build())
+                        )
+                );
+    }
+
+    @DisplayName("참여자 시간 조회 API")
+    @WithMockRoomParticipant
+    @Test
+    void 참여자_시간_조회(RestDocumentationContextProvider contextProvider,
+                   HandlerMethodArgumentResolver roomParticipantResolver) throws Exception {
+        var operationIdentifier = "get-api-v1-rooms-room-uuid-available-time";
+
+        var pathParameters = new ParameterDescriptor[]{
+                parameterWithName("roomUuid").description("방 UUID")
+        };
+
+        var requestHeaders = new HeaderDescriptor[]{
+                headerWithName("Authorization").description("인증 토큰 (Bearer {JWT-TOKEN})")
+        };
+
+        var responseFields = new FieldDescriptor[]{
+                fieldWithPath("name").type(STRING).description("참여자 이름"),
+                fieldWithPath("availableDateTimes").type(ARRAY).description("등록한 날짜/시간 목록 (형식: yyyy-MM-dd HH:mm)")
+        };
+
+        //language=JSON
+        var responseLiteral = """
+                {
+                  "name": "동호",
+                  "availableDateTimes": [
+                    "2025-07-16 13:00",
+                    "2025-07-16 13:30",
+                    "2025-07-16 14:00"
+                  ]
+                }
+                """;
+
+        var response = TestJsonUtils.readValue(responseLiteral, TimeBlockResponse.class);
+        when(timeBlockService.getTimeBlock(any(), any())).thenReturn(response);
+
+        var mockMvc = MockMvcFactory.getRestDocsMockMvc(
+                contextProvider, LOCALHOST,
+                new HandlerMethodArgumentResolver[]{roomParticipantResolver},
+                controller);
+
+        mockMvc.perform(
+                        get("/api/v1/rooms/{roomUuid}/available-time", "test-room-uuid")
+                                .header("Authorization", HEADER_AUTHORIZATION)
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        MockMvcRestDocumentation.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                HeaderDocumentation.requestHeaders(requestHeaders),
+                                RequestDocumentation.pathParameters(pathParameters),
+                                PayloadDocumentation.responseFields(responseFields)
+                        )
+                )
+                .andDo(
+                        MockMvcRestDocumentationWrapper.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                ResourceDocumentation.resource(
+                                        ResourceSnippetParameters.builder()
+                                                .description("참여자 시간 조회 API")
+                                                .tag("TimeBlock")
+                                                .requestHeaders(requestHeaders)
+                                                .responseFields(responseFields)
                                                 .pathParameters(pathParameters)
                                                 .build())
                         )

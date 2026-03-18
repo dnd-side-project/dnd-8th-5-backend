@@ -104,6 +104,13 @@ public class OAuth2TokenProvider {
                         "Access Token이 아닙니다.", ErrorCode.INVALID_TOKEN);
             }
 
+            // Guest 토큰이 OAuth2 토큰으로 잘못 인식되는 것을 방지
+            // 과도기 허용: user_type이 null이면 기존 토큰이므로 허용
+            String userType = claims.get("user_type", String.class);
+            if (userType != null && !"oauth".equals(userType)) {
+                return false;
+            }
+
             return true;
         } catch (ExpiredJwtException e) {
             log.info("토큰이 만료되었습니다.");

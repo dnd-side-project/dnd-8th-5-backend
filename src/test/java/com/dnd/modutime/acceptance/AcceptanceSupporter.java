@@ -3,6 +3,7 @@ package com.dnd.modutime.acceptance;
 import com.dnd.modutime.annotations.SpringBootTestWithoutOAuthConfig;
 import com.dnd.modutime.config.TimeConfiguration;
 import com.dnd.modutime.core.auth.application.request.LoginRequest;
+import com.dnd.modutime.core.auth.application.response.GuestLoginResponse;
 import com.dnd.modutime.core.auth.oauth.OAuth2AuthorizationRequestResolverConfig;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenProvider;
 import com.dnd.modutime.core.participant.application.response.EmailResponse;
@@ -136,6 +137,21 @@ public abstract class AcceptanceSupporter {
     protected EmailResponse 이메일을_조회한다(String roomUuid, String participantName) {
         ExtractableResponse<Response> response = get("/api/room/" + roomUuid + "/email?name=" + participantName);
         return response.body().as(EmailResponse.class);
+    }
+
+    protected String 게스트_로그인_토큰_발급(String roomUuid, String participantName) {
+        var loginRequest = new LoginRequest(participantName, "1234");
+        ExtractableResponse<Response> response = post("/guest/api/v1/room/" + roomUuid + "/login", loginRequest);
+        return response.body().as(GuestLoginResponse.class).getAccessToken();
+    }
+
+    protected ExtractableResponse<Response> getWithToken(String uri, String token) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + token)
+                .when().get(uri)
+                .then().log().all()
+                .extract();
     }
 
     protected void 두명의_날짜를_등록한다(String roomUuid) {
