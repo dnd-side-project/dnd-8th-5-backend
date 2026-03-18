@@ -20,3 +20,8 @@ spring:
   config:
     activate:
       on-profile: prod
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
