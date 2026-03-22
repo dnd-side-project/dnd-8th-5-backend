@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 
 import static com.dnd.modutime.core.common.Constants.AUTHORIZATION;
 import static com.dnd.modutime.core.common.Constants.TOKEN_PREFIX_SEPARATOR;
@@ -44,6 +46,8 @@ public class OAuth2TokenAuthenticationFilter extends OncePerRequestFilter {
 
             if (this.oAuth2TokenProvider.validateOAuth2Token(oAuth2AccessToken)) {
                 setAuthentication(oAuth2AccessToken);
+            } else if (this.oAuth2TokenProvider.isGuestToken(oAuth2AccessToken)) {
+                setGuestAuthentication(oAuth2AccessToken);
             }
         } catch (OAuth2AuthenticationException e) {
             this.authenticationEntryPoint.commence(request, response, e);
@@ -62,6 +66,11 @@ public class OAuth2TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private void setAuthentication(final String oAuth2AccessToken) {
         Authentication authentication = this.oAuth2TokenProvider.getAuthentication(oAuth2AccessToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private void setGuestAuthentication(final String token) {
+        var authentication = new PreAuthenticatedAuthenticationToken("guest", token, Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 

@@ -124,6 +124,18 @@ public class OAuth2TokenProvider {
         }
     }
 
+    public boolean isGuestToken(final String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(tokenConfigurationProperties.secret().getBytes(StandardCharsets.UTF_8))
+                    .parseClaimsJws(token)
+                    .getBody();
+            return "guest".equals(claims.get("user_type", String.class));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public Authentication getAuthentication(final String token) {
         Claims claims = getOAuth2TokenClaims(token);
 
