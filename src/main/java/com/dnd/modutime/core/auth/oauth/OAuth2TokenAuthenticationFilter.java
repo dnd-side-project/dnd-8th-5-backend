@@ -26,13 +26,16 @@ public class OAuth2TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final OAuth2TokenProvider oAuth2TokenProvider;
     private final RequestMatcher permitAllMatchers;
+    private final RequestMatcher guestTokenAllowedMatchers;
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
     public OAuth2TokenAuthenticationFilter(final OAuth2TokenProvider oAuth2TokenProvider,
                                            final RequestMatcher permitAllMatchers,
+                                           final RequestMatcher guestTokenAllowedMatchers,
                                            final AuthenticationEntryPoint authenticationEntryPoint) {
         this.oAuth2TokenProvider = oAuth2TokenProvider;
         this.permitAllMatchers = permitAllMatchers;
+        this.guestTokenAllowedMatchers = guestTokenAllowedMatchers;
         this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
@@ -46,7 +49,8 @@ public class OAuth2TokenAuthenticationFilter extends OncePerRequestFilter {
 
             if (this.oAuth2TokenProvider.validateOAuth2Token(oAuth2AccessToken)) {
                 setAuthentication(oAuth2AccessToken);
-            } else if (this.oAuth2TokenProvider.isGuestToken(oAuth2AccessToken)) {
+            } else if (this.oAuth2TokenProvider.isGuestToken(oAuth2AccessToken)
+                       && this.guestTokenAllowedMatchers.matches(request)) {
                 setGuestAuthentication(oAuth2AccessToken);
             }
         } catch (OAuth2AuthenticationException e) {
