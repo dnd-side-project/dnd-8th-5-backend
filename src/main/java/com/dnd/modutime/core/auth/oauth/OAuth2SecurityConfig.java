@@ -231,6 +231,7 @@ public class OAuth2SecurityConfig {
                 List.of(HttpMethod.GET.toString(),
                         HttpMethod.POST.toString(),
                         HttpMethod.PUT.toString(),
+                        HttpMethod.PATCH.toString(),
                         HttpMethod.OPTIONS.toString(),
                         HttpMethod.DELETE.toString(),
                         HttpMethod.HEAD.toString()
