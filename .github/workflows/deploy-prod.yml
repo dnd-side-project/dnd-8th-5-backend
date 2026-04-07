@@ -105,6 +105,7 @@ jobs:
             DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
             KAKAO_CLIENT_ID=${{secrets.KAKAO_CLIENT_ID}}
             JWT_SECRET=${{secrets.JWT_SECRET}}
+            SENTRY_DSN=${{secrets.SENTRY_DSN}}
             EOL
             
             sudo sh install-docker.sh

@@ -14,6 +14,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
       JWT_SECRET: ${JWT_SECRET}
+      SENTRY_DSN: ${SENTRY_DSN}
     mem_limit: 512m
     mem_reservation: 256m
     restart: unless-stopped
