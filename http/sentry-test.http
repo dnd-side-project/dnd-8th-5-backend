@@ -1,0 +1,14 @@
+### 500 에러 유발 - Guest 방 생성 시 필수 필드 누락으로 서버 에러 유도
+POST http://{{host}}/guest/api/room
+Content-Type: application/json
+
+{}
+
+### 500 에러 유발 - 잘못된 형식의 시간 등록 (인증 불필요 엔드포인트)
+PUT http://{{host}}/api/room/test-room-uuid/available-time
+Content-Type: application/json
+
+{}
+
+### 4xx 에러 (Sentry 전송 안됨 확인용) - Guest 존재하지 않는 방 조회
+GET http://{{host}}/guest/api/v2/room/non-existent-uuid
