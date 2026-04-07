@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: logging
   jpa:
     show-sql: true
     hibernate:

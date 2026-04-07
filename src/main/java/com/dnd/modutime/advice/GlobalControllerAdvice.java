@@ -3,6 +3,7 @@ package com.dnd.modutime.advice;
 import com.dnd.modutime.advice.response.ExceptionResponse;
 import com.dnd.modutime.exception.InvalidPasswordException;
 import com.dnd.modutime.exception.NotFoundException;
+import io.sentry.Sentry;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,5 +29,12 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleIllegalArgumentException(IllegalArgumentException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionResponse(exception.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> handleUnexpectedException(Exception exception) {
+        Sentry.captureException(exception);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ExceptionResponse("서버 내부 오류가 발생했습니다."));
     }
 }

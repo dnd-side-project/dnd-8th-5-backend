@@ -1,0 +1,6 @@
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: ${SENTRY_ENVIRONMENT:local}
+  send-default-pii: true
+  traces-sample-rate: 1.0
+  exception-resolver-order: -2147483647
