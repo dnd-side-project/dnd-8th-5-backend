@@ -180,6 +180,10 @@ jobs:
             --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
             --targets Id=${{ steps.green.outputs.instance_id }}
 
+          aws elbv2 register-targets \
+            --target-group-arn ${{ secrets.SSH_TARGET_GROUP_ARN }} \
+            --targets Id=${{ steps.green.outputs.instance_id }}
+
           echo "타겟 그룹 healthy 대기 중..."
           aws elbv2 wait target-in-service \
             --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
@@ -193,6 +197,9 @@ jobs:
             echo "Blue 제거: $INSTANCE_ID"
             aws elbv2 deregister-targets \
               --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
+              --targets Id=$INSTANCE_ID
+            aws elbv2 deregister-targets \
+              --target-group-arn ${{ secrets.SSH_TARGET_GROUP_ARN }} \
               --targets Id=$INSTANCE_ID
           done
 
@@ -218,6 +225,9 @@ jobs:
             echo "배포 실패 - Green 인스턴스 정리: ${{ steps.green.outputs.instance_id }}"
             aws elbv2 deregister-targets \
               --target-group-arn ${{ secrets.TARGET_GROUP_ARN }} \
+              --targets Id=${{ steps.green.outputs.instance_id }} 2>/dev/null || true
+            aws elbv2 deregister-targets \
+              --target-group-arn ${{ secrets.SSH_TARGET_GROUP_ARN }} \
               --targets Id=${{ steps.green.outputs.instance_id }} 2>/dev/null || true
             aws ec2 terminate-instances \
               --instance-ids ${{ steps.green.outputs.instance_id }} 2>/dev/null || true
