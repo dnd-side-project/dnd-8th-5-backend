@@ -18,3 +18,21 @@ include::{snippets}/put-api-v1-rooms-room-uuid-time-blocks-available-time/http-r
 ==== 응답
 
 include::{snippets}/put-api-v1-rooms-room-uuid-time-blocks-available-time/http-response.adoc[]
+
+=== 참여자 시간 조회
+
+* 참여자가 등록한 시간을 조회합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/get-api-v1-rooms-room-uuid-available-time/request-headers.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-available-time/path-parameters.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-available-time/curl-request.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-available-time/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/get-api-v1-rooms-room-uuid-available-time/http-response.adoc[]
+include::{snippets}/get-api-v1-rooms-room-uuid-available-time/response-fields.adoc[]

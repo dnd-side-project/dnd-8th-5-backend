@@ -182,11 +182,21 @@ public class OAuth2SecurityConfig {
         return new OAuth2AccessDeniedHandler(objectMapper);
     }
 
+    /**
+     * Guest 토큰이 인증을 허용받는 경로를 정의합니다.
+     * Guest 토큰은 방 관련 API에서만 사용되므로, 다른 경로(예: /api/v1/users/me)에서는 인증되지 않습니다.
+     */
+    @Bean
+    public RequestMatcher guestTokenAllowedMatchers() {
+        return new AntPathRequestMatcher("/api/v1/rooms/**");
+    }
+
     @Bean
     public OAuth2TokenAuthenticationFilter tokenAuthenticationFilter(OAuth2TokenProvider oAuth2TokenProvider,
                                                                      RequestMatcher permitAllMatchers,
+                                                                     RequestMatcher guestTokenAllowedMatchers,
                                                                      AuthenticationEntryPoint authenticationEntryPoint) {
-        return new OAuth2TokenAuthenticationFilter(oAuth2TokenProvider, permitAllMatchers, authenticationEntryPoint);
+        return new OAuth2TokenAuthenticationFilter(oAuth2TokenProvider, permitAllMatchers, guestTokenAllowedMatchers, authenticationEntryPoint);
     }
 
     @Bean

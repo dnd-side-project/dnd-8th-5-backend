@@ -9,6 +9,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.MethodParameter;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -79,7 +80,7 @@ public class RoomParticipantArgumentResolver implements HandlerMethodArgumentRes
                 .orElseThrow(() -> new IllegalArgumentException("해당 OAuth 사용자를 찾을 수 없습니다."));
 
         var participant = participantQueryService.findByRoomUuidAndUserId(roomUuid, user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 방에 참여하지 않은 사용자입니다."));
+                .orElseThrow(() -> new AccessDeniedException("해당 방에 참여하지 않은 사용자입니다."));
 
         return new ParticipantInfo(ParticipantType.OAUTH, roomUuid, participant.getName(), user.getId());
     }

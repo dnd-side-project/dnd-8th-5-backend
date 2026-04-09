@@ -35,7 +35,6 @@ include::adjustment-result-guest.adoc[]
 include::auth-guest.adoc[]
 include::room-guest.adoc[]
 include::participant-guest.adoc[]
-include::timeblock-guest.adoc[]
 
 == OAuth2 API
 * OAuth2 인증 관련 API입니다.
