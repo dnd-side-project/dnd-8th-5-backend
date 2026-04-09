@@ -234,6 +234,24 @@ The convertor factory selects appropriate strategy based on room configuration.
 - `.junie/guidelines.md` - Additional coding guidelines
 - `architecture-decision-records/` - Architecture decisions
 
+## Deployment
+
+### Blue-Green 배포
+
+운영 배포는 GitHub Actions(`deploy-prod.yml`)를 통한 블루-그린 방식으로 수행된다.
+
+**흐름:** Green EC2 생성 → 앱 배포 → 헬스체크(/aws) → NLB 타겟 그룹 전환 → Blue EC2 종료
+
+- Launch Template(`lt-01450247ef5b97f69`)으로 Green EC2를 임시 생성
+- 배포 실패 시 Green만 정리되고 Blue는 유지됨 (자동 롤백)
+- 배포 완료 후 EC2는 항상 1대만 유지 (비용 최적화)
+
+### Graceful Shutdown
+
+- `application-server.yaml`에 prod 프로파일로 설정
+- `server.shutdown=graceful` + `timeout-per-shutdown-phase=30s`
+- SIGTERM 수신 시 진행 중인 요청을 최대 30초 대기 후 종료
+
 ## Development Notes
 
 - Room entities use UUID instead of DB IDs for public API (security/obfuscation)
