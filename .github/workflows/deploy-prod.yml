@@ -99,7 +99,8 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd /home/ubuntu/srv/ubuntu
-            cat > .env << EOL
+            umask 077
+            cat > .env <<'EOL'
             DB_URL=${{secrets.PROD_DB_URL}}
             DB_USERNAME=${{secrets.PROD_DB_USERNAME}}
             DB_PASSWORD=${{secrets.PROD_DB_PASSWORD}}
@@ -107,6 +108,7 @@ jobs:
             JWT_SECRET=${{secrets.JWT_SECRET}}
             SENTRY_DSN=${{secrets.SENTRY_DSN}}
             EOL
+            chmod 600 .env
             
             sudo sh install-docker.sh
             sudo docker rm -f $(docker ps -qa)
