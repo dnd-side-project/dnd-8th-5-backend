@@ -44,7 +44,7 @@ jobs:
 
       - name: Docker 이미지 빌드 및 Push
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker build -t ${{ secrets.DOCKER_REPO }}/modutime-web .
           docker push ${{ secrets.DOCKER_REPO }}/modutime-web
           docker build -t ${{ secrets.DOCKER_REPO }}/modutime-nginx ./nginx
@@ -120,7 +120,10 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
             ubuntu@${{ steps.green_ip.outputs.public_ip }} \
-            "echo '=== 복사된 파일 목록 ===' && ls -la /home/ubuntu/srv/ubuntu/"
+            "set -e; \
+             test -f /home/ubuntu/srv/ubuntu/docker-compose.yml; \
+             test -f /home/ubuntu/srv/ubuntu/install-docker.sh; \
+             echo '=== 복사된 파일 목록 ==='; ls -la /home/ubuntu/srv/ubuntu/"
 
       - name: Green 인스턴스에 앱 배포
         uses: appleboy/ssh-action@master
