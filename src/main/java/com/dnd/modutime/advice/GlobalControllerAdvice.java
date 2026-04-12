@@ -1,6 +1,7 @@
 package com.dnd.modutime.advice;
 
 import com.dnd.modutime.advice.response.ExceptionResponse;
+import com.dnd.modutime.exception.AuthenticationException;
 import com.dnd.modutime.exception.InvalidPasswordException;
 import com.dnd.modutime.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,12 @@ import java.net.BindException;
 
 @RestControllerAdvice
 public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ExceptionResponse(exception.getMessage()));
+    }
 
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<ExceptionResponse> handleUnAuthorizedException(InvalidPasswordException exception) {
