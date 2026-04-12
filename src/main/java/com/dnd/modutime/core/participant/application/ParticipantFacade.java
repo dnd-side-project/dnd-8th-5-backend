@@ -39,6 +39,9 @@ public class ParticipantFacade {
 
     @Transactional
     public void joinAsOAuthUser(ParticipantJoinCommand command) {
+        if (command.getUserId() == null) {
+            throw new IllegalStateException("인증된 사용자의 ID가 없습니다.");
+        }
         if (queryService.existsByRoomUuidAndUserId(command.getRoomUuid(), command.getUserId())) {
             throw new IllegalArgumentException("이미 해당 방에 참여한 사용자입니다.");
         }

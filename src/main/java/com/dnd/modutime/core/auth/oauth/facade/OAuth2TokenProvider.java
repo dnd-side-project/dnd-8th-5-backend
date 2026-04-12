@@ -168,16 +168,8 @@ public class OAuth2TokenProvider {
         User user = userRepository.findByEmailAndProvider(email, provider)
                 .orElseThrow();
 
-        OAuth2User principal = new OAuth2User(
-                new User(user.getName(),
-                        email,
-                        user.getProfileImage(),
-                        user.getThumbnailImage(),
-                        provider
-                ),
-                claims,
-                "sub"
-        );
+        OAuth2User principal = new OAuth2User(user, claims, "sub");
+        this.userCache.putUserInCache(principal);
 
         return new OAuth2AuthenticationToken(principal, Collections.emptyList(), registrationId);
     }

@@ -1,9 +1,11 @@
 package com.dnd.modutime.core.auth.oauth.facade;
 
+import com.dnd.modutime.core.auth.oauth.OAuth2User;
 import com.dnd.modutime.core.auth.oauth.exception.InvalidOAuth2TokenException;
 import com.dnd.modutime.core.auth.security.TokenType;
 import com.dnd.modutime.core.common.ErrorCode;
 import com.dnd.modutime.core.user.OAuth2Provider;
+import com.dnd.modutime.core.user.User;
 import com.dnd.modutime.core.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,13 +15,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserCache;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("OAuth2TokenProvider 테스트")
@@ -31,6 +38,9 @@ class OAuth2TokenProviderTest {
 
     @Mock
     private UserCache userCache;
+
+    @Mock
+    private UserRepository userRepository;
 
     private static final String SECRET_KEY = "this-is-a-test-secret-key-for-testing-purposes-only";
     private static final String TEST_EMAIL = "test@example.com";
@@ -48,7 +58,7 @@ class OAuth2TokenProviderTest {
 
         oAuth2TokenProvider = new OAuth2TokenProvider(
                 tokenConfigurationProperties,
-                mock(UserRepository.class),
+                userRepository,
                 userCache
         );
     }
@@ -134,5 +144,46 @@ class OAuth2TokenProviderTest {
 
         // Then
         assertThat(isValid).isTrue();
+    }
+
+    @Test
+    @DisplayName("loadAuthentication()에서 반환된 OAuth2User의 userId가 DB 조회값과 일치해야 한다")
+    void loadAuthentication에서_반환된_OAuth2User의_userId가_DB_조회값과_일치해야_한다() {
+        // Given
+        var provider = OAuth2Provider.KAKAO;
+        var accessToken = oAuth2TokenProvider.createOAuth2AccessToken(TEST_EMAIL, provider);
+
+        var user = new User("테스트", TEST_EMAIL, "profile.jpg", "thumb.jpg", provider);
+        ReflectionTestUtils.setField(user, "id", 1L);
+
+        when(userRepository.findByEmailAndProvider(TEST_EMAIL, provider))
+                .thenReturn(Optional.of(user));
+
+        // When
+        Authentication authentication = oAuth2TokenProvider.loadAuthentication(accessToken);
+        var principal = (OAuth2User) authentication.getPrincipal();
+
+        // Then
+        assertThat(principal.user().getId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("loadAuthentication()에서 캐시에 저장되어야 한다")
+    void loadAuthentication에서_캐시에_저장되어야_한다() {
+        // Given
+        var provider = OAuth2Provider.KAKAO;
+        var accessToken = oAuth2TokenProvider.createOAuth2AccessToken(TEST_EMAIL, provider);
+
+        var user = new User("테스트", TEST_EMAIL, "profile.jpg", "thumb.jpg", provider);
+        ReflectionTestUtils.setField(user, "id", 1L);
+
+        when(userRepository.findByEmailAndProvider(TEST_EMAIL, provider))
+                .thenReturn(Optional.of(user));
+
+        // When
+        oAuth2TokenProvider.loadAuthentication(accessToken);
+
+        // Then
+        verify(userCache).putUserInCache(any(OAuth2User.class));
     }
 }
