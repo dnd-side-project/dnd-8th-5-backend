@@ -1,0 +1,38 @@
+name: Create Release Tag
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+          fetch-depth: 0
+
+      - name: Create release tag
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          PREFIX="release-${TODAY}"
+
+          LAST_BUILD=$(git tag -l "${PREFIX}-*" | sed "s/${PREFIX}-//" | sort -n | tail -1)
+
+          if [ -z "$LAST_BUILD" ]; then
+            BUILD_NUMBER=1
+          else
+            BUILD_NUMBER=$((LAST_BUILD + 1))
+          fi
+
+          TAG_NAME="${PREFIX}-${BUILD_NUMBER}"
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
+
+          echo "### :label: Created tag: \`${TAG_NAME}\`" >> "$GITHUB_STEP_SUMMARY"
