@@ -53,4 +53,27 @@ public class OAuth2Controller {
 
         return this.OAuth2TokenService.createOAuth2AccessTokenByRefreshToken(refreshToken);
     }
+
+    /**
+     * 클라이언트 전달 문서용 컨트롤러
+     * <p>
+     * OAuth2 로그아웃 API입니다.
+     * 실제 처리는 컨트롤러가 아닌 {@link com.dnd.modutime.core.auth.oauth.OAuth2LogoutFilter} 와
+     * Spring Security의 LogoutFilter 체인에서 수행되므로 이 메서드 본문은 호출되지 않습니다.
+     * 본 매핑은 REST Docs/OpenAPI 명세에 엔드포인트를 노출하기 위한 목적으로만 존재합니다.
+     * <p>
+     * 요청 시 Authorization 헤더에 'Bearer {accessToken}' 형식으로 액세스 토큰을 전달해야 합니다.
+     * 처리 결과는 다음과 같습니다.
+     * > 1. DB에 저장된 refreshToken 만료 처리
+     * > 2. 서버 캐시(OAuth2UserCache)에서 사용자 무효화
+     * > 3. 클라이언트의 refreshToken / refreshTokenExpireTime 쿠키 즉시 만료
+     * > 4. 세션 무효화 및 JSESSIONID 쿠키 삭제
+     *
+     * @see com.dnd.modutime.core.auth.oauth.OAuth2LogoutFilter
+     * @see com.dnd.modutime.core.auth.oauth.OAuth2LogoutSuccessHandler
+     */
+    @PostMapping("/oauth2/logout")
+    public void oAuth2Logout() {
+        // no-op: 실제 처리는 필터 체인에서 수행됩니다.
+    }
 }
