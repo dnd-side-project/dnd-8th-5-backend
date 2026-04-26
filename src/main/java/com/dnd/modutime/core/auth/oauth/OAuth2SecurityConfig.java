@@ -222,7 +222,9 @@ public class OAuth2SecurityConfig {
         if (List.of(environment.getActiveProfiles()).contains("prod")) {
             configuration.setAllowedOriginPatterns(List.of(
                     hostProperties.host().client(),
-                    "https://modutime.site"
+                    "https://modutime.site",
+                    "https://dev.modutime.site/",
+                    "https://www.dev.modutime.site/"
             ));
         } else {
             configuration.setAllowedOriginPatterns(List.of("*"));
