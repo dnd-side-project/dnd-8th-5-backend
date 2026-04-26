@@ -10,11 +10,13 @@ public class UserWithdrawCommand {
 
     private Long userId;
     private String cacheKey;
+    private String reason;
 
-    public static UserWithdrawCommand of(final Long userId, final String cacheKey) {
+    public static UserWithdrawCommand of(final Long userId, final String cacheKey, final String reason) {
         var command = new UserWithdrawCommand();
         command.userId = userId;
         command.cacheKey = cacheKey;
+        command.reason = reason;
         return command;
     }
 }

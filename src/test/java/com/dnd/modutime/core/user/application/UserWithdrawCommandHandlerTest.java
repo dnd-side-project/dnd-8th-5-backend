@@ -44,17 +44,21 @@ class UserWithdrawCommandHandlerTest {
         this.handler = new UserWithdrawCommandHandler(userRepository, userCache, timeProvider);
     }
 
+    private static final String REASON = "자주 사용하지 않아요";
+
     @Test
-    @DisplayName("캐시 무효화 후 user soft delete")
+    @DisplayName("캐시 무효화 후 user soft delete + 사유/동의시각 기록")
     void 정상_처리() {
         var user = newUser(1L, "test@example.com", OAuth2Provider.KAKAO, "12345");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        handler.handle(UserWithdrawCommand.of(1L, "kakao:test@example.com"));
+        handler.handle(UserWithdrawCommand.of(1L, "kakao:test@example.com", REASON));
 
         verify(userCache, times(1)).removeUserFromCache("kakao:test@example.com");
         assertThat(user.isWithdrawn()).isTrue();
         assertThat(user.getDeletedAt()).isEqualTo(NOW);
+        assertThat(user.getWithdrawReason()).isEqualTo(REASON);
+        assertThat(user.getWithdrawConsentedAt()).isEqualTo(NOW);
     }
 
     @Test
@@ -62,7 +66,7 @@ class UserWithdrawCommandHandlerTest {
     void 사용자_없음() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> handler.handle(UserWithdrawCommand.of(99L, "kakao:gone@example.com")))
+        assertThatThrownBy(() -> handler.handle(UserWithdrawCommand.of(99L, "kakao:gone@example.com", REASON)))
                 .isInstanceOf(UserNotFoundException.class);
     }
 

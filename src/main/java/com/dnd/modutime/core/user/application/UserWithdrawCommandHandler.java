@@ -29,6 +29,6 @@ public class UserWithdrawCommandHandler {
         this.userCache.removeUserFromCache(command.getCacheKey());
         var user = this.userRepository.findById(command.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.", ErrorCode.USER_NOT_FOUND));
-        user.withdraw(this.timeProvider.getCurrentLocalDateTime());
+        user.withdraw(this.timeProvider.getCurrentLocalDateTime(), command.getReason());
     }
 }

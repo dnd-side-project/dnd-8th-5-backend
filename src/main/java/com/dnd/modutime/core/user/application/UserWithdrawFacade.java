@@ -38,7 +38,7 @@ public class UserWithdrawFacade {
      * <p>Unlink 성공 후 DB 업데이트 실패 시에도, 카카오는 이미 unlink 상태이고
      * KakaoResponseHandler가 -101(이미 연결 해제됨)을 정상 처리하므로 재시도 안전.</p>
      */
-    public void withdraw(final Long userId) {
+    public void withdraw(final Long userId, final String reason) {
         var user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.", ErrorCode.USER_NOT_FOUND));
 
@@ -54,7 +54,7 @@ public class UserWithdrawFacade {
         }
 
         var cacheKey = user.getProvider().getRegistrationId() + ":" + user.getEmail();
-        this.commandHandler.handle(UserWithdrawCommand.of(user.getId(), cacheKey));
+        this.commandHandler.handle(UserWithdrawCommand.of(user.getId(), cacheKey, reason));
 
         log.info("user withdrawn: id={}, provider={}", user.getId(), user.getProvider());
     }

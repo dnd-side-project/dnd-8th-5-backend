@@ -88,6 +88,12 @@ public class User extends AbstractAggregateRoot<User> implements Auditable {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "withdraw_reason", length = 500)
+    private String withdrawReason;
+
+    @Column(name = "withdraw_consented_at")
+    private LocalDateTime withdrawConsentedAt;
+
     public User(final String name,
                 final String email,
                 final String profileImage,
@@ -143,17 +149,21 @@ public class User extends AbstractAggregateRoot<User> implements Auditable {
     }
 
     /**
-     * 회원 탈퇴 처리 (soft delete + 익명화).
+     * 회원 탈퇴 처리 (soft delete + 익명화 + 사유/동의 기록).
      * UNIQUE(email, oauth_provider) 제약 회피를 위해 email/oauthId를 변경하고,
      * @Where 절로 조회에서 자동 필터링되도록 deletedAt을 채운다.
+     * 탈퇴 사유와 데이터 영구 삭제 동의 시각도 함께 기록한다.
      */
-    public void withdraw(final LocalDateTime now) {
+    public void withdraw(final LocalDateTime now, final String reason) {
         Objects.requireNonNull(now);
+        Objects.requireNonNull(reason);
         this.deletedAt = now;
         this.email = "withdrawn_" + this.id + "@modutime.local";
         this.oauthId = null;
         this.refreshToken = null;
         this.tokenExpirationTime = now;
+        this.withdrawReason = reason;
+        this.withdrawConsentedAt = now;
     }
 
     public boolean isWithdrawn() {
