@@ -22,6 +22,7 @@ public enum ErrorCode {
     INFRASTRUCTURE_ERROR("외부 호출 오류"),
     INTERNAL_SERVER_ERROR("서버 내부 오류"),
     USER_NOT_FOUND("유저를 찾을 수 없음"),
+    INSUFFICIENT_AUTHENTICATION("재로그인이 필요함"),
     ;
 
     private final String description;

@@ -211,11 +211,6 @@ public class OAuth2SecurityConfig {
     }
 
     @Bean
-    public UserCache userCache() {
-        return new OAuth2UserCache();
-    }
-
-    @Bean
     public CorsConfigurationSource corsConfigurationSource(ModutimeHostConfigurationProperties hostProperties, Environment environment) {
         var configuration = new CorsConfiguration();
 

@@ -59,6 +59,9 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         User user = this.userRepository.findByEmailAndProvider(oAuth2UserDetails.email(), oAuth2UserDetails.oAuth2Provider())
                 .orElseGet(oAuth2UserDetails::toEntity);
 
+        // 기존 사용자: oauthId가 비어있으면 백필
+        user.linkOAuthIdIfAbsent(oAuth2UserDetails.oauthId());
+
         return this.userRepository.save(user);
     }
 }
