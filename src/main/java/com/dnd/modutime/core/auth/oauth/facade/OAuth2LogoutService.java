@@ -6,10 +6,18 @@ import com.dnd.modutime.core.user.OAuth2Provider;
 import com.dnd.modutime.core.user.UserNotFoundException;
 import com.dnd.modutime.core.user.UserRepository;
 import io.jsonwebtoken.Claims;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * UserCache 빈은 {@link com.dnd.modutime.core.auth.oauth.OAuth2SecurityConfig}(@Profile("!test"))에서만
+ * 등록되므로, 이를 의존하는 본 서비스도 동일 프로필 게이트를 적용해 통합 테스트에서 컨텍스트 로딩 실패를
+ * 방지한다. 사용처인 OAuth2LogoutFilter / logoutFilter() 빈 또한 같은 SecurityConfig에 정의되어 test에서는
+ * 비활성이므로 동작상 영향이 없다.
+ */
+@Profile("!test")
 @Service
 public class OAuth2LogoutService {
 
