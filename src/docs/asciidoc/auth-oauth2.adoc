@@ -36,3 +36,25 @@ include::{snippets}/oauth2-post-reissue-token/http-request.adoc[]
 
 include::{snippets}/oauth2-post-reissue-token/http-response.adoc[]
 include::{snippets}/oauth2-post-reissue-token/response-fields.adoc[]
+
+=== 로그아웃
+
+* 액세스 토큰으로 로그아웃을 처리합니다.
+* 요청 시 `Authorization: Bearer {accessToken}` 헤더를 포함해야 합니다.
+* 처리 내용:
+** DB에 저장된 refreshToken 만료 처리
+** OAuth2UserCache(Caffeine) 무효화
+** refresh 관련 쿠키 (`refreshToken`) 삭제
+** 세션 무효화 및 SecurityContext 초기화
+
+[discrete]
+==== 요청
+
+include::{snippets}/oauth2-post-logout/curl-request.adoc[]
+include::{snippets}/oauth2-post-logout/http-request.adoc[]
+include::{snippets}/oauth2-post-logout/request-headers.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/oauth2-post-logout/http-response.adoc[]
