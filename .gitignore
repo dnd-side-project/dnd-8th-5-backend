@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### oh-my-claudecode (OMC) ###
+.omc/
+
+### Local Gradle overrides (개인 머신 의존 — JDK 경로 등) ###
+gradle.properties
+!gradle.properties.example

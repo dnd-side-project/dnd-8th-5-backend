@@ -1,0 +1,18 @@
+# 이 파일을 gradle.properties 로 복사한 뒤 본인 머신 환경에 맞게 수정하세요.
+# (gradle.properties 자체는 .gitignore 로 커밋되지 않습니다 — 개인 머신 의존 설정 보관용)
+#
+# JDK 17 강제: Lombok 1.18.20 이 javac 내부 API 의존이라 JDK 17 이외에선 컴파일 실패합니다.
+# /usr/libexec/java_home -V 로 본인 머신의 Corretto/Temurin/Zulu 17 경로를 확인하세요.
+#
+# 예시 (Mac, Corretto 17):
+#   org.gradle.java.home=/Users/<your-name>/Library/Java/JavaVirtualMachines/corretto-17.0.17/Contents/Home
+# 예시 (Mac, sdkman):
+#   org.gradle.java.home=/Users/<your-name>/.sdkman/candidates/java/17.0.17-amzn
+
+# Java version configuration
+org.gradle.java.home=<ABSOLUTE_PATH_TO_JDK_17_HOME>
+
+# Gradle daemon configuration
+org.gradle.daemon=true
+org.gradle.parallel=true
+org.gradle.caching=true

@@ -48,13 +48,15 @@ class UserWithdrawFacadeTest {
         this.facade = new UserWithdrawFacade(userRepository, kakaoClient, commandHandler);
     }
 
+    private static final String REASON = "자주 사용하지 않아요";
+
     @Test
-    @DisplayName("정상 탈퇴: 카카오 unlink → CommandHandler 위임 (호출 순서 보장)")
+    @DisplayName("정상 탈퇴: 카카오 unlink → CommandHandler 위임 (호출 순서 보장, reason 전달)")
     void 정상_탈퇴() {
         var user = newUser(1L, "test@example.com", OAuth2Provider.KAKAO, "12345");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        facade.withdraw(1L);
+        facade.withdraw(1L, REASON);
 
         InOrder order = inOrder(kakaoClient, commandHandler);
         order.verify(kakaoClient, times(1)).unlinkByUserId("12345");
@@ -65,6 +67,7 @@ class UserWithdrawFacadeTest {
         var command = captor.getValue();
         assertThat(command.getUserId()).isEqualTo(1L);
         assertThat(command.getCacheKey()).isEqualTo("kakao:test@example.com");
+        assertThat(command.getReason()).isEqualTo(REASON);
     }
 
     @Test
@@ -72,7 +75,7 @@ class UserWithdrawFacadeTest {
     void 사용자_없음() {
         when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> facade.withdraw(999L))
+        assertThatThrownBy(() -> facade.withdraw(999L, REASON))
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(kakaoClient, never()).unlinkByUserId(anyString());
@@ -85,7 +88,7 @@ class UserWithdrawFacadeTest {
         var user = newUser(1L, "legacy@example.com", OAuth2Provider.KAKAO, null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        assertThatThrownBy(() -> facade.withdraw(1L))
+        assertThatThrownBy(() -> facade.withdraw(1L, REASON))
                 .isInstanceOf(InsufficientAuthenticationException.class);
 
         verify(kakaoClient, never()).unlinkByUserId(anyString());
@@ -100,7 +103,7 @@ class UserWithdrawFacadeTest {
         doThrow(new KakaoException.KakaoServerException("카카오 장애"))
                 .when(kakaoClient).unlinkByUserId("12345");
 
-        assertThatThrownBy(() -> facade.withdraw(1L))
+        assertThatThrownBy(() -> facade.withdraw(1L, REASON))
                 .isInstanceOf(KakaoException.KakaoServerException.class);
 
         verify(commandHandler, never()).handle(any());

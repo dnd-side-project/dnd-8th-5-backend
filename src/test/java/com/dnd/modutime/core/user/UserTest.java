@@ -61,13 +61,14 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("withdraw 호출 시 deletedAt이 채워지고 email/oauthId/refreshToken이 익명화된다")
+    @DisplayName("withdraw 호출 시 deletedAt이 채워지고 email/oauthId/refreshToken이 익명화되며 사유/동의시각이 기록된다")
     void withdraw_익명화() {
         var user = new User("이름", "original@example.com", "p.jpg", "t.jpg", OAuth2Provider.KAKAO, "12345");
         user.updateRefreshToken("refresh-token", LocalDateTime.now().plusDays(14));
         var now = LocalDateTime.of(2026, 4, 26, 10, 0);
+        var reason = "자주 사용하지 않아요";
 
-        user.withdraw(now);
+        user.withdraw(now, reason);
 
         assertThat(user.isWithdrawn()).isTrue();
         assertThat(user.getDeletedAt()).isEqualTo(now);
@@ -76,6 +77,8 @@ class UserTest {
         assertThat(user.getOauthId()).isNull();
         assertThat(user.getRefreshToken()).isNull();
         assertThat(user.getTokenExpirationTime()).isEqualTo(now);
+        assertThat(user.getWithdrawReason()).isEqualTo(reason);
+        assertThat(user.getWithdrawConsentedAt()).isEqualTo(now);
     }
 
     @Test
@@ -87,11 +90,21 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("withdraw에 null을 넘기면 NPE")
-    void withdraw_null_NPE() {
+    @DisplayName("withdraw에 now가 null이면 NPE")
+    void withdraw_now_null_NPE() {
         var user = new User("이름", "test@example.com", "p.jpg", "t.jpg", OAuth2Provider.KAKAO, "12345");
 
-        assertThatThrownBy(() -> user.withdraw(null))
+        assertThatThrownBy(() -> user.withdraw(null, "사유"))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    @DisplayName("withdraw에 reason이 null이면 NPE")
+    void withdraw_reason_null_NPE() {
+        var user = new User("이름", "test@example.com", "p.jpg", "t.jpg", OAuth2Provider.KAKAO, "12345");
+        var now = LocalDateTime.of(2026, 4, 26, 10, 0);
+
+        assertThatThrownBy(() -> user.withdraw(now, null))
                 .isInstanceOf(NullPointerException.class);
     }
 }
