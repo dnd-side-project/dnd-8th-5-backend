@@ -19,12 +19,38 @@ description: "Modutime 프로젝트의 Spring REST Docs API 테스트 및 AsciiD
 3. **도메인 `.adoc` 파일 처리** — 두 갈래 분기. 새 엔드포인트가 어느 도메인 .adoc로 가야 하는지 먼저 확인하고, 그 파일이 이미 있는지부터 본다.
    - **새 도메인** → `src/docs/asciidoc/{domain-name}.adoc` 신규 생성 + `src/docs/asciidoc/index.adoc`에 `include::{domain-name}.adoc[]` 한 줄 추가
    - **기존 도메인** → 그 .adoc 파일을 열어서 새 엔드포인트 `=== {API 이름}` 섹션 + 스니펫 include 블록을 **반드시 직접 추가**한다. 이걸 빠뜨리면 테스트는 통과해도 최종 문서에 노출되지 않는다 (스니펫만 생기고 include되지 않은 dead snippet 상태가 됨). index.adoc은 이미 해당 도메인 파일을 include하고 있으므로 손대지 말 것.
-4. `./gradlew apiDocsTest --tests "{FQCN}"` 실행 → 스니펫 생성 확인 (`build/generated-snippets/{operation-id}/`)
-5. **`./gradlew asciidoctor` 실행 → 최종 HTML에 새 섹션이 들어갔는지 검증.** 빌드만 성공하는 걸로는 부족하다. asciidoctor는 include가 누락돼도 통과하므로 `grep "{operation-id}\|{API 한글 이름}" build/docs/asciidoc/index.html`로 실제 노출을 확인한다.
+4. `src/docs/asciidoc/index.adoc`의 버전/날짜 라인 최신화 (아래 "버전/날짜 자동 최신화" 참조)
+5. `./gradlew apiDocsTest --tests "{FQCN}"` 실행 → 스니펫 생성 확인 (`build/generated-snippets/{operation-id}/`)
+6. **`./gradlew asciidoctor` 실행 → 최종 HTML에 새 섹션이 들어갔는지 검증.** 빌드만 성공하는 걸로는 부족하다. asciidoctor는 include가 누락돼도 통과하므로 `grep "{operation-id}\|{API 한글 이름}" build/docs/asciidoc/index.html`로 실제 노출을 확인한다.
 
 ### 흔한 실수: dead snippet
 
 스니펫은 생성됐는데 어느 .adoc에서도 include하지 않으면 `build/generated-snippets/`에는 파일이 쌓여도 사용자가 보는 문서에는 그 엔드포인트가 영영 나타나지 않는다. 새 엔드포인트의 DocsTest를 작성한 직후 항상 자문할 것: "이 `operation-id`를 include하는 .adoc 라인이 어디에 있나?" 답이 없으면 step 3을 빼먹은 것이다.
+
+## 버전/날짜 자동 최신화
+
+`src/docs/asciidoc/index.adoc` 3번째 줄에 `v{MAJOR.MINOR.PATCH}, {YYYY-MM-DD}` 형식의 메타데이터가 있다.
+API 문서를 추가/수정할 때마다 **사용자에게 별도로 묻지 않고 자동으로** 다음을 수행한다:
+
+- **날짜**: 항상 오늘 날짜(`YYYY-MM-DD`)로 갱신
+- **버전**: 변경 성격에 따라 다음 규칙으로 갱신
+  - **MINOR 증가** (예: `v0.1.0` → `v0.2.0`): 신규 API 엔드포인트 추가 (새 컨트롤러 메서드, 새 URL/HTTP 메서드 조합). MINOR 증가 시 PATCH는 0으로 초기화
+  - **PATCH 증가** (예: `v0.1.0` → `v0.1.1`): 기존 엔드포인트의 파라미터/응답 필드 수정, 설명 변경, 예시 갱신, include 순서 조정 등 자잘한 문서 수정
+  - **MAJOR 증가**: 사용자가 명시적으로 요청한 경우에만 수행. 자동 변경 금지
+- 변경 이유로 별도 commit message나 사용자 안내를 남기지 않는다 (silent update)
+
+수행 시점: 3번 단계(도메인 `.adoc` 처리) 직후, 4번 단계에서 함께 처리한다.
+
+예시:
+```
+신규 엔드포인트 추가:
+  변경 전: v0.1.3, 2025-07-18
+  변경 후: v0.2.0, 2026-04-26
+
+기존 엔드포인트 파라미터 수정:
+  변경 전: v0.2.0, 2025-07-18
+  변경 후: v0.2.1, 2026-04-26
+```
 
 ## 파일 위치 규칙
 
