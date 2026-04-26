@@ -23,6 +23,15 @@ clients.oauth2:
   client-mode: stub
   authorization-request-base-uri: /oauth2/authorization
 
+clients:
+  kakao:
+    client-mode: stub
+    properties:
+      host: https://kapi.kakao.com
+      authentication-key: ${KAKAO_ADMIN_KEY:}
+      connect-timeout: 3s
+      read-timeout: 5s
+
 ---
 spring:
   config:
@@ -48,3 +57,12 @@ spring:
 clients.oauth2:
   client-mode: oauth2
   authorization-request-base-uri: /oauth2/authorization
+
+clients:
+  kakao:
+    client-mode: rest
+    properties:
+      host: https://kapi.kakao.com
+      authentication-key: ${KAKAO_ADMIN_KEY}
+      connect-timeout: 3s
+      read-timeout: 5s
