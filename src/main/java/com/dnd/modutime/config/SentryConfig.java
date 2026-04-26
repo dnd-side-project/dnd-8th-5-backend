@@ -16,9 +16,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 @Configuration
 public class SentryConfig {
 
-    // 4xx 클라이언트 에러로 간주해 Sentry 알림에서 제외할 예외 목록.
-    // addIgnoredExceptionForType 만으로는 SentryExceptionResolver 가 캡처하는 예외를
-    // 일관되게 차단하지 못해, BeforeSendCallback 에서도 동일 목록으로 한 번 더 거른다.
+    /**
+     * 4xx 클라이언트 에러로 간주해 Sentry 알림에서 제외할 예외 목록.
+     * addIgnoredExceptionForType 만으로는 SentryExceptionResolver 가 캡처하는 예외를
+     * 일관되게 차단하지 못해, BeforeSendCallback 에서도 동일 목록으로 한 번 더 거른다.
+     */
     private static final List<Class<? extends Throwable>> IGNORED_EXCEPTIONS = List.of(
             IllegalArgumentException.class,
             NotFoundException.class,
