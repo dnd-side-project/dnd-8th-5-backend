@@ -1,0 +1,25 @@
+# local 프로필 - Sentry 비활성화
+sentry:
+  dsn:
+---
+# prod 프로필 - Sentry 활성화
+spring:
+  config:
+    activate:
+      on-profile: prod
+sentry:
+  dsn: ${SENTRY_DSN}
+  environment: production
+  release: ${SENTRY_RELEASE:modutime@unknown}
+  traces-sample-rate: 0.1
+  send-default-pii: false
+  in-app-includes: com.dnd.modutime
+  exception-resolver-order: -2147483647
+  ignored-exceptions-for-type:
+    - com.dnd.modutime.exception.NotFoundException
+    - com.dnd.modutime.exception.InvalidPasswordException
+    - org.springframework.security.access.AccessDeniedException
+    - org.springframework.web.bind.MethodArgumentNotValidException
+    - java.lang.IllegalArgumentException
+    - org.springframework.validation.BindException
+    - org.springframework.http.converter.HttpMessageNotReadableException

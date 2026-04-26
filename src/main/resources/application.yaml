@@ -8,6 +8,7 @@ spring:
       - security
       - logging
       - server
+      - sentry
 
 management:
   endpoints:
