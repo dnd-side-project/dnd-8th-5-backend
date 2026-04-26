@@ -1,5 +1,6 @@
 package com.dnd.modutime.config;
 
+import com.dnd.modutime.core.auth.oauth.facade.BadCredentialsException;
 import com.dnd.modutime.exception.InvalidPasswordException;
 import com.dnd.modutime.exception.NotFoundException;
 import io.sentry.SentryOptions;
@@ -34,6 +35,7 @@ public class SentryConfig {
         return ex instanceof IllegalArgumentException
                 || ex instanceof NotFoundException
                 || ex instanceof InvalidPasswordException
+                || ex instanceof BadCredentialsException
                 || ex instanceof MethodArgumentNotValidException
                 || ex instanceof HttpMessageNotReadableException
                 || ex instanceof BindException

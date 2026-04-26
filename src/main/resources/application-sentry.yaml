@@ -18,6 +18,7 @@ sentry:
   ignored-exceptions-for-type:
     - com.dnd.modutime.exception.NotFoundException
     - com.dnd.modutime.exception.InvalidPasswordException
+    - com.dnd.modutime.core.auth.oauth.facade.BadCredentialsException
     - org.springframework.security.access.AccessDeniedException
     - org.springframework.web.bind.MethodArgumentNotValidException
     - java.lang.IllegalArgumentException
