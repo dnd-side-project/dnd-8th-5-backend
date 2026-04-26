@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 class UserWithdrawCommandHandlerTest {
 
     private static final LocalDateTime NOW = LocalDateTime.of(2026, 4, 26, 10, 0);
+    private static final String REASON = "자주 사용하지 않아요";
 
     private UserRepository userRepository;
     private UserCache userCache;
@@ -43,8 +44,6 @@ class UserWithdrawCommandHandlerTest {
 
         this.handler = new UserWithdrawCommandHandler(userRepository, userCache, timeProvider);
     }
-
-    private static final String REASON = "자주 사용하지 않아요";
 
     @Test
     @DisplayName("캐시 무효화 후 user soft delete + 사유/동의시각 기록")
