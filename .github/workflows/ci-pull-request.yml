@@ -29,7 +29,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Build with gradle
-        run: ./gradlew clean test --info --build-cache
+        run: ./gradlew clean test --build-cache
 
       #https://github.com/actions/upload-artifact
       - name: "Upload failure test report"

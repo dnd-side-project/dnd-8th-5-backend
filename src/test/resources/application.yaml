@@ -1,11 +1,16 @@
 spring:
   jpa:
-    show-sql: true
+    # 로컬에서 SQL 보고 싶으면 환경변수로 켠다 (Gradle -D는 test worker로 전파되지 않음):
+    #   SPRING_JPA_SHOW_SQL=true \
+    #   SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true \
+    #   LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASICBINDER=TRACE \
+    #   ./gradlew test
+    show-sql: false
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
     generate-ddl: true
   datasource:
     url:
@@ -44,12 +49,9 @@ spring:
 
 logging:
   level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    org.hibernate.tool.hbm2ddl: WARN
 
 
 modutime:
