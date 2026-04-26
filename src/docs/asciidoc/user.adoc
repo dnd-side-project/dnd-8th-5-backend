@@ -17,3 +17,22 @@ include::{snippets}/get-api-v1-users-me/http-request.adoc[]
 
 include::{snippets}/get-api-v1-users-me/http-response.adoc[]
 include::{snippets}/get-api-v1-users-me/response-fields.adoc[]
+
+=== 회원 탈퇴
+
+* 인증된 사용자의 OAuth Provider(현재 카카오) 연결을 해제하고 사용자 정보를 익명화합니다.
+* 카카오 unlink 외부 호출 후 soft delete + 이메일/oauthId/리프레시 토큰을 익명화합니다.
+* 동일 OAuth 계정으로의 재가입을 허용하기 위해 UNIQUE 제약 회피 목적의 익명화가 적용됩니다.
+* 멱등 처리: 이미 탈퇴한 사용자는 OAuth 토큰이 만료되어 재로그인이 불가하므로 일반적으로 재호출되지 않습니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/delete-api-v1-users-me/request-headers.adoc[]
+include::{snippets}/delete-api-v1-users-me/curl-request.adoc[]
+include::{snippets}/delete-api-v1-users-me/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/delete-api-v1-users-me/http-response.adoc[]

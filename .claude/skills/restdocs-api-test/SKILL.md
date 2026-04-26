@@ -16,9 +16,15 @@ description: "Modutime 프로젝트의 Spring REST Docs API 테스트 및 AsciiD
 
 1. 대상 컨트롤러 읽기 → 엔드포인트, 파라미터, 응답 DTO 파악
 2. DocsTest 클래스 생성 (아래 템플릿 + [references/patterns.md](references/patterns.md) 참조)
-3. `.adoc` 파일 생성
-4. `src/docs/asciidoc/index.adoc`에 include 추가
-5. `./gradlew apiDocsTest` 실행 후 검증
+3. **도메인 `.adoc` 파일 처리** — 두 갈래 분기. 새 엔드포인트가 어느 도메인 .adoc로 가야 하는지 먼저 확인하고, 그 파일이 이미 있는지부터 본다.
+   - **새 도메인** → `src/docs/asciidoc/{domain-name}.adoc` 신규 생성 + `src/docs/asciidoc/index.adoc`에 `include::{domain-name}.adoc[]` 한 줄 추가
+   - **기존 도메인** → 그 .adoc 파일을 열어서 새 엔드포인트 `=== {API 이름}` 섹션 + 스니펫 include 블록을 **반드시 직접 추가**한다. 이걸 빠뜨리면 테스트는 통과해도 최종 문서에 노출되지 않는다 (스니펫만 생기고 include되지 않은 dead snippet 상태가 됨). index.adoc은 이미 해당 도메인 파일을 include하고 있으므로 손대지 말 것.
+4. `./gradlew apiDocsTest --tests "{FQCN}"` 실행 → 스니펫 생성 확인 (`build/generated-snippets/{operation-id}/`)
+5. **`./gradlew asciidoctor` 실행 → 최종 HTML에 새 섹션이 들어갔는지 검증.** 빌드만 성공하는 걸로는 부족하다. asciidoctor는 include가 누락돼도 통과하므로 `grep "{operation-id}\|{API 한글 이름}" build/docs/asciidoc/index.html`로 실제 노출을 확인한다.
+
+### 흔한 실수: dead snippet
+
+스니펫은 생성됐는데 어느 .adoc에서도 include하지 않으면 `build/generated-snippets/`에는 파일이 쌓여도 사용자가 보는 문서에는 그 엔드포인트가 영영 나타나지 않는다. 새 엔드포인트의 DocsTest를 작성한 직후 항상 자문할 것: "이 `operation-id`를 include하는 .adoc 라인이 어디에 있나?" 답이 없으면 step 3을 빼먹은 것이다.
 
 ## 파일 위치 규칙
 
@@ -119,6 +125,10 @@ public class {Controller}DocsTest {
 
 ## adoc 템플릿
 
+새 도메인 파일을 만들 때는 전체 템플릿, 기존 도메인 파일에 엔드포인트를 추가할 때는 헤더(`[[Tag]]`, `==`)를 빼고 `=== {API 이름}` 블록만 이어 붙인다.
+
+**전체 템플릿 (새 도메인 파일):**
+
 ```asciidoc
 [[{Tag}]]
 == {섹션 제목}
@@ -142,7 +152,9 @@ include::{snippets}/{operation-id}/http-response.adoc[]
 include::{snippets}/{operation-id}/response-fields.adoc[]
 ```
 
-요청 본문 → `request-fields.adoc` 추가, path parameter → `path-parameters.adoc` 추가, query parameter → `request-parameters.adoc` 추가, Authorization 헤더 → `request-headers.adoc` 추가.
+**엔드포인트 추가 블록 (기존 도메인 파일):** 위에서 `=== {API 이름}` 이하만 떼어 마지막 섹션 뒤에 append.
+
+요청 본문 → `request-fields.adoc` 추가, path parameter → `path-parameters.adoc` 추가, query parameter → `request-parameters.adoc` 추가, Authorization 헤더 → `request-headers.adoc` 추가. 응답이 204 No Content처럼 본문이 없는 경우 `response-fields.adoc`은 빼고 `http-response.adoc`만 include.
 
 ## 필드 타입 매핑
 
