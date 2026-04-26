@@ -18,7 +18,33 @@ description: "Modutime 프로젝트의 Spring REST Docs API 테스트 및 AsciiD
 2. DocsTest 클래스 생성 (아래 템플릿 + [references/patterns.md](references/patterns.md) 참조)
 3. `.adoc` 파일 생성
 4. `src/docs/asciidoc/index.adoc`에 include 추가
-5. `./gradlew apiDocsTest` 실행 후 검증
+5. `src/docs/asciidoc/index.adoc`의 버전/날짜 라인 최신화 (아래 "버전/날짜 자동 최신화" 참조)
+6. `./gradlew apiDocsTest` 실행 후 검증
+
+## 버전/날짜 자동 최신화
+
+`src/docs/asciidoc/index.adoc` 3번째 줄에 `v{MAJOR.MINOR.PATCH}, {YYYY-MM-DD}` 형식의 메타데이터가 있다.
+API 문서를 추가/수정할 때마다 **사용자에게 별도로 묻지 않고 자동으로** 다음을 수행한다:
+
+- **날짜**: 항상 오늘 날짜(`YYYY-MM-DD`)로 갱신
+- **버전**: 변경 성격에 따라 다음 규칙으로 갱신
+  - **MINOR 증가** (예: `v0.1.0` → `v0.2.0`): 신규 API 엔드포인트 추가 (새 컨트롤러 메서드, 새 URL/HTTP 메서드 조합). MINOR 증가 시 PATCH는 0으로 초기화
+  - **PATCH 증가** (예: `v0.1.0` → `v0.1.1`): 기존 엔드포인트의 파라미터/응답 필드 수정, 설명 변경, 예시 갱신, include 순서 조정 등 자잘한 문서 수정
+  - **MAJOR 증가**: 사용자가 명시적으로 요청한 경우에만 수행. 자동 변경 금지
+- 변경 이유로 별도 commit message나 사용자 안내를 남기지 않는다 (silent update)
+
+수행 시점: 4번 단계(`include` 추가) 직후, 5번 단계에서 함께 처리한다.
+
+예시:
+```
+신규 엔드포인트 추가:
+  변경 전: v0.1.3, 2025-07-18
+  변경 후: v0.2.0, 2026-04-26
+
+기존 엔드포인트 파라미터 수정:
+  변경 전: v0.2.0, 2025-07-18
+  변경 후: v0.2.1, 2026-04-26
+```
 
 ## 파일 위치 규칙
 
