@@ -5,6 +5,7 @@ import com.dnd.modutime.util.DateTimeUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -19,6 +20,7 @@ import java.util.Objects;
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@Where(clause = "deleted_at IS NULL")
 public class User extends AbstractAggregateRoot<User> implements Auditable {
 
     @Id
@@ -74,11 +76,17 @@ public class User extends AbstractAggregateRoot<User> implements Auditable {
     @Column(name = "oauth_provider")
     private OAuth2Provider provider;
 
+    @Column(name = "oauth_id", length = 64)
+    private String oauthId;
+
     @Column(name = "refresh_token", length = 512)
     private String refreshToken;
 
     @Column(name = "token_expiration_time")
     private LocalDateTime tokenExpirationTime;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public User(final String name,
                 final String email,
@@ -86,11 +94,22 @@ public class User extends AbstractAggregateRoot<User> implements Auditable {
                 final String thumbnailImage,
                 final OAuth2Provider provider
     ) {
+        this(name, email, profileImage, thumbnailImage, provider, null);
+    }
+
+    public User(final String name,
+                final String email,
+                final String profileImage,
+                final String thumbnailImage,
+                final OAuth2Provider provider,
+                final String oauthId
+    ) {
         this.name = Objects.requireNonNull(name);
         this.email = Objects.requireNonNull(email);
         this.profileImage = Objects.requireNonNull(profileImage);
         this.thumbnailImage = Objects.requireNonNull(thumbnailImage);
         this.provider = Objects.requireNonNull(provider);
+        this.oauthId = oauthId;
         audit();
         registerEvent(new UserCreatedEvent(this.id, DateTimeUtils.currentUTC()));
     }
@@ -113,4 +132,31 @@ public class User extends AbstractAggregateRoot<User> implements Auditable {
         return tokenExpirationTime.isBefore(DateTimeUtils.currentUTC());
     }
 
+    /**
+     * 카카오 등 OAuth2 provider의 사용자 식별자(provider user id)를 백필한다.
+     * 이미 값이 있으면 변경하지 않는다.
+     */
+    public void linkOAuthIdIfAbsent(final String oauthId) {
+        if (this.oauthId == null && oauthId != null) {
+            this.oauthId = oauthId;
+        }
+    }
+
+    /**
+     * 회원 탈퇴 처리 (soft delete + 익명화).
+     * UNIQUE(email, oauth_provider) 제약 회피를 위해 email/oauthId를 변경하고,
+     * @Where 절로 조회에서 자동 필터링되도록 deletedAt을 채운다.
+     */
+    public void withdraw(final LocalDateTime now) {
+        Objects.requireNonNull(now);
+        this.deletedAt = now;
+        this.email = "withdrawn_" + this.id + "@modutime.local";
+        this.oauthId = null;
+        this.refreshToken = null;
+        this.tokenExpirationTime = now;
+    }
+
+    public boolean isWithdrawn() {
+        return this.deletedAt != null;
+    }
 }

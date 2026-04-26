@@ -17,7 +17,8 @@ public record OAuth2UserDetails(
         String email,
         String profileImage,
         String thumbnailImage,
-        OAuth2Provider oAuth2Provider
+        OAuth2Provider oAuth2Provider,
+        String oauthId
 ) {
     public static OAuth2UserDetails of(final String registrationId, final Map<String, Object> attributes, final ObjectMapper objectMapper) {
         return switch (registrationId) {
@@ -47,10 +48,12 @@ public record OAuth2UserDetails(
         Map<String, Object> kakaoAccount = kakaoAttributes.kakao_account();
         String email = (String) kakaoAccount.getOrDefault("email", null);
 
-        return new OAuth2UserDetails(name, email, profileImage, thumbnailImage, OAuth2Provider.KAKAO);
+        String oauthId = kakaoAttributes.id() != null ? String.valueOf(kakaoAttributes.id()) : null;
+
+        return new OAuth2UserDetails(name, email, profileImage, thumbnailImage, OAuth2Provider.KAKAO, oauthId);
     }
 
     public User toEntity() {
-        return new User(this.name, this.email, this.profileImage, this.thumbnailImage, this.oAuth2Provider);
+        return new User(this.name, this.email, this.profileImage, this.thumbnailImage, this.oAuth2Provider, this.oauthId);
     }
 }
