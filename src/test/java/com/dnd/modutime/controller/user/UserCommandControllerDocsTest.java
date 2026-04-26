@@ -4,7 +4,7 @@ import com.dnd.modutime.annotation.ApiDocsTest;
 import com.dnd.modutime.core.auth.oauth.OAuth2User;
 import com.dnd.modutime.core.user.OAuth2Provider;
 import com.dnd.modutime.core.user.User;
-import com.dnd.modutime.core.user.application.UserWithdrawService;
+import com.dnd.modutime.core.user.application.UserWithdrawFacade;
 import com.dnd.modutime.core.user.controller.UserCommandController;
 import com.dnd.modutime.documentation.DocumentUtils;
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
@@ -38,8 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ApiDocsTest
 public class UserCommandControllerDocsTest {
 
-    private final UserWithdrawService userWithdrawService = Mockito.mock(UserWithdrawService.class);
-    private final UserCommandController controller = new UserCommandController(userWithdrawService);
+    private final UserWithdrawFacade userWithdrawFacade = Mockito.mock(UserWithdrawFacade.class);
+    private final UserCommandController controller = new UserCommandController(userWithdrawFacade);
 
     @DisplayName("회원 탈퇴 API")
     @Test
