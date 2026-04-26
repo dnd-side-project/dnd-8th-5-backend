@@ -15,12 +15,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.headers.HeaderDescriptor;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +32,8 @@ import java.time.LocalDateTime;
 import static com.dnd.modutime.TestConstant.LOCALHOST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -37,6 +41,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,6 +71,18 @@ public class OAuth2ControllerDocsTest {
                     "mock-refresh-token-def456uvw",
                     LocalDateTime.now().plusDays(7)
             );
+        }
+    }
+
+    /**
+     * OAuth2 로그아웃 엔드포인트 문서화를 위한 Mock Controller
+     * 실제 처리는 OAuth2LogoutFilter + Spring Security LogoutFilter가 담당하므로 문서화 목적으로만 사용
+     */
+    @RestController
+    private static class MockOAuth2LogoutController {
+        @PostMapping("/oauth2/logout")
+        public void oAuth2Logout() {
+            // no-op: 실제 처리는 필터 체인에서 수행됩니다.
         }
     }
 
@@ -165,6 +182,48 @@ public class OAuth2ControllerDocsTest {
                                                 .pathParameters(pathParams)
                                                 .requestParameters(requestParams)
                                                 .responseFields(responseFields)
+                                                .build())
+                        )
+                )
+        ;
+    }
+
+    @DisplayName("OAuth2 로그아웃 API - 액세스 토큰으로 로그아웃 처리, refresh 쿠키/세션/캐시 정리")
+    @Test
+    void test03(RestDocumentationContextProvider contextProvider) throws Exception {
+        var operationIdentifier = "oauth2-post-logout";
+
+        var requestHeaderDescriptors = new HeaderDescriptor[]{
+                headerWithName(AUTHORIZATION).description("'Bearer {accessToken}' 형식의 액세스 토큰")
+        };
+
+        var mockController = new MockOAuth2LogoutController();
+
+        MockMvcFactory.getRestDocsMockMvc(contextProvider, LOCALHOST, mockController)
+                .perform(
+                        post("/oauth2/logout")
+                                .header(AUTHORIZATION, "Bearer mock-access-token")
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo( // Spring REST Docs
+                        MockMvcRestDocumentation.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                requestHeaders(requestHeaderDescriptors)
+                        )
+                )
+                .andDo( // Spring REST Docs to OpenAPI
+                        MockMvcRestDocumentationWrapper.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                ResourceDocumentation.resource(
+                                        ResourceSnippetParameters.builder()
+                                                .description("OAuth2 로그아웃 API - DB의 refreshToken 만료, OAuth2UserCache 무효화, refresh 관련 쿠키/세션 정리")
+                                                .tag("Auth-OAuth2")
+                                                .requestHeaders(requestHeaderDescriptors)
                                                 .build())
                         )
                 )

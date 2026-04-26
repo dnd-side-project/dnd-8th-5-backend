@@ -2,6 +2,7 @@ package com.dnd.modutime.core.auth.oauth;
 
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2LogoutService;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenProvider;
+import com.dnd.modutime.core.auth.oauth.facade.TokenConfigurationProperties;
 import com.dnd.modutime.core.common.ModutimeHostConfigurationProperties;
 import com.dnd.modutime.core.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -205,8 +206,8 @@ public class OAuth2SecurityConfig {
     }
 
     @Bean
-    public LogoutSuccessHandler logoutSuccessHandler() {
-        return new OAuth2LogoutSuccessHandler();
+    public LogoutSuccessHandler logoutSuccessHandler(TokenConfigurationProperties tokenConfigurationProperties) {
+        return new OAuth2LogoutSuccessHandler(tokenConfigurationProperties);
     }
 
     @Bean
