@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -33,7 +34,7 @@ public class TimeBlock extends AbstractAggregateRoot<TimeBlock> implements Audit
     private String participantName;
 
     @OneToMany(mappedBy = "timeBlock", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
-    private List<AvailableDateTime> availableDateTimes = List.of();
+    private List<AvailableDateTime> availableDateTimes = new ArrayList<>();
 
     private String createdBy;
     private LocalDateTime createdAt;
@@ -61,10 +62,11 @@ public class TimeBlock extends AbstractAggregateRoot<TimeBlock> implements Audit
         }
     }
 
-    public void replace(List<AvailableDateTime> availableDateTimes) {
-        List<AvailableDateTime> oldAvailableDateTimes = this.availableDateTimes;
-        this.availableDateTimes = availableDateTimes;
-        registerEvent(new TimeBlockReplaceEvent(roomUuid, oldAvailableDateTimes, availableDateTimes, participantName));
+    public void replace(List<AvailableDateTime> newAvailableDateTimes) {
+        List<AvailableDateTime> oldSnapshot = new ArrayList<>(this.availableDateTimes);
+        this.availableDateTimes.clear();
+        this.availableDateTimes.addAll(newAvailableDateTimes);
+        registerEvent(new TimeBlockReplaceEvent(roomUuid, oldSnapshot, this.availableDateTimes, participantName));
     }
 
     @PreRemove
