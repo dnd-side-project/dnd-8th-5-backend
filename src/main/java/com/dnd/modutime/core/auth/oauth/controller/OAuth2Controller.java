@@ -3,6 +3,7 @@ package com.dnd.modutime.core.auth.oauth.controller;
 import com.dnd.modutime.core.auth.oauth.OAuth2SecurityConfig;
 import com.dnd.modutime.core.auth.oauth.controller.dto.OAuth2LoginResponse;
 import com.dnd.modutime.core.auth.oauth.controller.dto.OAuth2ReIssueTokenResponse;
+import com.dnd.modutime.core.auth.oauth.controller.dto.ReissueTokenRequest;
 import com.dnd.modutime.core.auth.oauth.facade.BadCredentialsException;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenService;
 import com.dnd.modutime.core.common.ErrorCode;
@@ -42,16 +43,33 @@ public class OAuth2Controller {
 
     /**
      * 사용자의 리프레시 토큰을 이용하여 새로운 액세스 토큰을 생성합니다.
-     * 클라이언트는 'refreshToken' 이라는 이름의 쿠키에 리프레시 토큰을 포함하여 요청을 보내야 합니다.
-     * 서버에서 요청을 검증한 후 새로운 액세스 토큰을 발급합니다.
+     *
+     * <p>두 가지 방식으로 refreshToken 을 전달할 수 있습니다.</p>
+     * <ol>
+     *   <li>웹 클라이언트: 'refreshToken' 쿠키 (기존 동작)</li>
+     *   <li>네이티브 앱: JSON 바디 {@code {"refreshToken": "..."}}</li>
+     * </ol>
+     *
+     * <p>두 방식 모두 제공된 경우 JSON 바디가 우선합니다 (앱이 명시적으로 보낸 값을 신뢰).</p>
      */
     @PostMapping("/oauth2/reissue-token")
-    public OAuth2ReIssueTokenResponse oAuth2ReIssueToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+    public OAuth2ReIssueTokenResponse oAuth2ReIssueToken(
+            @CookieValue(value = "refreshToken", required = false) String cookieToken,
+            @RequestBody(required = false) ReissueTokenRequest body
+    ) {
+        String refreshToken = resolveRefreshToken(cookieToken, body);
         if (refreshToken == null) {
-            throw new BadCredentialsException("refreshToken 쿠키가 존재하지 않습니다.", ErrorCode.MISSING_COOKIE);
+            throw new BadCredentialsException("refreshToken 이 존재하지 않습니다.", ErrorCode.MISSING_COOKIE);
         }
 
         return this.OAuth2TokenService.createOAuth2AccessTokenByRefreshToken(refreshToken);
+    }
+
+    private String resolveRefreshToken(final String cookieToken, final ReissueTokenRequest body) {
+        if (body != null && body.refreshToken() != null && !body.refreshToken().isBlank()) {
+            return body.refreshToken();
+        }
+        return cookieToken;
     }
 
     /**
