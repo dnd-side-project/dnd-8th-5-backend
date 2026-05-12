@@ -15,5 +15,9 @@ public record ErrorResponse(
     public static ErrorResponse of(String message, int status) {
         return new ErrorResponse("MT" + status, message, status);
     }
+
+    public static ErrorResponse from(ErrorCode errorCode, String message, int status) {
+        return new ErrorResponse(errorCode.getCode(), message, status);
+    }
 }
 
