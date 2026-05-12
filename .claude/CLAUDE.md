@@ -128,6 +128,23 @@ Event handlers use `@Transactional(propagation = Propagation.REQUIRES_NEW)` for 
 - Write Javadoc in Korean for complex methods
 - Acceptance test methods use Korean DSL (e.g., `방_생성()`, `시간을_등록한다()`)
 
+### Error Response Format
+
+모든 HTTP 에러 응답은 `com.dnd.modutime.core.common.ErrorResponse` 단일 포맷을 사용한다.
+
+스키마:
+```json
+{ "code": "MT4xx | ErrorCode.name()", "message": "...", "status": 4xx }
+```
+
+- 일반 컨트롤러 예외는 `GlobalControllerAdvice`가 처리하며, 응답 바디로 `ExceptionResponse` 같은 다른 DTO를 새로 만들지 않는다.
+- 신규 `@ExceptionHandler`를 추가할 때:
+  - `core.common.ErrorCode`에 적절한 항목이 있으면 그것을 매핑한다. 없으면 enum에 새 항목을 추가한 뒤 매핑한다.
+  - `ErrorResponse.from(ErrorCode, message, status)` 팩토리를 사용한다. 직접 `new ErrorResponse(...)` 호출은 Security 필터 계층(`SecurityErrorCodeResponseHandler`, `OAuth2LogoutFilter`)으로 제한한다.
+  - 메시지는 예외의 `getMessage()`를 우선 사용하고, 비어있을 때만 `ErrorCode.getDescription()`로 fallback한다.
+- Security 필터/핸들러에서 직접 에러를 직렬화할 때도 같은 `ErrorResponse` 포맷을 유지한다. 새로운 에러 응답 DTO를 만들지 않는다.
+- `BindException`은 첫 번째 fieldError의 `defaultMessage`만 message로 노출한다 (다중 필드 에러 처리는 별도 정책 결정 필요).
+
 ### Testing Requirements
 
 **TDD is mandatory** - write tests before implementation:
