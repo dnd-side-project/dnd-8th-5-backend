@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,9 +17,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RoomRequest {
 
+    @NotBlank(message = "방의 제목은 빈문자일 수 없습니다.")
     private String title;
     private Integer headCount;
 
+    @NotEmpty(message = "날짜는 최소 1개이상 존재해야 합니다.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private List<LocalDate> dates;
 

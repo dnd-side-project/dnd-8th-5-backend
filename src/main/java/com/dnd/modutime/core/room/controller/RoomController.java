@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class RoomController {
@@ -21,7 +23,7 @@ public class RoomController {
 
     @Deprecated(since = "카카오 로그인 배포 이후")
     @PostMapping("/api/room")
-    public ResponseEntity<RoomCreationResponse> create(@RequestBody RoomRequest roomRequest) {
+    public ResponseEntity<RoomCreationResponse> create(@RequestBody @Valid RoomRequest roomRequest) {
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
         timeTableService.create(roomCreationResponse.getUuid());
         adjustmentResultService.create(roomCreationResponse.getUuid());
