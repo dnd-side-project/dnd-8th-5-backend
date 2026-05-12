@@ -5,13 +5,17 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 import com.dnd.modutime.acceptance.request.RoomRequestWithNoNull;
 import com.dnd.modutime.core.room.application.response.RoomCreationResponse;
 import com.dnd.modutime.core.room.application.response.V2RoomInfoResponse;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
@@ -69,5 +73,65 @@ public class RoomAcceptanceTest extends AcceptanceSupporter{
                 "이멤버리멤버",
                 List.of(_2023_02_10)));
         return response.body().as(RoomCreationResponse.class);
+    }
+
+    @Test
+    void 빈_본문으로_방_생성_요청시_400을_응답한다() {
+        ExtractableResponse<Response> response = postRaw("/api/room", "{}");
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isNotBlank()
+        );
+    }
+
+    @Test
+    void 깨진_JSON으로_방_생성_요청시_400을_응답한다() {
+        ExtractableResponse<Response> response = postRaw("/api/room", "{");
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("잘못된 요청입니다.")
+        );
+    }
+
+    @Test
+    void 제목이_없으면_400을_응답한다() {
+        Map<String, Object> body = Map.of(
+                "dates", List.of("2023-02-10"),
+                "headCount", 5
+        );
+
+        ExtractableResponse<Response> response = post("/api/room", body);
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("방의 제목은 빈문자일 수 없습니다.")
+        );
+    }
+
+    @Test
+    void 날짜가_비어있으면_400을_응답한다() {
+        Map<String, Object> body = Map.of(
+                "title", "이멤버리멤버",
+                "dates", List.of(),
+                "headCount", 5
+        );
+
+        ExtractableResponse<Response> response = post("/api/room", body);
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("날짜는 최소 1개이상 존재해야 합니다.")
+        );
+    }
+
+    private ExtractableResponse<Response> postRaw(String uri, String body) {
+        return RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when().post(uri)
+                .then().log().all()
+                .extract();
     }
 }

@@ -59,12 +59,14 @@ public class RoomGuestControllerDocsTest {
 
         var requestFields = new FieldDescriptor[]{
                 fieldWithPath("title").type(STRING).description("방 제목"),
-                fieldWithPath("roomDates").type(ARRAY).description("방 날짜 목록"),
-                fieldWithPath("roomDates[].availableDate").type(STRING).description("날짜"),
-                fieldWithPath("roomDates[].availableTimes").type(ARRAY).description("시간 목록").optional(),
-                fieldWithPath("roomDates[].availableTimes[].startTime").type(STRING).description("시작 시간").optional(),
-                fieldWithPath("roomDates[].availableTimes[].endTime").type(STRING).description("종료 시간").optional(),
-                fieldWithPath("headcount").type(NUMBER).description("예상 인원"),
+                fieldWithPath("headCount").type(NUMBER).description("예상 인원").optional(),
+                fieldWithPath("dates").type(ARRAY).description("방 날짜 목록 (yyyy-MM-dd)"),
+                fieldWithPath("startTime").type(STRING).description("시작 시간 (HH:mm)").optional(),
+                fieldWithPath("endTime").type(STRING).description("종료 시간 (HH:mm)").optional(),
+                fieldWithPath("timer").type(OBJECT).description("마감 타이머").optional(),
+                fieldWithPath("timer.day").type(NUMBER).description("마감 일 수").optional(),
+                fieldWithPath("timer.hour").type(NUMBER).description("마감 시간").optional(),
+                fieldWithPath("timer.minute").type(NUMBER).description("마감 분").optional(),
         };
 
         var responseFields = new FieldDescriptor[]{
@@ -75,18 +77,15 @@ public class RoomGuestControllerDocsTest {
         var requestLiteral = """
                 {
                   "title": "모두의 회의",
-                  "roomDates": [
-                    {
-                      "availableDate": "2025-07-16",
-                      "availableTimes": [
-                        {
-                          "startTime": "13:00",
-                          "endTime": "15:00"
-                        }
-                      ]
-                    }
-                  ],
-                  "headcount": 5
+                  "headCount": 5,
+                  "dates": ["2025-07-16"],
+                  "startTime": "13:00",
+                  "endTime": "15:00",
+                  "timer": {
+                    "day": 2,
+                    "hour": 1,
+                    "minute": 30
+                  }
                 }
                 """;
 

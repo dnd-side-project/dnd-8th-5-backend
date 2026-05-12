@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class RoomGuestController {
@@ -19,7 +21,7 @@ public class RoomGuestController {
     private final AdjustmentResultService adjustmentResultService;
 
     @PostMapping("/guest/api/room")
-    public ResponseEntity<RoomCreationResponse> create(@RequestBody RoomRequest roomRequest) {
+    public ResponseEntity<RoomCreationResponse> create(@RequestBody @Valid RoomRequest roomRequest) {
         RoomCreationResponse roomCreationResponse = roomService.create(roomRequest);
         timeTableService.create(roomCreationResponse.getUuid());
         adjustmentResultService.create(roomCreationResponse.getUuid());

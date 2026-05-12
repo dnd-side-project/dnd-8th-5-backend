@@ -31,13 +31,16 @@ public class RoomService {
 
     public RoomCreationResponse create(RoomRequest roomRequest) {
         TimerRequest timerRequest = roomRequest.getTimerRequest();
+        List<RoomDate> roomDates = roomRequest.getDates() == null
+                ? null
+                : roomRequest.getDates().stream()
+                        .map(RoomDate::new)
+                        .collect(Collectors.toList());
         Room room = new Room(
                 roomRequest.getTitle(),
                 roomRequest.getStartTime(),
                 roomRequest.getEndTime(),
-                roomRequest.getDates().stream()
-                        .map(RoomDate::new)
-                        .collect(Collectors.toList()),
+                roomDates,
                 roomRequest.getHeadCount(),
                 findDeadLineOrNull(timerRequest),
                 timeProvider);
