@@ -5,13 +5,14 @@ import com.dnd.modutime.core.common.ErrorResponse;
 import com.dnd.modutime.exception.AuthenticationException;
 import com.dnd.modutime.exception.InvalidPasswordException;
 import com.dnd.modutime.exception.NotFoundException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.net.BindException;
 
 @RestControllerAdvice
 public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
@@ -36,9 +37,12 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, ErrorCode.MT400, exception);
     }
 
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorResponse> handle(org.springframework.validation.BindException e) {
-        var fieldErrors = e.getBindingResult().getFieldErrors();
+    @Override
+    protected ResponseEntity<Object> handleBindException(BindException ex,
+                                                         HttpHeaders headers,
+                                                         HttpStatus status,
+                                                         WebRequest request) {
+        var fieldErrors = ex.getBindingResult().getFieldErrors();
         var message = fieldErrors.isEmpty() ? null : fieldErrors.get(0).getDefaultMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.from(ErrorCode.MT400, resolveMessage(message, ErrorCode.MT400),
