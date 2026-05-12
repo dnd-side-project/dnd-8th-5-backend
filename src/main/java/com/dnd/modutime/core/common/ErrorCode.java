@@ -23,6 +23,9 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR("서버 내부 오류"),
     USER_NOT_FOUND("유저를 찾을 수 없음"),
     INSUFFICIENT_AUTHENTICATION("재로그인이 필요함"),
+    INVALID_KAKAO_TOKEN("카카오 인증 토큰이 유효하지 않음"),
+    KAKAO_EMAIL_NOT_PROVIDED("카카오 계정 이메일 제공에 동의하지 않음"),
+    KAKAO_API_ERROR("카카오 API 호출 오류"),
     ;
 
     private final String description;

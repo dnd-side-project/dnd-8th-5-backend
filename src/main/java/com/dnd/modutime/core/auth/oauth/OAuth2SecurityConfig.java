@@ -4,7 +4,6 @@ import com.dnd.modutime.core.auth.oauth.facade.OAuth2LogoutService;
 import com.dnd.modutime.core.auth.oauth.facade.OAuth2TokenProvider;
 import com.dnd.modutime.core.auth.oauth.facade.TokenConfigurationProperties;
 import com.dnd.modutime.core.common.ModutimeHostConfigurationProperties;
-import com.dnd.modutime.core.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
@@ -122,6 +120,7 @@ public class OAuth2SecurityConfig {
                 new AntPathRequestMatcher("/oauth2/*/callback"),
                 new AntPathRequestMatcher("/oauth2/authorization/**"),
                 new AntPathRequestMatcher("/oauth2/reissue-token"),
+                new AntPathRequestMatcher("/oauth2/kakao/native-login"),
                 /**
                  * TODO: 카카오 배포후 PUT /api/v1/room/{roomUuid}/available-time 로 변경후 제거
                  */
@@ -143,15 +142,13 @@ public class OAuth2SecurityConfig {
      * OAuth2 로그인 과정에서 사용자 정보를 로드하고 처리하는 커스텀 {@link org.springframework.security.oauth2.client.userinfo.OAuth2UserService}를 제공합니다.
      *
      * <p>이 서비스는 OAuth2 제공자(예: 카카오, 구글)로부터 가져온 사용자 정보를 데이터베이스에 저장하거나,
-     * 이미 존재하는 사용자를 로드하는 역할을 합니다.</p>
-     *
-     * @param userRepository 사용자 정보를 관리하는 리포지토리
-     * @return 사용자 정보를 로드하고 애플리케이션의 인증된 사용자 객체로 반환하는 {@link org.springframework.security.oauth2.client.userinfo.OAuth2UserService}
+     * 이미 존재하는 사용자를 로드하는 역할을 합니다. 사용자 조회/생성/캐시 동작은 네이티브 로그인 흐름과
+     * 공유되며 {@link OAuth2UserResolver}로 위임된다.</p>
      */
     @Bean
     public org.springframework.security.oauth2.client.userinfo.OAuth2UserService<OAuth2UserRequest, OAuth2User>
-    oAuth2UserService(UserRepository userRepository, UserCache userCache, ObjectMapper objectMapper) {
-        return new OAuth2UserService(userRepository, userCache, objectMapper);
+    oAuth2UserService(OAuth2UserResolver oAuth2UserResolver, ObjectMapper objectMapper) {
+        return new OAuth2UserService(oAuth2UserResolver, objectMapper);
     }
 
 

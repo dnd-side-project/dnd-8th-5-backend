@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import static com.dnd.modutime.TestConstant.LOCALHOST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -186,6 +187,68 @@ public class OAuth2ControllerDocsTest {
                         )
                 )
         ;
+    }
+
+    @DisplayName("OAuth2 토큰 재발급 API - 네이티브 앱은 JSON 바디로 refreshToken 전달")
+    @Test
+    void test01b_바디_입력(RestDocumentationContextProvider contextProvider) throws Exception {
+        var operationIdentifier = "oauth2-post-reissue-token-with-body";
+
+        var requestFields = new FieldDescriptor[]{
+                fieldWithPath("refreshToken").type(STRING).description("네이티브 앱이 저장 중인 refresh token")
+        };
+
+        var responseFields = new FieldDescriptor[]{
+                fieldWithPath("accessToken").type(STRING).description("새로 발급된 JWT 액세스 토큰"),
+                fieldWithPath("accessTokenExpirationTime").type(STRING).description("액세스 토큰 만료 시간")
+        };
+
+        when(oAuth2TokenService.createOAuth2AccessTokenByRefreshToken(any())).thenReturn(
+                new OAuth2ReIssueTokenResponse("new-mock-access-token", LocalDateTime.now().plusHours(1))
+        );
+
+        MockMvcFactory.getRestDocsMockMvc(contextProvider, LOCALHOST, controller)
+                .perform(
+                        post("/oauth2/reissue-token")
+                                .contentType(APPLICATION_JSON)
+                                .content("""
+                                        {"refreshToken": "mock-refresh-token-from-keychain"}
+                                        """)
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        MockMvcRestDocumentation.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                PayloadDocumentation.requestFields(requestFields),
+                                PayloadDocumentation.responseFields(responseFields)
+                        )
+                )
+                .andDo(
+                        MockMvcRestDocumentationWrapper.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                ResourceDocumentation.resource(
+                                        ResourceSnippetParameters.builder()
+                                                .description("OAuth2 토큰 재발급 API - 네이티브 앱이 JSON 바디로 refreshToken 을 전달")
+                                                .tag("Auth-OAuth2")
+                                                .requestFields(requestFields)
+                                                .responseFields(responseFields)
+                                                .build())
+                        )
+                );
+    }
+
+    @DisplayName("OAuth2 토큰 재발급 API - 쿠키/바디 둘 다 제공되지 않으면 401")
+    @Test
+    void test01c_입력_누락(RestDocumentationContextProvider contextProvider) throws Exception {
+        MockMvcFactory.getRestDocsMockMvc(contextProvider, LOCALHOST, controller)
+                .perform(post("/oauth2/reissue-token"))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
     }
 
     @DisplayName("OAuth2 로그아웃 API - 액세스 토큰으로 로그아웃 처리, refresh 쿠키/세션/캐시 정리")

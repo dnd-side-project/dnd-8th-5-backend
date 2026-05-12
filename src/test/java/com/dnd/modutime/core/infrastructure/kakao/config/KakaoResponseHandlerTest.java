@@ -1,5 +1,7 @@
 package com.dnd.modutime.core.infrastructure.kakao.config;
 
+import com.dnd.modutime.core.auth.oauth.exception.InvalidKakaoAccessTokenException;
+import com.dnd.modutime.core.auth.oauth.exception.KakaoApiException;
 import com.dnd.modutime.core.infrastructure.kakao.KakaoException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,8 +58,8 @@ class KakaoResponseHandlerTest {
     }
 
     @Test
-    @DisplayName("4xx 응답은 KakaoClientException을 던진다")
-    void handleError_4xx_KakaoClientException() {
+    @DisplayName("400 응답은 KakaoClientException을 던진다")
+    void handleError_400_KakaoClientException() {
         var body = "{\"msg\":\"IllegalParam\",\"code\":-2}".getBytes(StandardCharsets.UTF_8);
         var response = new MockClientHttpResponse(body, HttpStatus.BAD_REQUEST);
 
@@ -67,23 +69,34 @@ class KakaoResponseHandlerTest {
     }
 
     @Test
-    @DisplayName("401 응답도 KakaoClientException을 던진다")
-    void handleError_401_KakaoClientException() {
+    @DisplayName("401 응답은 InvalidKakaoAccessTokenException을 던진다")
+    void handleError_401_InvalidKakaoAccessToken() {
         var body = "{\"msg\":\"unauthorized\",\"code\":-401}".getBytes(StandardCharsets.UTF_8);
         var response = new MockClientHttpResponse(body, HttpStatus.UNAUTHORIZED);
 
         assertThatThrownBy(() -> handler.handleError(response))
-                .isInstanceOf(KakaoException.KakaoClientException.class);
+                .isInstanceOf(InvalidKakaoAccessTokenException.class)
+                .hasMessageContaining("unauthorized");
     }
 
     @Test
-    @DisplayName("5xx 응답은 KakaoServerException을 던진다")
-    void handleError_5xx_KakaoServerException() {
+    @DisplayName("403 응답도 InvalidKakaoAccessTokenException을 던진다")
+    void handleError_403_InvalidKakaoAccessToken() {
+        var body = "{\"msg\":\"forbidden\",\"code\":-403}".getBytes(StandardCharsets.UTF_8);
+        var response = new MockClientHttpResponse(body, HttpStatus.FORBIDDEN);
+
+        assertThatThrownBy(() -> handler.handleError(response))
+                .isInstanceOf(InvalidKakaoAccessTokenException.class);
+    }
+
+    @Test
+    @DisplayName("5xx 응답은 KakaoApiException을 던진다")
+    void handleError_5xx_KakaoApiException() {
         var body = "{\"msg\":\"internal\",\"code\":-500}".getBytes(StandardCharsets.UTF_8);
         var response = new MockClientHttpResponse(body, HttpStatus.INTERNAL_SERVER_ERROR);
 
         assertThatThrownBy(() -> handler.handleError(response))
-                .isInstanceOf(KakaoException.KakaoServerException.class)
+                .isInstanceOf(KakaoApiException.class)
                 .hasMessageContaining("internal");
     }
 
@@ -94,6 +107,6 @@ class KakaoResponseHandlerTest {
         var response = new MockClientHttpResponse(invalidBody, HttpStatus.SERVICE_UNAVAILABLE);
 
         assertThatThrownBy(() -> handler.handleError(response))
-                .isInstanceOf(KakaoException.KakaoServerException.class);
+                .isInstanceOf(KakaoApiException.class);
     }
 }

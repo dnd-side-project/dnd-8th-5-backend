@@ -1,11 +1,7 @@
 package com.dnd.modutime.core.auth.oauth;
 
-import com.dnd.modutime.core.user.User;
-import com.dnd.modutime.core.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserCache;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -16,13 +12,11 @@ import java.util.Map;
 @Slf4j
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
-    private final UserCache userCache;
+    private final OAuth2UserResolver oAuth2UserResolver;
     private final ObjectMapper objectMapper;
 
-    public OAuth2UserService(final UserRepository userRepository, final UserCache userCache, final ObjectMapper objectMapper) {
-        this.userRepository = userRepository;
-        this.userCache = userCache;
+    public OAuth2UserService(final OAuth2UserResolver oAuth2UserResolver, final ObjectMapper objectMapper) {
+        this.oAuth2UserResolver = oAuth2UserResolver;
         this.objectMapper = objectMapper;
     }
 
@@ -38,30 +32,8 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                 .getUserInfoEndpoint()
                 .getUserNameAttributeName();
 
-        OAuth2UserDetails oAuth2UserDetails = OAuth2UserDetails.of(registrationId, attributes, objectMapper);
+        OAuth2UserDetails details = OAuth2UserDetails.of(registrationId, attributes, objectMapper);
 
-        String cachedKey = registrationId + ":" + oAuth2UserDetails.email();
-        UserDetails cachedUser = this.userCache.getUserFromCache(cachedKey);
-        if (cachedUser != null) {
-            return (OAuth2User) cachedUser;
-        }
-
-        User user = getOrSaveUser(oAuth2UserDetails);
-
-        OAuth2User OAuth2User = new OAuth2User(user, attributes, userNameAttributeName);
-        this.userCache.putUserInCache(OAuth2User);
-        log.debug("User {} is cached", OAuth2User.getUsername());
-
-        return OAuth2User;
-    }
-
-    private User getOrSaveUser(final OAuth2UserDetails oAuth2UserDetails) {
-        User user = this.userRepository.findByEmailAndProvider(oAuth2UserDetails.email(), oAuth2UserDetails.oAuth2Provider())
-                .orElseGet(oAuth2UserDetails::toEntity);
-
-        // 기존 사용자: oauthId가 비어있으면 백필
-        user.linkOAuthIdIfAbsent(oAuth2UserDetails.oauthId());
-
-        return this.userRepository.save(user);
+        return this.oAuth2UserResolver.resolveAndCache(details, attributes, userNameAttributeName);
     }
 }
