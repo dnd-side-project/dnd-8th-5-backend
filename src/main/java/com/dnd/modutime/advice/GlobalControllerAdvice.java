@@ -1,9 +1,12 @@
 package com.dnd.modutime.advice;
 
 import com.dnd.modutime.advice.response.ExceptionResponse;
+import com.dnd.modutime.core.auth.oauth.exception.KakaoApiException;
+import com.dnd.modutime.core.auth.oauth.exception.KakaoEmailNotProvidedException;
 import com.dnd.modutime.exception.AuthenticationException;
 import com.dnd.modutime.exception.InvalidPasswordException;
 import com.dnd.modutime.exception.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,12 +15,26 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.net.BindException;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ExceptionResponse(exception.getMessage()));
+    }
+
+    @ExceptionHandler(KakaoEmailNotProvidedException.class)
+    public ResponseEntity<ExceptionResponse> handleKakaoEmailNotProvided(KakaoEmailNotProvidedException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ExceptionResponse(exception.getMessage()));
+    }
+
+    @ExceptionHandler(KakaoApiException.class)
+    public ResponseEntity<ExceptionResponse> handleKakaoApiException(KakaoApiException exception) {
+        log.error("카카오 API 호출 오류: {}", exception.getMessage(), exception);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionResponse(exception.getMessage()));
     }
 
