@@ -1,5 +1,6 @@
 package com.dnd.modutime.core.auth.oauth;
 
+import com.dnd.modutime.core.auth.oauth.exception.KakaoEmailNotProvidedException;
 import com.dnd.modutime.core.user.User;
 import com.dnd.modutime.core.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,9 @@ public class OAuth2UserResolver {
     public OAuth2User resolveAndCache(final OAuth2UserDetails details,
                                        final Map<String, Object> attributes,
                                        final String userNameAttributeName) {
+        if (details.email() == null) {
+            throw new KakaoEmailNotProvidedException("카카오 계정 이메일 제공에 동의해야 로그인할 수 있습니다.");
+        }
         String cacheKey = details.oAuth2Provider().getRegistrationId() + ":" + details.email();
         UserDetails cached = this.userCache.getUserFromCache(cacheKey);
         if (cached != null) {
