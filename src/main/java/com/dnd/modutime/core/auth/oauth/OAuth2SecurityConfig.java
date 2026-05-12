@@ -120,6 +120,7 @@ public class OAuth2SecurityConfig {
                 new AntPathRequestMatcher("/oauth2/*/callback"),
                 new AntPathRequestMatcher("/oauth2/authorization/**"),
                 new AntPathRequestMatcher("/oauth2/reissue-token"),
+                new AntPathRequestMatcher("/oauth2/kakao/native-login"),
                 /**
                  * TODO: 카카오 배포후 PUT /api/v1/room/{roomUuid}/available-time 로 변경후 제거
                  */
