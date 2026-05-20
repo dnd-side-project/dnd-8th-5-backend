@@ -150,9 +150,9 @@ Event handlers use `@Transactional(propagation = Propagation.REQUIRES_NEW)` for 
 **TDD is mandatory** - write tests before implementation:
 
 1. **API Documentation Tests** - Required for all controller endpoints
-   - Tag with `@ApiDocsTest`
-   - Generate REST Docs snippets
-   - Located in `src/test/java/.../controller/`
+   - Tag with `@ApiDocsTest`, located in `src/test/java/.../controller/`
+   - **주의:** 스니펫 생성만으로는 사용자 HTML에 노출되지 않는다. `src/docs/asciidoc/{도메인}.adoc`에 `include::{snippets}/...`까지 추가해야 한다.
+   - 상세 단계 + 체크리스트: [docs/api-documentation.md](docs/api-documentation.md)
 
 2. **Acceptance Tests** - End-to-end API tests
    - Extend `AcceptanceSupporter` base class
@@ -191,16 +191,9 @@ adr new {decision-name}
 
 ## API Documentation
 
-The project generates two types of API documentation:
+API 문서화는 **Spring REST Docs (AsciiDoc → HTML)** 와 **OpenAPI 3.0 (YAML)** 두 가지를 동시에 생성한다. 두 산출물 모두 `@ApiDocsTest` 한 곳에서 파생되지만, REST Docs HTML 노출에는 `src/docs/asciidoc/*.adoc` 의 include 갱신이 추가로 필요하다.
 
-1. **Spring REST Docs** (AsciiDoc format)
-   - Generated from controller tests tagged with `@ApiDocsTest`
-   - Output: `build/docs/asciidoc/`
-   - Included in JAR when building with `-Pinclude-api-docs`
-
-2. **OpenAPI 3.0 Spec** (YAML format)
-   - Generated via `openapi3` Gradle task
-   - Uses `restdocs-api-spec` plugin
+전체 파이프라인, 신규 엔드포인트 체크리스트, 자주 발생하는 실수 사례는 [docs/api-documentation.md](docs/api-documentation.md) 를 참고한다.
 
 ## Working with the Codebase
 
@@ -210,8 +203,9 @@ The project generates two types of API documentation:
 2. Start with domain model changes (entities, value objects)
 3. Write domain unit tests first
 4. Implement service layer logic
-5. Add controller endpoint with `@ApiDocsTest`
-6. If cross-aggregate coordination needed, use domain events
+5. Add controller endpoint with `@ApiDocsTest` (스니펫 생성)
+6. **`src/docs/asciidoc/{도메인}.adoc` 에 새 operationId의 include 블록 추가** — 빼먹기 쉬움, [docs/api-documentation.md](docs/api-documentation.md) 체크리스트 참고
+7. If cross-aggregate coordination needed, use domain events
 
 ### Understanding Time Adjustment Logic
 

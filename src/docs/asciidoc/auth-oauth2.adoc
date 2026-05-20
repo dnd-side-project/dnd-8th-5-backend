@@ -20,22 +20,61 @@ include::{snippets}/oauth2-get-authorization-registration-id/request-parameters.
 include::{snippets}/oauth2-get-authorization-registration-id/http-response.adoc[]
 include::{snippets}/oauth2-get-authorization-registration-id/response-fields.adoc[]
 
-=== 토큰 재발급
+=== 네이티브 카카오 로그인
 
-* refreshToken 쿠키를 이용하여 새로운 accessToken을 발급합니다.
-* 요청 시 `Cookie: refreshToken={리프레시 토큰}` 헤더를 포함해야 합니다.
+* 네이티브 앱(iOS/Android)이 카카오 SDK 로 발급받은 사용자 access token 으로 자체 JWT(액세스/리프레시)를 JSON 응답으로 발급합니다.
+* 쿠키를 사용하지 않으므로 키체인/Keystore 등 앱 저장소를 가진 네이티브 환경에 적합합니다. 웹 흐름은 기존 `GET /oauth2/authorization/{registrationId}` 를 그대로 사용하세요.
+* 실패 응답:
+** `401 Unauthorized` - 유효하지 않은 카카오 access token (`INVALID_KAKAO_TOKEN`)
+** `403 Forbidden` - 카카오 계정 이메일 제공에 동의하지 않음 (`KAKAO_EMAIL_NOT_PROVIDED`)
+** `500 Internal Server Error` - 카카오 API 호출 자체가 실패한 경우 (`KAKAO_API_ERROR`)
 
 [discrete]
 ==== 요청
+
+include::{snippets}/oauth2-post-kakao-native-login/curl-request.adoc[]
+include::{snippets}/oauth2-post-kakao-native-login/http-request.adoc[]
+include::{snippets}/oauth2-post-kakao-native-login/request-fields.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/oauth2-post-kakao-native-login/http-response.adoc[]
+include::{snippets}/oauth2-post-kakao-native-login/response-fields.adoc[]
+
+=== 토큰 재발급
+
+* refreshToken 으로 새로운 accessToken 을 발급합니다.
+* 입력 경로는 두 가지를 동시에 지원합니다.
+** 웹: `Cookie: refreshToken={리프레시 토큰}` 헤더
+** 네이티브 앱: JSON 바디 `{ "refreshToken": "..." }`
+* 우선순위는 `body.refreshToken` (비어있지 않을 때) > 쿠키 입니다.
+* 쿠키와 바디 모두 비어있으면 `401 Unauthorized` 가 반환됩니다.
+
+[discrete]
+==== 요청 - 쿠키
 
 include::{snippets}/oauth2-post-reissue-token/curl-request.adoc[]
 include::{snippets}/oauth2-post-reissue-token/http-request.adoc[]
 
 [discrete]
-==== 응답
+==== 응답 - 쿠키
 
 include::{snippets}/oauth2-post-reissue-token/http-response.adoc[]
 include::{snippets}/oauth2-post-reissue-token/response-fields.adoc[]
+
+[discrete]
+==== 요청 - JSON 바디 (네이티브 앱)
+
+include::{snippets}/oauth2-post-reissue-token-with-body/curl-request.adoc[]
+include::{snippets}/oauth2-post-reissue-token-with-body/http-request.adoc[]
+include::{snippets}/oauth2-post-reissue-token-with-body/request-fields.adoc[]
+
+[discrete]
+==== 응답 - JSON 바디 (네이티브 앱)
+
+include::{snippets}/oauth2-post-reissue-token-with-body/http-response.adoc[]
+include::{snippets}/oauth2-post-reissue-token-with-body/response-fields.adoc[]
 
 === 로그아웃
 
