@@ -42,7 +42,7 @@ class AdjustmentResultEventHandlerTest extends IntegrationSupporter {
                 }
                 """;
         var timeTable = JsonUtils.readValue(timeTableLiteral, TimeTable.class);
-        given(timeTableRepository.findByRoomUuid(any())).willReturn(Optional.of(timeTable));
+        given(timeTableRepository.findByRoomUuidForUpdate(any())).willReturn(Optional.of(timeTable));
         timeTableService.update(TimeTableUpdateCommand.of(
                 "room-uuid",
                 List.of(),
