@@ -3,11 +3,9 @@ package com.dnd.modutime.core.timetable.repository;
 import com.dnd.modutime.core.timetable.domain.TimeTable;
 import java.util.Optional;
 import javax.persistence.LockModeType;
-import javax.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
@@ -21,7 +19,6 @@ public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
      * 읽기(조회 API)는 락 없는 {@link #findByRoomUuid(String)}를 사용한다.
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @QueryHints(@QueryHint(name = "javax.persistence.lock.timeout", value = "3000"))
     @Query("select t from TimeTable t where t.roomUuid = :roomUuid")
     Optional<TimeTable> findByRoomUuidForUpdate(@Param("roomUuid") String roomUuid);
 }

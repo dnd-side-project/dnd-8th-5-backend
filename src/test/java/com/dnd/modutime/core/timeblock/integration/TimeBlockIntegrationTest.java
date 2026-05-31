@@ -127,6 +127,26 @@ class TimeBlockIntegrationTest extends IntegrationSupporter {
         assertThat(after.get(0).getId()).isEqualTo(keptId);
     }
 
+    @DisplayName("날짜만 저장하는 방에서 동일 요청을 재전송해도 기존 row가 유지된다 (date-only diff no-op)")
+    @Test
+    void 날짜만_저장하는_방에서_동일_요청을_재전송해도_기존_row가_유지된다() {
+        // given
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+        TimeBlock savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
+        timeBlockService.replace(ROOM_UUID, new TimeReplaceRequest("참여자1", false,
+                List.of(LocalDateTime.of(_2023_02_10, _00_00))));
+        Long keptId = availableDateTimeRepository.findByTimeBlockId(savedTimeBlock.getId()).get(0).getId();
+
+        // when - 시간값 없는(날짜만) 동일 내용을 재전송
+        timeBlockService.replace(ROOM_UUID, new TimeReplaceRequest("참여자1", false,
+                List.of(LocalDateTime.of(_2023_02_10, _00_00))));
+
+        // then - times=null 끼리도 동일 슬롯으로 판정되어 삭제/삽입이 일어나지 않는다
+        List<AvailableDateTime> after = availableDateTimeRepository.findByTimeBlockId(savedTimeBlock.getId());
+        assertThat(after).hasSize(1);
+        assertThat(after.get(0).getId()).isEqualTo(keptId);
+    }
+
     @Test
     void 시간을_등록하지_않은_참여자로_가능한_시간을_조회하면_빈리스트가_반환된다() {
         // given
