@@ -107,6 +107,46 @@ class TimeBlockIntegrationTest extends IntegrationSupporter {
         assertThat(actual.isEmpty()).isTrue();
     }
 
+    @DisplayName("동일한 시간을 다시 등록하면 기존 row가 재삭제·재삽입 없이 그대로 유지된다 (diff no-op)")
+    @Test
+    void 동일한_시간을_다시_등록하면_기존_row가_유지된다() {
+        // given
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+        TimeBlock savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
+        timeBlockService.replace(ROOM_UUID, new TimeReplaceRequest("참여자1", true,
+                List.of(LocalDateTime.of(_2023_02_10, _12_00), LocalDateTime.of(_2023_02_10, _13_00))));
+        Long keptId = availableDateTimeRepository.findByTimeBlockId(savedTimeBlock.getId()).get(0).getId();
+
+        // when - 완전히 동일한 내용을 재전송
+        timeBlockService.replace(ROOM_UUID, new TimeReplaceRequest("참여자1", true,
+                List.of(LocalDateTime.of(_2023_02_10, _12_00), LocalDateTime.of(_2023_02_10, _13_00))));
+
+        // then - 삭제/삽입이 일어나지 않아 동일 id가 보존된다
+        List<AvailableDateTime> after = availableDateTimeRepository.findByTimeBlockId(savedTimeBlock.getId());
+        assertThat(after).hasSize(1);
+        assertThat(after.get(0).getId()).isEqualTo(keptId);
+    }
+
+    @DisplayName("날짜만 저장하는 방에서 동일 요청을 재전송해도 기존 row가 유지된다 (date-only diff no-op)")
+    @Test
+    void 날짜만_저장하는_방에서_동일_요청을_재전송해도_기존_row가_유지된다() {
+        // given
+        doNothing().when(timeReplaceValidator).validate(any(), any());
+        TimeBlock savedTimeBlock = timeBlockRepository.save(new TimeBlock(ROOM_UUID, "참여자1"));
+        timeBlockService.replace(ROOM_UUID, new TimeReplaceRequest("참여자1", false,
+                List.of(LocalDateTime.of(_2023_02_10, _00_00))));
+        Long keptId = availableDateTimeRepository.findByTimeBlockId(savedTimeBlock.getId()).get(0).getId();
+
+        // when - 시간값 없는(날짜만) 동일 내용을 재전송
+        timeBlockService.replace(ROOM_UUID, new TimeReplaceRequest("참여자1", false,
+                List.of(LocalDateTime.of(_2023_02_10, _00_00))));
+
+        // then - times=null 끼리도 동일 슬롯으로 판정되어 삭제/삽입이 일어나지 않는다
+        List<AvailableDateTime> after = availableDateTimeRepository.findByTimeBlockId(savedTimeBlock.getId());
+        assertThat(after).hasSize(1);
+        assertThat(after.get(0).getId()).isEqualTo(keptId);
+    }
+
     @Test
     void 시간을_등록하지_않은_참여자로_가능한_시간을_조회하면_빈리스트가_반환된다() {
         // given

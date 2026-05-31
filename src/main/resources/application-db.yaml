@@ -43,6 +43,12 @@ spring:
     hikari:
       maximum-pool-size: 20
       minimum-idle: 10
+      # 락 대기로 막힌 요청이 커넥션을 오래 점유해 풀이 고갈되는 도미노를 차단한다.
+      # 락 대기 시간은 RDS 파라미터그룹의 innodb_lock_wait_timeout(3s)으로 제한하며,
+      # connection-timeout(5s)보다 짧게 두어 "락 대기 → 커넥션 타임아웃" 역전을 해소한다.
+      # (JPA javax.persistence.lock.timeout 힌트는 MySQL dialect에서 무시되므로 사용하지 않는다.)
+      connection-timeout: 5000
+      leak-detection-threshold: 20000
 
   sql:
     init:

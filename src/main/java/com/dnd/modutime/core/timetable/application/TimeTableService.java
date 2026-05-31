@@ -39,9 +39,14 @@ public class TimeTableService {
                 .orElseThrow(() -> new NotFoundException("해당하는 TimeTable을 찾을 수 없습니다."));
     }
 
+    private TimeTable getTimeTableByRoomUuidForUpdate(String roomUuid) {
+        return timeTableRepository.findByRoomUuidForUpdate(roomUuid)
+                .orElseThrow(() -> new NotFoundException("해당하는 TimeTable을 찾을 수 없습니다."));
+    }
+
     @Transactional
     public void update(TimeTableUpdateCommand command) {
-        TimeTable timeTable = getTimeTableByRoomUuid(command.getRoomUuid());
+        TimeTable timeTable = getTimeTableByRoomUuidForUpdate(command.getRoomUuid());
         List<Long> timeInfoIds = timeTable.getTimeInfoIdsByAvailableDateTimes(command.getOldAvailableDateTimes());
 
         timeTable.removeParticipantName(command.getOldAvailableDateTimes(), command.getParticipantName());

@@ -28,7 +28,7 @@ public class AdjustmentResultReplaceService {
     private final CandidateDateTimeConvertorFactory candidateDateTimeConvertorFactory;
 
     public void replace(AdjustmentResultReplaceCommand command) {
-        var adjustmentResult = getByRoomUuid(command.getRoomUuid());
+        var adjustmentResult = getByRoomUuidForUpdate(command.getRoomUuid());
         candidateDateTimeRepository.deleteAllByAdjustmentResultId(adjustmentResult.getId());
 
         var dateTimeInfosDto = convertDateTimeInfosDto(command.getDateInfos());
@@ -40,8 +40,8 @@ public class AdjustmentResultReplaceService {
         adjustmentResult.replace(candidateDateTimes);
     }
 
-    private AdjustmentResult getByRoomUuid(String roomUuid) {
-        return adjustmentResultRepository.findByRoomUuid(roomUuid)
+    private AdjustmentResult getByRoomUuidForUpdate(String roomUuid) {
+        return adjustmentResultRepository.findByRoomUuidForUpdate(roomUuid)
                 .orElseThrow(() -> new NotFoundException("roomUuid에 해당하는 조율 결과가 없습니다."));
     }
 
