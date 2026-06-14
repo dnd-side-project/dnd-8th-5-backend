@@ -57,6 +57,38 @@ class FeedbackTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("MEMBER인데 authorUserId/authorEmail이 없으면 생성에 실패한다")
+    @Test
+    void member_식별자_누락_예외() {
+        assertThatThrownBy(() -> feedbackWithAuthor(AuthorType.MEMBER, null, "김카카오", null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("ANONYMOUS인데 작성자 식별 정보가 있으면 생성에 실패한다")
+    @Test
+    void anonymous_식별자_존재_예외() {
+        assertThatThrownBy(() -> feedbackWithAuthor(AuthorType.ANONYMOUS, null, "이름있음", null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("GUEST인데 authorUserId/email을 가지면 생성에 실패한다")
+    @Test
+    void guest_회원식별자_보유_예외() {
+        assertThatThrownBy(() -> feedbackWithAuthor(AuthorType.GUEST, 1L, "김모두", "g@x.com"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private static Feedback feedbackWithAuthor(AuthorType type, Long userId, String name, String email) {
+        return new Feedback(
+                FeedbackCategory.PRAISE, "내용", null, false, null,
+                new Responses(List.of(new ResponsePair("q", "a"))),
+                new Snapshot(null, null,
+                        new Snapshot.Page("r", "p", ""),
+                        new Snapshot.Env("UA", new Snapshot.Viewport(1, 2), "2.0.0")),
+                type, userId, name, email
+        );
+    }
+
     @DisplayName("Responses JSON 컨버터는 bare 배열로 직렬화/역직렬화한다")
     @Test
     void responses_컨버터_라운드트립() {

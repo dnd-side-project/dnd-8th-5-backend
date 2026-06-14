@@ -36,8 +36,7 @@ public record FeedbackRequest(
         InterviewRequest interview,
 
         @NotEmpty(message = "responses는 최소 1개 이상이어야 합니다.")
-        @Valid
-        List<ResponsePairRequest> responses,
+        List<@NotNull @Valid ResponsePairRequest> responses,
 
         @NotNull(message = "snapshot은 필수값입니다.")
         @Valid
@@ -50,7 +49,7 @@ public record FeedbackRequest(
                 content.trim(),
                 emptyToNull(replyEmail),
                 interview.agreed(),
-                interview.phoneNumber(),
+                emptyToNull(interview.phoneNumber()),
                 toResponses(),
                 snapshot.toSnapshot(),
                 author
@@ -77,7 +76,7 @@ public record FeedbackRequest(
             Boolean agreed,
 
             @javax.validation.constraints.Pattern(
-                    regexp = "^01[016789]-?\\d{3,4}-?\\d{4}$",
+                    regexp = "^(01[016789]-?\\d{3,4}-?\\d{4})?$",
                     message = "interview.phoneNumber 형식이 올바르지 않습니다."
             )
             String phoneNumber

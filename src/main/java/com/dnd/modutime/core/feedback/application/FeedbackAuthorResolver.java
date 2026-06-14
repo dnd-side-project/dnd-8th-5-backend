@@ -59,10 +59,8 @@ public class FeedbackAuthorResolver {
         if (!StringUtils.hasText(header) || !header.startsWith(BEARER + TOKEN_PREFIX_SEPARATOR)) {
             return null;
         }
-        String[] parts = header.split(TOKEN_PREFIX_SEPARATOR);
-        if (parts.length < 2 || !StringUtils.hasText(parts[1])) {
-            return null;
-        }
-        return parts[1];
+        // 여러 공백/앞뒤 공백에도 견고하도록 "Bearer " prefix 제거 후 trim
+        String token = header.substring((BEARER + TOKEN_PREFIX_SEPARATOR).length()).trim();
+        return StringUtils.hasText(token) ? token : null;
     }
 }

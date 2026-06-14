@@ -129,7 +129,7 @@ public class OAuth2SecurityConfig {
                  * 피드백 제출은 카카오 로그인/비회원(guest token)/완전 비로그인 모두 허용(optional auth).
                  * 필터를 스킵해 401을 피하고, 제출자 식별은 FeedbackAuthorResolver가 헤더를 직접 파싱해 처리한다.
                  */
-                new AntPathRequestMatcher("/api/v1/feedback"),
+                new AntPathRequestMatcher("/api/v1/feedback", HttpMethod.POST.name()),
                 new AntPathRequestMatcher("/guest/**")
         );
     }

@@ -92,6 +92,7 @@ public class Feedback implements Auditable {
         validateResponses(responses);
         validateSnapshot(snapshot);
         validateAuthorType(authorType);
+        validateAuthorIdentity(authorType, authorUserId, authorName, authorEmail);
 
         this.category = category;
         this.content = content;
@@ -136,6 +137,37 @@ public class Feedback implements Auditable {
     private static void validateAuthorType(AuthorType authorType) {
         if (authorType == null) {
             throw new IllegalArgumentException("authorType은 필수값입니다.");
+        }
+    }
+
+    /**
+     * 작성자 타입과 식별자 조합의 정합성을 보장한다. (서비스/리졸버 외 경로에서도 비정상 조합이 영속화되지 않도록)
+     */
+    private static void validateAuthorIdentity(
+            AuthorType authorType,
+            Long authorUserId,
+            String authorName,
+            String authorEmail
+    ) {
+        switch (authorType) {
+            case MEMBER -> {
+                if (authorUserId == null || authorEmail == null || authorEmail.isBlank()) {
+                    throw new IllegalArgumentException("MEMBER는 authorUserId와 authorEmail이 필수입니다.");
+                }
+            }
+            case GUEST -> {
+                if (authorName == null || authorName.isBlank()) {
+                    throw new IllegalArgumentException("GUEST는 authorName이 필수입니다.");
+                }
+                if (authorUserId != null || authorEmail != null) {
+                    throw new IllegalArgumentException("GUEST는 authorUserId/authorEmail을 가질 수 없습니다.");
+                }
+            }
+            case ANONYMOUS -> {
+                if (authorUserId != null || authorName != null || authorEmail != null) {
+                    throw new IllegalArgumentException("ANONYMOUS는 작성자 식별 정보를 가질 수 없습니다.");
+                }
+            }
         }
     }
 

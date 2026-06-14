@@ -1,5 +1,5 @@
 -- 인앱 피드백 테이블 생성 (prod는 ddl-auto=none 이므로 수동 적용)
-CREATE TABLE IF NOT EXISTS feedback (
+CREATE TABLE feedback (
     id                     BIGINT        NOT NULL AUTO_INCREMENT,
     category               VARCHAR(20)   NOT NULL COMMENT 'PRAISE | REVIEW | FEATURE | QUESTION | BUG',
     content                VARCHAR(1000) NOT NULL COMMENT '작성 내용 (trim 후 1~1000자)',

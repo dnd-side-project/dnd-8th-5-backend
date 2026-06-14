@@ -64,4 +64,26 @@ class FeedbackAcceptanceTest extends AcceptanceSupporter {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
+
+    @DisplayName("responses에 null 요소가 있으면 500이 아니라 400을 응답한다")
+    @Test
+    void responses에_null요소면_400() {
+        String body = VALID_BODY.replaceFirst("(?s)\"responses\": \\[.*?\\],", "\"responses\": [null],");
+
+        ExtractableResponse<Response> response = post("/api/v1/feedback", body);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("인터뷰 비동의 시 전화번호가 빈 문자열이어도 200을 응답한다")
+    @Test
+    void 빈_전화번호_허용() {
+        String body = VALID_BODY.replace(
+                "\"interview\": { \"agreed\": false },",
+                "\"interview\": { \"agreed\": false, \"phoneNumber\": \"\" },");
+
+        ExtractableResponse<Response> response = post("/api/v1/feedback", body);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
 }
