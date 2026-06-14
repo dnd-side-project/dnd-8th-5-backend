@@ -90,8 +90,40 @@ public class AdminTokenProvider {
         return true;
     }
 
+    /**
+     * 어드민 refresh token 의 서명과 타입(refresh / admin)을 검증한다.
+     *
+     * <p>DB 조회 이전에 토큰 자체의 유효성을 먼저 확인하기 위한 용도다. 만료 여부는 호출측이
+     * 저장된 만료 시각(DB) 기준으로 판단하므로, 서명이 유효하면 만료된 토큰도 {@code true} 를
+     * 반환한다. 서명 위조/형식 오류/타입 불일치(refresh 아님, admin 아님)는 {@code false}.</p>
+     */
+    public boolean isValidAdminRefreshToken(final String token) {
+        try {
+            Claims claims = parseClaimsAllowingExpired(token);
+            return TokenType.REFRESH.name().equals(claims.get(CLAIM_TOKEN_TYPE, String.class))
+                    && USER_TYPE_ADMIN.equals(claims.get(CLAIM_USER_TYPE, String.class));
+        } catch (Exception e) {
+            log.warn("유효하지 않은 어드민 refresh token 입니다.");
+            return false;
+        }
+    }
+
     public String getUsername(final String token) {
         return parseClaims(token).getSubject();
+    }
+
+    /**
+     * 서명만 검증하고 만료는 허용한다. 만료된(그러나 서명이 유효한) 토큰의 클레임은 그대로 반환한다.
+     */
+    private Claims parseClaimsAllowingExpired(final String token) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(secret())
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 
     private Claims parseClaims(final String token) {

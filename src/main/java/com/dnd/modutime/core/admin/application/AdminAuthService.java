@@ -55,6 +55,10 @@ public class AdminAuthService {
      */
     @Transactional
     public AdminReissueTokenResponse reissue(final String refreshToken) {
+        if (!adminTokenProvider.isValidAdminRefreshToken(refreshToken)) {
+            throw new AdminAuthException("유효한 Refresh token이 아닙니다.", ErrorCode.INVALID_TOKEN);
+        }
+
         Admin admin = adminRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new AdminAuthException("유효한 Refresh token이 아닙니다.", ErrorCode.INVALID_TOKEN));
 

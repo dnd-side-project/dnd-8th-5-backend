@@ -6,6 +6,7 @@ import com.dnd.modutime.core.admin.application.response.AdminReissueTokenRespons
 import com.dnd.modutime.core.admin.controller.dto.AdminReissueTokenRequest;
 import com.dnd.modutime.core.admin.domain.Admin;
 import com.dnd.modutime.core.admin.repository.AdminRepository;
+import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -108,6 +110,41 @@ public class AdminAuthAcceptanceTest extends AcceptanceSupporter {
     void 재발급_입력_누락() {
         ExtractableResponse<Response> response = post("/admin/reissue-token",
                 new AdminReissueTokenRequest(null));
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @DisplayName("어드민 토큰 재발급 - 바디 없이 refreshToken 쿠키만으로도 발급된다")
+    @Test
+    void 재발급_쿠키() {
+        AdminLoginResponse login = post("/admin/login", new AdminLoginRequest(USERNAME, PASSWORD))
+                .body().as(AdminLoginResponse.class);
+
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .cookie("refreshToken", login.refreshToken())
+                .when().post("/admin/reissue-token")
+                .then().log().all()
+                .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.body().as(AdminReissueTokenResponse.class).accessToken()).isNotBlank();
+    }
+
+    @DisplayName("어드민 토큰 재발급 - 쿠키와 바디가 함께 오면 바디가 우선한다")
+    @Test
+    void 재발급_바디_우선() {
+        AdminLoginResponse login = post("/admin/login", new AdminLoginRequest(USERNAME, PASSWORD))
+                .body().as(AdminLoginResponse.class);
+
+        // 쿠키는 유효한 refreshToken, 바디는 유효하지 않은 값 → 바디가 우선 적용되어 401 이어야 한다.
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .cookie("refreshToken", login.refreshToken())
+                .body(new AdminReissueTokenRequest("invalid-refresh-token"))
+                .when().post("/admin/reissue-token")
+                .then().log().all()
+                .extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }

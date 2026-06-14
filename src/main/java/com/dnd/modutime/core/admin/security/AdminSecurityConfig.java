@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -59,12 +60,14 @@ public class AdminSecurityConfig {
 
     /**
      * 어드민 인증이 필요하지 않은 엔드포인트(로그인/토큰 재발급)를 정의한다.
+     * 경로뿐 아니라 HTTP 메서드(POST)까지 고정해, 같은 경로에 다른 메서드가 추가되어도
+     * 비의도적으로 공개되지 않도록 한다.
      */
     @Bean
     public RequestMatcher adminPermitAllMatchers() {
         return new OrRequestMatcher(
-                new AntPathRequestMatcher("/admin/login"),
-                new AntPathRequestMatcher("/admin/reissue-token")
+                new AntPathRequestMatcher("/admin/login", HttpMethod.POST.name()),
+                new AntPathRequestMatcher("/admin/reissue-token", HttpMethod.POST.name())
         );
     }
 

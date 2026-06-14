@@ -44,3 +44,15 @@ include::{snippets}/admin-post-reissue-token/request-fields.adoc[]
 
 include::{snippets}/admin-post-reissue-token/http-response.adoc[]
 include::{snippets}/admin-post-reissue-token/response-fields.adoc[]
+
+[discrete]
+==== 요청 - 쿠키 (웹 클라이언트)
+
+include::{snippets}/admin-post-reissue-token-cookie/curl-request.adoc[]
+include::{snippets}/admin-post-reissue-token-cookie/http-request.adoc[]
+
+[discrete]
+==== 응답 - 쿠키 (웹 클라이언트)
+
+include::{snippets}/admin-post-reissue-token-cookie/http-response.adoc[]
+include::{snippets}/admin-post-reissue-token-cookie/response-fields.adoc[]

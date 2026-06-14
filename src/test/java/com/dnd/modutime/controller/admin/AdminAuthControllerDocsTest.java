@@ -22,6 +22,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.PayloadDocumentation;
 
+import javax.servlet.http.Cookie;
 import java.time.LocalDateTime;
 
 import static com.dnd.modutime.TestConstant.LOCALHOST;
@@ -172,6 +173,51 @@ public class AdminAuthControllerDocsTest {
                                                 .description("어드민 토큰 재발급 - refreshToken(쿠키 또는 JSON 바디)으로 새 accessToken 발급")
                                                 .tag("Admin-Auth")
                                                 .requestFields(requestFields)
+                                                .responseFields(responseFields)
+                                                .build())
+                        )
+                );
+    }
+
+    @DisplayName("어드민 토큰 재발급 - 웹은 refreshToken 쿠키로도 발급 가능")
+    @Test
+    void test04_재발급_쿠키(RestDocumentationContextProvider contextProvider) throws Exception {
+        var operationIdentifier = "admin-post-reissue-token-cookie";
+
+        var responseFields = new FieldDescriptor[]{
+                fieldWithPath("accessToken").type(STRING).description("새로 발급된 어드민 JWT 액세스 토큰"),
+                fieldWithPath("accessTokenExpirationTime").type(STRING).description("액세스 토큰 만료 시각")
+        };
+
+        when(adminAuthService.reissue(any())).thenReturn(new AdminReissueTokenResponse(
+                "new-mock-admin-access-token",
+                LocalDateTime.of(2026, 5, 12, 11, 15)
+        ));
+
+        MockMvcFactory.getRestDocsMockMvc(contextProvider, LOCALHOST, controller)
+                .perform(
+                        post("/admin/reissue-token")
+                                .cookie(new Cookie("refreshToken", "mock-admin-refresh-token"))
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        MockMvcRestDocumentation.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                PayloadDocumentation.responseFields(responseFields)
+                        )
+                )
+                .andDo(
+                        MockMvcRestDocumentationWrapper.document(
+                                operationIdentifier,
+                                DocumentUtils.getDocumentRequest(),
+                                DocumentUtils.getDocumentResponse(),
+                                ResourceDocumentation.resource(
+                                        ResourceSnippetParameters.builder()
+                                                .description("어드민 토큰 재발급 - refreshToken 쿠키로 새 accessToken 발급 (웹 클라이언트)")
+                                                .tag("Admin-Auth")
                                                 .responseFields(responseFields)
                                                 .build())
                         )
