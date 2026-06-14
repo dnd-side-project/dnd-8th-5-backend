@@ -263,6 +263,13 @@ The convertor factory selects appropriate strategy based on room configuration.
 - `server.shutdown=graceful` + `timeout-per-shutdown-phase=30s`
 - SIGTERM 수신 시 진행 중인 요청을 최대 30초 대기 후 종료
 
+### Database Migration SQL
+
+- 필요한 마이그레이션/DDL SQL은 **레포 루트 `db/migrations/`** 에 둔다 (`src/main/resources/` 아래 X).
+- 파일명 규칙: `V<YYYYMMDD>_<UPPER_SNAKE 설명>.sql`. 같은 날 2개 이상이면 `V<YYYYMMDD>_2_...` 처럼 순번 접미사.
+- 상단에 한 줄 한글 요약 주석을 남긴다.
+- Flyway/Liquibase 의존성은 설정되어 있지 않다 → 이 파일들은 prod(`ddl-auto=none`)에 **수동 적용**되는 스크립트 모음이다. local/test는 H2 `ddl-auto`로 엔티티에서 자동 생성된다.
+
 ## Development Notes
 
 - Room entities use UUID instead of DB IDs for public API (security/obfuscation)
