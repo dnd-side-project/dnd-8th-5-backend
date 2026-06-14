@@ -6,9 +6,12 @@ import com.dnd.modutime.core.auth.oauth.facade.TokenConfigurationProperties;
 import com.dnd.modutime.core.common.ModutimeHostConfigurationProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -53,6 +56,7 @@ import java.util.List;
 public class OAuth2SecurityConfig {
 
     @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(
             HttpSecurity httpSecurity,
             AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository,
@@ -172,6 +176,7 @@ public class OAuth2SecurityConfig {
      * 기본 동작은 Http Status 401 (Unauthorized)와 함께 스프링 기본 오류 페이지를 반환합니다. 커스텀 EntryPoint를 사용하여 이 동작을 원하는 방식으로 변경할 수 있습니다.
      */
     @Bean
+    @Primary
     public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
         return new OAuth2AuthenticationEntryPoint(objectMapper);
     }
@@ -200,6 +205,20 @@ public class OAuth2SecurityConfig {
                                                                      RequestMatcher guestTokenAllowedMatchers,
                                                                      AuthenticationEntryPoint authenticationEntryPoint) {
         return new OAuth2TokenAuthenticationFilter(oAuth2TokenProvider, permitAllMatchers, guestTokenAllowedMatchers, authenticationEntryPoint);
+    }
+
+    /**
+     * {@link OAuth2TokenAuthenticationFilter} 가 @Bean 으로 등록되면 Spring Boot 가 이를 모든 요청에
+     * 적용되는 전역 서블릿 필터로 자동 등록한다. 이 필터는 이 OAuth 보안 체인(addFilterBefore) 안에서만
+     * 동작해야 하므로 전역 자동 등록을 비활성화한다. 이렇게 하면 {@code /admin/**} 등 다른 체인이
+     * 담당하는 경로에 OAuth 필터가 간섭하지 않는다. (체인 참여는 addFilterBefore 로 유지된다.)
+     */
+    @Bean
+    public FilterRegistrationBean<OAuth2TokenAuthenticationFilter> oAuth2TokenAuthenticationFilterRegistration(
+            OAuth2TokenAuthenticationFilter oAuth2TokenAuthenticationFilter) {
+        var registration = new FilterRegistrationBean<>(oAuth2TokenAuthenticationFilter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     @Bean
