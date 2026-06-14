@@ -1,0 +1,46 @@
+[[Admin-Auth]]
+=== 어드민 로그인
+
+* 어드민 전용 인증 API입니다. 일반 사용자(카카오 OAuth) 인증과 분리되어 있으며 `/admin/**` 경로에만 적용됩니다.
+* username + 비밀번호를 검증하여 자체 JWT(액세스/리프레시)를 JSON 으로 발급합니다.
+* 발급된 토큰은 `user_type=admin` 클레임을 가지며, 어드민 외 엔드포인트에서는 사용할 수 없습니다.
+* 어드민 계정은 운영에서 직접(수동 SQL) 등록합니다. 가입 엔드포인트는 제공하지 않습니다.
+* 실패 응답:
+** `401 Unauthorized` - 아이디 또는 비밀번호 불일치 (`BAD_CREDENTIALS`)
+** `400 Bad Request` - username/password 누락
+
+[discrete]
+==== 요청
+
+include::{snippets}/admin-post-login/curl-request.adoc[]
+include::{snippets}/admin-post-login/http-request.adoc[]
+include::{snippets}/admin-post-login/request-fields.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/admin-post-login/http-response.adoc[]
+include::{snippets}/admin-post-login/response-fields.adoc[]
+
+=== 어드민 토큰 재발급
+
+* refreshToken 으로 새로운 accessToken 을 발급합니다. (리프레시 토큰 회전 없음)
+* 입력 경로는 두 가지를 지원합니다.
+** 웹: `Cookie: refreshToken={리프레시 토큰}` 헤더
+** 도구/네이티브: JSON 바디 `{ "refreshToken": "..." }`
+* 우선순위는 `body.refreshToken` (비어있지 않을 때) > 쿠키 입니다.
+* 실패 응답:
+** `401 Unauthorized` - refreshToken 누락/유효하지 않음/만료 (`MISSING_COOKIE`, `INVALID_TOKEN`, `REFRESH_TOKEN_EXPIRED`)
+
+[discrete]
+==== 요청 - JSON 바디
+
+include::{snippets}/admin-post-reissue-token/curl-request.adoc[]
+include::{snippets}/admin-post-reissue-token/http-request.adoc[]
+include::{snippets}/admin-post-reissue-token/request-fields.adoc[]
+
+[discrete]
+==== 응답 - JSON 바디
+
+include::{snippets}/admin-post-reissue-token/http-response.adoc[]
+include::{snippets}/admin-post-reissue-token/response-fields.adoc[]

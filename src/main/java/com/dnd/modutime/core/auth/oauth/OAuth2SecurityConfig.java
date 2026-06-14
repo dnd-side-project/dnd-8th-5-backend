@@ -9,6 +9,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -53,6 +55,7 @@ import java.util.List;
 public class OAuth2SecurityConfig {
 
     @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(
             HttpSecurity httpSecurity,
             AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository,
@@ -125,7 +128,12 @@ public class OAuth2SecurityConfig {
                  * TODO: 카카오 배포후 PUT /api/v1/room/{roomUuid}/available-time 로 변경후 제거
                  */
                 new AntPathRequestMatcher("/api/room/{roomUuid}/available-time"),
-                new AntPathRequestMatcher("/guest/**")
+                new AntPathRequestMatcher("/guest/**"),
+                /**
+                 * /admin/** 은 별도 AdminSecurityConfig 체인에서 어드민 토큰으로 인증을 처리한다.
+                 * 전역으로 등록되는 OAuth 토큰 필터가 어드민 경로에 관여하지 않도록 제외한다.
+                 */
+                new AntPathRequestMatcher("/admin/**")
         );
     }
 
@@ -167,6 +175,7 @@ public class OAuth2SecurityConfig {
      * 기본 동작은 Http Status 401 (Unauthorized)와 함께 스프링 기본 오류 페이지를 반환합니다. 커스텀 EntryPoint를 사용하여 이 동작을 원하는 방식으로 변경할 수 있습니다.
      */
     @Bean
+    @Primary
     public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
         return new OAuth2AuthenticationEntryPoint(objectMapper);
     }

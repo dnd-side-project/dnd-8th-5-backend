@@ -41,6 +41,11 @@ include::participant-guest.adoc[]
 
 include::auth-oauth2.adoc[]
 
+== Admin API
+* 어드민 전용 API입니다. `/admin/**` 경로에서만 어드민 인증을 사용합니다.
+
+include::admin-auth.adoc[]
+
 // 코드
 include::timeblock.adoc[]
 include::participant.adoc[]
