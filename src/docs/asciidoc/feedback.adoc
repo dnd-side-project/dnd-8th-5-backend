@@ -1,0 +1,20 @@
+[[Feedback]]
+
+=== 피드백 제출
+
+* 인앱 피드백을 제출합니다.
+* 인증은 선택적(optional auth)입니다. 카카오 로그인(`Bearer {accessToken}`), 비회원 로그인(guest token), 완전 비로그인 모두 허용합니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/post-api-v1-feedback/request-headers.adoc[]
+include::{snippets}/post-api-v1-feedback/curl-request.adoc[]
+include::{snippets}/post-api-v1-feedback/request-fields.adoc[]
+include::{snippets}/post-api-v1-feedback/http-request.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/post-api-v1-feedback/http-response.adoc[]
+include::{snippets}/post-api-v1-feedback/response-fields.adoc[]

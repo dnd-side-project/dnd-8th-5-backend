@@ -128,6 +128,11 @@ public class OAuth2SecurityConfig {
                  * TODO: 카카오 배포후 PUT /api/v1/room/{roomUuid}/available-time 로 변경후 제거
                  */
                 new AntPathRequestMatcher("/api/room/{roomUuid}/available-time"),
+                /**
+                 * 피드백 제출은 카카오 로그인/비회원(guest token)/완전 비로그인 모두 허용(optional auth).
+                 * 필터를 스킵해 401을 피하고, 제출자 식별은 FeedbackAuthorResolver가 헤더를 직접 파싱해 처리한다.
+                 */
+                new AntPathRequestMatcher("/api/v1/feedback", HttpMethod.POST.name()),
                 new AntPathRequestMatcher("/guest/**"),
                 /**
                  * /admin/** 은 별도 AdminSecurityConfig 체인에서 어드민 토큰으로 인증을 처리한다.
