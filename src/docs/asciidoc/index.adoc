@@ -46,6 +46,7 @@ include::auth-oauth2.adoc[]
 
 include::admin-auth.adoc[]
 include::admin-feedback.adoc[]
+include::admin-metrics.adoc[]
 
 // 코드
 include::timeblock.adoc[]

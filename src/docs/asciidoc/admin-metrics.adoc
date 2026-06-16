@@ -1,0 +1,38 @@
+[[Admin-Metrics]]
+=== 어드민 대시보드 요약 지표 조회
+
+* 어드민 "대시보드" 상단 StatCard 4종에 쓰이는 현재 시점 집계 스냅샷입니다. `Authorization: Bearer {accessToken}` (어드민 토큰) 이 필요합니다.
+* 7개 필드 모두 음수 아닌 정수이며, 데이터가 없으면 `0` 입니다.
+* `totalUsers == loggedInUsers + anonymousUsers` 불변식을 보장합니다. (`activeRooms` 는 최근 7일 내 참여 활동 기준, `anonymousUsers` 는 게스트 참여 건수)
+
+[discrete]
+==== 요청
+
+include::{snippets}/admin-get-metrics/curl-request.adoc[]
+include::{snippets}/admin-get-metrics/http-request.adoc[]
+include::{snippets}/admin-get-metrics/request-headers.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/admin-get-metrics/http-response.adoc[]
+include::{snippets}/admin-get-metrics/response-fields.adoc[]
+
+=== 어드민 대시보드 추이 조회
+
+* 추이 그래프 3종(방 생성 / 사용자 가입 / 참여자)에 쓰입니다. `daily` 는 정확히 30개(최근 30일), `monthly` 는 정확히 12개(최근 12개월)입니다.
+* 배열 순서는 오래된 구간 → 최신 구간이며, 데이터가 없는 구간도 값 `0` 으로 채웁니다(구간 누락 없음).
+* 라벨은 KST 기준으로 daily 는 `"M/D"`, monthly 는 `"M월"` 형식입니다.
+
+[discrete]
+==== 요청
+
+include::{snippets}/admin-get-metrics-trends/curl-request.adoc[]
+include::{snippets}/admin-get-metrics-trends/http-request.adoc[]
+include::{snippets}/admin-get-metrics-trends/request-headers.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/admin-get-metrics-trends/http-response.adoc[]
+include::{snippets}/admin-get-metrics-trends/response-fields.adoc[]
