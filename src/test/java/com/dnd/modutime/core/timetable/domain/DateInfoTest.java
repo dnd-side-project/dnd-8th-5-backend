@@ -119,6 +119,19 @@ public class DateInfoTest {
                 .collect(Collectors.toList())).contains("참여자1");
     }
 
+    @Test
+    void date가_같고_시간이_빈리스트여도_참여자를_추가한다() {
+        // DB에서 로드된 date-only AvailableDateTime의 times는 null이 아니라 빈 리스트([])다.
+        DateInfo dateInfo = getDateInfo(List.of(getTimeInfo(null)));
+        dateInfo.addParticipantNameIfSameDate(new AvailableDateTime(new TimeBlock(ROOM_UUID, "참여자1"), _2023_02_10,
+                List.of()), "참여자1");
+
+        TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
+        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
+                .map(TimeInfoParticipantName::getName)
+                .collect(Collectors.toList())).contains("참여자1");
+    }
+
 //    private DateInfo getDateInfo(List<TimeInfo> timeInfos) {
 //        return new DateInfo(getTimeTable(), _2023_02_10, timeInfos);
 //    }
