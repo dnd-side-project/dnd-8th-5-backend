@@ -13,7 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -32,9 +31,9 @@ public class DateInfoTest {
         dateInfo.removeParticipantNameIfSameDate(new AvailableDateTime(new TimeBlock(ROOM_UUID, "참여자1"), _2023_02_09,
                 List.of(new AvailableTime(_12_00))), "참여자1");
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
-        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
-                .map(TimeInfoParticipantName::getName)
-                .collect(Collectors.toList())).contains("참여자1");
+        assertThat(timeInfo.getTimeInfoParticipantNames())
+                .extracting(TimeInfoParticipantName::getName)
+                .contains("참여자1");
     }
 
     @Test
@@ -46,9 +45,9 @@ public class DateInfoTest {
         dateInfo.removeParticipantNameIfSameDate(new AvailableDateTime(new TimeBlock(ROOM_UUID, "참여자1"), _2023_02_10,
                 null), "참여자1");
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
-        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
-                .map(TimeInfoParticipantName::getName)
-                .collect(Collectors.toList())).doesNotContain("참여자1");
+        assertThat(timeInfo.getTimeInfoParticipantNames())
+                .extracting(TimeInfoParticipantName::getName)
+                .doesNotContain("참여자1");
     }
 
     @Test
@@ -114,9 +113,9 @@ public class DateInfoTest {
                 null), "참여자1");
 
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
-        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
-                .map(TimeInfoParticipantName::getName)
-                .collect(Collectors.toList())).contains("참여자1");
+        assertThat(timeInfo.getTimeInfoParticipantNames())
+                .extracting(TimeInfoParticipantName::getName)
+                .contains("참여자1");
     }
 
     @Test
@@ -127,9 +126,9 @@ public class DateInfoTest {
                 List.of()), "참여자1");
 
         TimeInfo timeInfo = dateInfo.getTimeInfos().get(0);
-        assertThat(timeInfo.getTimeInfoParticipantNames().stream()
-                .map(TimeInfoParticipantName::getName)
-                .collect(Collectors.toList())).contains("참여자1");
+        assertThat(timeInfo.getTimeInfoParticipantNames())
+                .extracting(TimeInfoParticipantName::getName)
+                .contains("참여자1");
     }
 
 //    private DateInfo getDateInfo(List<TimeInfo> timeInfos) {
