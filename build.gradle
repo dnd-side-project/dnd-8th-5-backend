@@ -39,7 +39,9 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    // MySQL 8.4 LTS 서버와 공식 호환되는 커넥터 LTS 버전으로 고정한다.
+    // (Spring Boot 2.7.8 관리 버전은 8.0.32 — 8.4 서버 미검증 조합)
+    runtimeOnly 'com.mysql:mysql-connector-j:8.4.0'
 
     // sentry
     implementation 'io.sentry:sentry-spring-boot-starter:7.22.0'
